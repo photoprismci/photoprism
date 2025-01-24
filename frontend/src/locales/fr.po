@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-23 18:02+0000\n"
+"PO-Revision-Date: 2025-01-24 16:44+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -628,7 +628,7 @@ msgstr "Vérifié"
 
 #: src/component/dialog/upload.vue:145 src/component/photo/album/dialog.vue:51
 msgid "Choose an album or create a new one"
-msgstr "Choisis un album ou crée-en un nouveau"
+msgstr "Choisir un album ou en créer un nouveau"
 
 #: src/component/photo/edit/files.vue:450
 msgid "Chroma"
@@ -2509,7 +2509,7 @@ msgstr "Sélectionne un dossier pour y rechercher des changements…"
 
 #: src/page/library/import.vue:42
 msgid "Select a source folder to import files from…"
-msgstr "Sélectionne un dossier source à partir duquel importer les fichiers…"
+msgstr "Sélectionner le dossier d'où importer les fichiers…"
 
 #: src/locales.js:62
 msgid "Select date"
@@ -2521,7 +2521,7 @@ msgstr "Sélectionner les dates"
 
 #: src/component/dialog/upload.vue:129
 msgid "Select the files to upload…"
-msgstr ""
+msgstr "Sélectionne les fichiers à télécharger…"
 
 #: src/locales.js:98
 msgid "Select Time"
@@ -3248,7 +3248,7 @@ msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
 
 #~ msgid "Press \"Browse\" to select the files to upload…"
-#~ msgstr "Appuie sur \"Parcourir\" pour sélectionner les fichiers à télécharger…"
+#~ msgstr "Utiliser «Parcourir» pour sélectionner les fichiers à télécharger…"
 
 #~ msgid "Failed copying to clipboard"
 #~ msgstr "Échec de la copie vers le presse-papier"

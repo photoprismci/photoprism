@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-01-23 18:02+0000\n"
+"PO-Revision-Date: 2025-01-24 16:44+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/frontend/es/>\n"
 "Language: es\n"
@@ -2505,7 +2505,7 @@ msgstr "Selecciona las fechas"
 
 #: src/component/dialog/upload.vue:129
 msgid "Select the files to upload…"
-msgstr ""
+msgstr "Selecciona los archivos que quieres subir…"
 
 #: src/locales.js:98
 msgid "Select Time"
