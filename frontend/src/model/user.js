@@ -26,9 +26,9 @@ Additional information can be found in our Developer Guide:
 import RestModel from "model/rest";
 import { Form } from "common/form";
 import Util from "common/util";
-import Api from "common/api";
+import $api from "common/api";
 import { T, $gettext } from "common/gettext";
-import { config } from "app/session";
+import { $config } from "app/session";
 import memoizeOne from "memoize-one";
 import * as auth from "options/auth";
 
@@ -132,7 +132,7 @@ export class User extends RestModel {
       return "";
     }
 
-    let dir = config.get("usersPath");
+    let dir = $config.get("usersPath");
 
     if (dir) {
       return `${dir}/${handle}`;
@@ -174,24 +174,24 @@ export class User extends RestModel {
   }
 
   getRegisterForm() {
-    return Api.options(this.getEntityResource() + "/register").then((response) =>
+    return $api.options(this.getEntityResource() + "/register").then((response) =>
       Promise.resolve(new Form(response.data))
     );
   }
 
-  getAvatarURL(size, $config) {
+  getAvatarURL(size, config) {
     if (!size) {
       size = "tile_500";
     }
 
-    if (!$config) {
-      $config = config;
+    if (!config) {
+      config = $config;
     }
 
     if (this.Thumb) {
-      return `${$config.contentUri}/t/${this.Thumb}/${$config.previewToken}/${size}`;
+      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
     } else {
-      return `${$config.staticUri}/img/avatar/${size}.jpg`;
+      return `${config.staticUri}/img/avatar/${size}.jpg`;
     }
   }
 
@@ -208,13 +208,13 @@ export class User extends RestModel {
 
     formData.append("files", file);
 
-    return Api.post(this.getEntityResource() + `/avatar`, formData, formConf).then((response) =>
+    return $api.post(this.getEntityResource() + `/avatar`, formData, formConf).then((response) =>
       Promise.resolve(this.setValues(response.data))
     );
   }
 
   getProfileForm() {
-    return Api.options(this.getEntityResource() + "/profile").then((response) =>
+    return $api.options(this.getEntityResource() + "/profile").then((response) =>
       Promise.resolve(new Form(response.data))
     );
   }
@@ -266,34 +266,34 @@ export class User extends RestModel {
   }
 
   changePassword(oldPassword, newPassword) {
-    return Api.put(this.getEntityResource() + "/password", {
+    return $api.put(this.getEntityResource() + "/password", {
       old: oldPassword,
       new: newPassword,
     }).then((response) => Promise.resolve(response.data));
   }
 
   createPasscode(password) {
-    return Api.post(this.getEntityResource() + "/passcode", {
+    return $api.post(this.getEntityResource() + "/passcode", {
       type: "totp",
       password: password,
     }).then((response) => Promise.resolve(response.data));
   }
 
   confirmPasscode(code) {
-    return Api.post(this.getEntityResource() + "/passcode/confirm", {
+    return $api.post(this.getEntityResource() + "/passcode/confirm", {
       type: "totp",
       code: code,
     }).then((response) => Promise.resolve(response.data));
   }
 
   activatePasscode() {
-    return Api.post(this.getEntityResource() + "/passcode/activate", {
+    return $api.post(this.getEntityResource() + "/passcode/activate", {
       type: "totp",
     }).then((response) => Promise.resolve(response.data));
   }
 
   deactivatePasscode(password) {
-    return Api.post(this.getEntityResource() + "/passcode/deactivate", {
+    return $api.post(this.getEntityResource() + "/passcode/deactivate", {
       type: "totp",
       password: password,
     }).then((response) => Promise.resolve(response.data));
@@ -330,7 +330,7 @@ export class User extends RestModel {
       order: "client_name",
     };
 
-    return Api.get(this.getEntityResource() + "/sessions", {
+    return $api.get(this.getEntityResource() + "/sessions", {
       params,
     }).then((response) => Promise.resolve(response.data));
   }

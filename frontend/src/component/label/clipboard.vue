@@ -70,8 +70,8 @@
   </div>
 </template>
 <script>
-import Api from "common/api";
-import Notify from "common/notify";
+import $api from "common/api";
+import $notify from "common/notify";
 import download from "common/download";
 import PPhotoAlbumDialog from "component/photo/album/dialog.vue";
 import PLabelDeleteDialog from "component/label/delete/dialog.vue";
@@ -122,7 +122,7 @@ export default {
 
       this.dialog.album = false;
 
-      Api.post(`albums/${ppid}/photos`, { labels: this.selection }).then(() => this.onAdded());
+      $api.post(`albums/${ppid}/photos`, { labels: this.selection }).then(() => this.onAdded());
     },
     onAdded() {
       this.clearClipboard();
@@ -134,10 +134,10 @@ export default {
 
       this.dialog.delete = false;
 
-      Api.post("batch/labels/delete", { labels: this.selection }).then(this.onDeleted.bind(this));
+      $api.post("batch/labels/delete", { labels: this.selection }).then(this.onDeleted.bind(this));
     },
     onDeleted() {
-      Notify.success(this.$gettext("Labels deleted"));
+      $notify.success(this.$gettext("Labels deleted"));
       this.clearClipboard();
     },
     download() {
@@ -146,7 +146,7 @@ export default {
       }
 
       if (this.selection.length !== 1) {
-        Notify.error(this.$gettext("You can only download one label"));
+        $notify.error(this.$gettext("You can only download one label"));
         return;
       }
 
@@ -155,7 +155,7 @@ export default {
       this.expanded = false;
     },
     onDownload(path) {
-      Notify.success(this.$gettext("Downloading…"));
+      $notify.success(this.$gettext("Downloading…"));
 
       download(path, "label.zip");
     },

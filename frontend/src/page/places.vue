@@ -56,7 +56,7 @@
 
 <script>
 import maplibregl from "maplibre-gl";
-import Api from "common/api";
+import $api from "common/api";
 import Thumb from "model/thumb";
 import PPagePhotos from "page/photos.vue";
 import MapStyleControl from "component/places/style-control";
@@ -494,7 +494,7 @@ export default {
       this.loading = true;
 
       // Perform get request to find nearby photos.
-      return Api.get("geo/view", options)
+      return $api.get("geo/view", options)
         .then((r) => {
           if (r && r.data && r.data.length > 0) {
             // Show photos.
@@ -582,7 +582,7 @@ export default {
       };
 
       // Fetch results from server.
-      return Api.get("geo", options)
+      return $api.get("geo", options)
         .then((response) => {
           if (!response.data.features || response.data.features.length === 0) {
             this.loading = false;

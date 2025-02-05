@@ -214,7 +214,7 @@ export default {
     },
   },
   created() {
-    this.$scrollbar.hide(this.$isMobile);
+    this.$modal.enter(this.$isMobile);
     const authError = window.localStorage.getItem("authError");
     if (authError) {
       this.$notify.error(authError);
@@ -222,7 +222,7 @@ export default {
     }
   },
   unmounted() {
-    this.$scrollbar.show();
+    this.$modal.leave();
   },
   methods: {
     wallpaper() {

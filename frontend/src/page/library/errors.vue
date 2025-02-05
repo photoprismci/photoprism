@@ -129,7 +129,7 @@
 
 <script>
 import { DateTime } from "luxon";
-import Api from "common/api";
+import $api from "common/api";
 import PConfirmAction from "component/confirm/action.vue";
 
 export default {
@@ -243,7 +243,7 @@ export default {
       this.scrollDisabled = true;
 
       // Delete error logs.
-      Api.delete("errors")
+      $api.delete("errors")
         .then((resp) => {
           if (resp && resp.data.code && resp.data.code === 200) {
             this.errors = [];
@@ -284,7 +284,7 @@ export default {
       const params = { count, offset, q };
 
       // Fetch error logs.
-      Api.get("errors", { params })
+      $api.get("errors", { params })
         .then((resp) => {
           if (!resp.data) {
             resp.data = [];

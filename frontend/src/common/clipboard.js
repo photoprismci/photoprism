@@ -24,9 +24,9 @@ Additional information can be found in our Developer Guide:
 */
 
 import RestModel from "model/rest";
-import Notify from "common/notify";
+import $notify from "common/notify";
 import { $gettext } from "common/gettext";
-import { config } from "app/session";
+import { $config } from "app/session";
 import { reactive } from "vue";
 
 export const MaxItems = 999;
@@ -50,14 +50,14 @@ export class Clipboard {
 
   isModel(model) {
     if (!model) {
-      if (config.debug) {
+      if ($config.debug) {
         console.warn("Clipboard::isModel() - empty model", model);
       }
       return false;
     }
 
     if (typeof model.getId !== "function") {
-      if (config.debug) {
+      if ($config.debug) {
         console.warn("Clipboard::isModel() - model.getId() is not a function", model);
       }
       return false;
@@ -99,7 +99,7 @@ export class Clipboard {
 
     if (index === -1) {
       if (this.selection.length >= this.maxItems) {
-        Notify.warn($gettext("Can't select more items"));
+        $notify.warn($gettext("Can't select more items"));
         return;
       }
 
@@ -136,7 +136,7 @@ export class Clipboard {
     }
 
     if (this.selection.length >= this.maxItems) {
-      Notify.warn($gettext("Can't select more items"));
+      $notify.warn($gettext("Can't select more items"));
       return false;
     }
 
@@ -151,7 +151,7 @@ export class Clipboard {
 
   addRange(rangeEnd, models) {
     if (!models || !models[rangeEnd] || !(models[rangeEnd] instanceof RestModel)) {
-      if (config.debug) {
+      if ($config.debug) {
         console.warn("Clipboard::addRange() - invalid arguments:", rangeEnd, models);
       }
       return;

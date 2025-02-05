@@ -48,8 +48,8 @@ export default {
     },
   },
   created() {
-    window.addEventListener("touchstart", (ev) => this.onTouchStart(ev), { passive: false });
-    window.addEventListener("touchmove", (ev) => this.onTouchMove(ev), { passive: true });
+    window.addEventListener("touchstart", this.onTouchStart.bind(this), { passive: true });
+    window.addEventListener("touchmove", this.onTouchMove.bind(this), { passive: true });
 
     this.subscriptions["view.refresh"] = Event.subscribe("view.refresh", (ev, data) => this.onRefresh(data));
     this.$config.setVuetify(this.$vuetify);
@@ -59,27 +59,18 @@ export default {
       Event.unsubscribe(this.subscriptions[i]);
     }
 
-    window.removeEventListener("touchstart", (ev) => this.onTouchStart(ev), { passive: false });
-    window.removeEventListener("touchmove", (ev) => this.onTouchMove(ev), { passive: true });
+    window.removeEventListener("touchstart", this.onTouchStart.bind(this), false);
+    window.removeEventListener("touchmove", this.onTouchMove.bind(this), false);
   },
   methods: {
     onRefresh(config) {
       this.themeName = config.themeName;
     },
     onTouchStart(ev) {
-      // Block navigation gestures in iOS Safari to avoid interfering with swipes in full-screen viewer,
-      // see https://pqina.nl/blog/blocking-navigation-gestures-on-ios-13-4/:
-      const x = ev.touches[0].pageX;
-      if ((x <= 16 || x >= window.innerWidth - 16) && this.$scrollbar.disabled()) {
-        this.touchStart = 0;
-        ev.preventDefault();
-        return;
-      }
-
       this.touchStart = ev.touches[0].pageY;
     },
     onTouchMove(ev) {
-      if (!this.touchStart || this.$scrollbar.disabled()) {
+      if (!this.touchStart || this.$modal.active()) {
         return;
       }
 

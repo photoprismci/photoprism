@@ -24,9 +24,9 @@ Additional information can be found in our Developer Guide:
 */
 
 import RestModel from "model/rest";
-import Api from "common/api";
+import $api from "common/api";
 import { $gettext } from "common/gettext";
-import { config } from "app/session";
+import { $config } from "app/session";
 
 export class Service extends RestModel {
   getDefaults() {
@@ -54,7 +54,7 @@ export class Service extends RestModel {
       SyncDate: null,
       SyncFilenames: true,
       SyncUpload: false,
-      SyncDownload: !config.get("readonly"),
+      SyncDownload: !$config.get("readonly"),
       SyncRaw: true,
       CreatedAt: "",
       UpdatedAt: "",
@@ -71,7 +71,7 @@ export class Service extends RestModel {
   }
 
   Folders() {
-    return Api.get(this.getEntityResource() + "/folders").then((response) => Promise.resolve(response.data));
+    return $api.get(this.getEntityResource() + "/folders").then((response) => Promise.resolve(response.data));
   }
 
   Upload(selection, folder) {
@@ -83,7 +83,7 @@ export class Service extends RestModel {
       selection = { Photos: selection };
     }
 
-    return Api.post(this.getEntityResource() + "/upload", { selection, folder }).then((response) => Promise.resolve(response.data));
+    return $api.post(this.getEntityResource() + "/upload", { selection, folder }).then((response) => Promise.resolve(response.data));
   }
 
   static getCollectionResource() {

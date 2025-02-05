@@ -177,14 +177,14 @@ export default {
     show: function (show) {
       if (show) {
         // Disable the browser scrollbar.
-        this.$scrollbar.hide();
+        this.$modal.enter();
         if (this.tab) {
           this.active = this.tab;
         }
         this.find(this.index);
       } else {
         // Re-enable the browser scrollbar.
-        this.$scrollbar.show();
+        this.$modal.leave();
       }
     },
   },

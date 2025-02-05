@@ -200,7 +200,7 @@
 
 <script>
 import * as options from "options/options";
-import Api from "common/api";
+import $api from "common/api";
 import { restart } from "common/server";
 import PAboutFooter from "component/about/footer.vue";
 
@@ -264,7 +264,7 @@ export default {
       if (values.Token.length >= 4) {
         this.busy = true;
         this.$notify.blockUI();
-        Api.put("connect/hub", values)
+        $api.put("connect/hub", values)
           .then(() => {
             this.$notify.success(this.$gettext("Connected"));
             this.success = true;

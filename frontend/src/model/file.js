@@ -24,10 +24,10 @@ Additional information can be found in our Developer Guide:
 */
 
 import RestModel from "model/rest";
-import Api from "common/api";
+import $api from "common/api";
 import { DateTime } from "luxon";
 import Util from "common/util";
-import { config } from "app/session";
+import { $config } from "app/session";
 import { $gettext } from "common/gettext";
 import download from "common/download";
 import * as media from "common/media";
@@ -120,16 +120,16 @@ export class File extends RestModel {
 
   thumbnailUrl(size) {
     if (this.Error || this.Missing) {
-      return `${config.contentUri}/svg/broken`;
+      return `${$config.contentUri}/svg/broken`;
     } else if (this.Sidecar) {
-      return `${config.contentUri}/svg/file`;
+      return `${$config.contentUri}/svg/file`;
     }
 
-    return `${config.contentUri}/t/${this.Hash}/${config.previewToken}/${size}`;
+    return `${$config.contentUri}/t/${this.Hash}/${$config.previewToken}/${size}`;
   }
 
   getDownloadUrl() {
-    return `${config.apiUri}/dl/${this.Hash}?t=${config.downloadToken}`;
+    return `${$config.apiUri}/dl/${this.Hash}?t=${$config.downloadToken}`;
   }
 
   download() {
@@ -267,9 +267,9 @@ export class File extends RestModel {
     this.Favorite = !this.Favorite;
 
     if (this.Favorite) {
-      return Api.post(this.getPhotoResource() + "/like");
+      return $api.post(this.getPhotoResource() + "/like");
     } else {
-      return Api.delete(this.getPhotoResource() + "/like");
+      return $api.delete(this.getPhotoResource() + "/like");
     }
   }
 
@@ -279,12 +279,12 @@ export class File extends RestModel {
 
   like() {
     this.Favorite = true;
-    return Api.post(this.getPhotoResource() + "/like");
+    return $api.post(this.getPhotoResource() + "/like");
   }
 
   unlike() {
     this.Favorite = false;
-    return Api.delete(this.getPhotoResource() + "/like");
+    return $api.delete(this.getPhotoResource() + "/like");
   }
 
   static getCollectionResource() {

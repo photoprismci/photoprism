@@ -163,7 +163,7 @@ import Label from "model/label";
 import Event from "pubsub-js";
 import RestModel from "model/rest";
 import { MaxItems } from "common/clipboard";
-import Notify from "common/notify";
+import $notify from "common/notify";
 import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
 
 export default {
@@ -383,7 +383,7 @@ export default {
 
       if (pos === -1) {
         if (this.selection.length >= MaxItems) {
-          Notify.warn(this.$gettext("Can't select more items"));
+          $notify.warn(this.$gettext("Can't select more items"));
           return;
         }
 
@@ -403,7 +403,7 @@ export default {
         this.lastId = "";
       } else {
         if (this.selection.length >= MaxItems) {
-          Notify.warn(this.$gettext("Can't select more items"));
+          $notify.warn(this.$gettext("Can't select more items"));
           return;
         }
 
@@ -424,7 +424,7 @@ export default {
       this.lastId = "";
     },
     loadMore() {
-      if (this.scrollDisabled || this.$scrollbar.disabled()) return;
+      if (this.scrollDisabled || this.$modal.active()) return;
 
       this.scrollDisabled = true;
       this.listen = false;

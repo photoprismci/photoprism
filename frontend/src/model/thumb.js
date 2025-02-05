@@ -24,8 +24,8 @@ Additional information can be found in our Developer Guide:
 */
 
 import Model from "model.js";
-import Api from "common/api";
-import { config } from "app/session.js";
+import $api from "common/api";
+import { $config } from "app/session.js";
 import { $gettext } from "common/gettext";
 
 const thumbs = window.__CONFIG__.thumbs;
@@ -65,9 +65,9 @@ export class Thumb extends Model {
     this.Favorite = !this.Favorite;
 
     if (this.Favorite) {
-      return Api.post("photos/" + this.UID + "/like");
+      return $api.post("photos/" + this.UID + "/like");
     } else {
-      return Api.delete("photos/" + this.UID + "/like");
+      return $api.delete("photos/" + this.UID + "/like");
     }
   }
 
@@ -90,7 +90,7 @@ export class Thumb extends Model {
       let t = thumbs[i];
 
       result.Thumbs[t.size] = {
-        src: `${config.staticUri}/img/404.jpg`,
+        src: `${$config.staticUri}/img/404.jpg`,
         w: t.w,
         h: t.h,
       };
@@ -242,10 +242,10 @@ export class Thumb extends Model {
 
   static thumbnailUrl(file, size) {
     if (!file.Hash) {
-      return `${config.staticUri}/img/404.jpg`;
+      return `${$config.staticUri}/img/404.jpg`;
     }
 
-    return `${config.contentUri}/t/${file.Hash}/${config.previewToken}/${size}`;
+    return `${$config.contentUri}/t/${file.Hash}/${$config.previewToken}/${size}`;
   }
 
   static downloadUrl(file) {
@@ -253,7 +253,7 @@ export class Thumb extends Model {
       return "";
     }
 
-    return `${config.apiUri}/dl/${file.Hash}?t=${config.downloadToken}`;
+    return `${$config.apiUri}/dl/${file.Hash}?t=${$config.downloadToken}`;
   }
 }
 

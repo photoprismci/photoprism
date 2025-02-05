@@ -24,11 +24,11 @@ Additional information can be found in our Developer Guide:
 */
 
 import RestModel from "model/rest";
-import Api from "common/api";
+import $api from "common/api";
 import { DateTime } from "luxon";
 import File from "model/file";
 import Util from "common/util";
-import { config } from "app/session";
+import { $config } from "app/session";
 import { $gettext } from "common/gettext";
 
 export const RootImport = "import";
@@ -93,7 +93,7 @@ export class Folder extends RestModel {
   }
 
   thumbnailUrl(size) {
-    return `${config.contentUri}/folders/t/${this.UID}/${config.previewToken}/${size}`;
+    return `${$config.contentUri}/folders/t/${this.UID}/${$config.previewToken}/${size}`;
   }
 
   getDateString() {
@@ -104,20 +104,20 @@ export class Folder extends RestModel {
     this.Favorite = !this.Favorite;
 
     if (this.Favorite) {
-      return Api.post(this.getEntityResource() + "/like");
+      return $api.post(this.getEntityResource() + "/like");
     } else {
-      return Api.delete(this.getEntityResource() + "/like");
+      return $api.delete(this.getEntityResource() + "/like");
     }
   }
 
   like() {
     this.Favorite = true;
-    return Api.post(this.getEntityResource() + "/like");
+    return $api.post(this.getEntityResource() + "/like");
   }
 
   unlike() {
     this.Favorite = false;
-    return Api.delete(this.getEntityResource() + "/like");
+    return $api.delete(this.getEntityResource() + "/like");
   }
 
   static findAll(path) {
@@ -149,7 +149,7 @@ export class Folder extends RestModel {
     // see https://github.com/photoprism/photoprism/issues/3695
     path = path.replaceAll(":", "%3A").replaceAll("#", "%23");
 
-    return Api.get(this.getCollectionResource() + path, options).then((response) => {
+    return $api.get(this.getCollectionResource() + path, options).then((response) => {
       let folders = response.data.folders ? response.data.folders : [];
       let files = response.data.files ? response.data.files : [];
 

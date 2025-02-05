@@ -1,23 +1,35 @@
 <template>
-  <div v-if="visible" ref="container" class="p-viewer" tabindex="-1" role="dialog">
-    <div
-      ref="lightbox"
-      tabindex="0"
-      class="p-viewer__lightbox"
-      :class="{
-        'sidebar-visible': sidebarVisible,
-        'slideshow-active': slideshow.active,
-        'is-fullscreen': isFullscreen,
-        'is-favorite': model.Favorite,
-        'is-playable': model.Playable,
-        'is-selected': $clipboard.has(model),
-      }"
-      @keydown.space.prevent="onSpace"
-    ></div>
-    <div v-if="sidebarVisible" ref="sidebar" class="p-viewer__sidebar">
-      <!-- TODO: Create a reusable sidebar component that allows users to view/edit metadata. -->
+  <v-dialog
+    ref="dialog"
+    :model-value="visible"
+    :transition="false"
+    :scrollable="false"
+    fullscreen
+    scrim
+    tiled
+    class="p-dialog p-viewer v-dialog--viewer"
+  >
+    <div class="p-viewer__underlay"></div>
+    <div ref="container" class="p-viewer__content">
+      <div
+        ref="lightbox"
+        tabindex="0"
+        class="p-viewer__lightbox"
+        :class="{
+          'sidebar-visible': sidebarVisible,
+          'slideshow-active': slideshow.active,
+          'is-fullscreen': isFullscreen,
+          'is-favorite': model.Favorite,
+          'is-playable': model.Playable,
+          'is-selected': $clipboard.has(model),
+        }"
+        @keydown.space.prevent="onSpace"
+      ></div>
+      <div v-if="sidebarVisible" ref="sidebar" class="p-viewer__sidebar">
+        <!-- TODO: Create a reusable sidebar component that allows users to view/edit metadata. -->
+      </div>
     </div>
-  </div>
+  </v-dialog>
 </template>
 
 <script>
@@ -25,7 +37,7 @@ import PhotoSwipe from "photoswipe";
 import Lightbox from "photoswipe/lightbox";
 import Captions from "common/captions";
 import Util from "common/util";
-import Api from "common/api";
+import $api from "common/api";
 import Thumb from "model/thumb";
 import { Photo } from "model/photo";
 import * as media from "common/media";
@@ -111,7 +123,7 @@ export default {
         zoom: true,
         close: true,
         counter: false,
-        trapFocus: true,
+        trapFocus: false,
         returnFocus: false,
         allowPanToNext: false,
         initialZoomLevel: "fit",
@@ -183,7 +195,7 @@ export default {
       params.offset = 0;
 
       // Fetch viewer results from API.
-      return Api.get("photos/view", { params })
+      return $api.get("photos/view", { params })
         .then((response) => {
           const count = response && response.data ? response.data.length : 0;
           if (count === 0) {
@@ -677,7 +689,7 @@ export default {
     },
     onShow() {
       // Hide the browser scrollbar as it is not wanted in the viewer.
-      this.$scrollbar.hide();
+      this.$modal.enter();
 
       // Render the component template.
       this.visible = true;
@@ -743,7 +755,7 @@ export default {
       }
 
       // Restore browser scrollbar state.
-      this.$scrollbar.show();
+      this.$modal.leave();
     },
     // Returns the active PhotoSwipe instance, if any.
     // Be sure to check the result before using it!

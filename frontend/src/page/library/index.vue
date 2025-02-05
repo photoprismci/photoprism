@@ -93,9 +93,9 @@
 </template>
 
 <script>
-import Api from "common/api";
+import $api from "common/api";
 import Axios from "axios";
-import Notify from "common/notify";
+import $notify from "common/notify";
 import Event from "pubsub-js";
 import Settings from "model/settings";
 import Util from "common/util";
@@ -187,7 +187,7 @@ export default {
       // DO NOTHING
     },
     cancelIndexing() {
-      Api.delete("index");
+      $api.delete("index");
     },
     startIndexing() {
       this.source = Axios.CancelToken.source();
@@ -197,7 +197,7 @@ export default {
       this.fileName = "";
 
       const ctx = this;
-      Notify.blockUI();
+      $notify.blockUI();
 
       // Request parameters.
       const params = {
@@ -207,22 +207,22 @@ export default {
       };
 
       // Submit POST request.
-      Api.post("index", params, { cancelToken: this.source.token })
+      $api.post("index", params, { cancelToken: this.source.token })
         .then(function () {
-          Notify.unblockUI();
+          $notify.unblockUI();
           ctx.busy = false;
           ctx.completed = 100;
           ctx.fileName = "";
         })
         .catch(function (e) {
-          Notify.unblockUI();
+          $notify.unblockUI();
 
           if (Axios.isCancel(e)) {
             // Run in background.
             return;
           }
 
-          Notify.error(ctx.$gettext("Indexing failed"));
+          $notify.error(ctx.$gettext("Indexing failed"));
 
           ctx.busy = false;
           ctx.completed = 0;
@@ -233,7 +233,7 @@ export default {
       if (this.source) {
         this.source.cancel("run in background");
         this.source = null;
-        Notify.unblockUI();
+        $notify.unblockUI();
       }
 
       const type = ev.split(".")[1];

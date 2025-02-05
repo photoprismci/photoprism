@@ -24,7 +24,7 @@ import Library from "page/settings/library.vue";
 import Advanced from "page/settings/advanced.vue";
 import Services from "page/settings/services.vue";
 import Account from "page/settings/account.vue";
-import { config } from "app/session";
+import { $config } from "app/session";
 import { markRaw } from "vue";
 
 function initTabs(flag, tabs) {
@@ -62,7 +62,7 @@ export default {
         public: true,
         admin: true,
         demo: true,
-        show: config.feature("settings"),
+        show: $config.feature("settings"),
       },
       {
         name: "settings_media",
@@ -74,7 +74,7 @@ export default {
         public: true,
         admin: true,
         demo: true,
-        show: config.allow("config", "manage") && isSuperAdmin,
+        show: $config.allow("config", "manage") && isSuperAdmin,
       },
       {
         name: "settings_advanced",
@@ -86,7 +86,7 @@ export default {
         public: false,
         admin: true,
         demo: true,
-        show: config.allow("config", "manage"),
+        show: $config.allow("config", "manage"),
       },
       {
         name: "settings_services",
@@ -98,7 +98,7 @@ export default {
         public: false,
         admin: true,
         demo: true,
-        show: config.feature("services") && config.allow("services", "manage"),
+        show: $config.feature("services") && $config.allow("services", "manage"),
       },
       {
         name: "settings_account",
@@ -110,7 +110,7 @@ export default {
         public: false,
         admin: true,
         demo: true,
-        show: config.feature("account"),
+        show: $config.feature("account"),
       },
     ];
 

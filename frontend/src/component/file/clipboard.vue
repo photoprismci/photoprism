@@ -69,8 +69,8 @@
   </div>
 </template>
 <script>
-import Api from "common/api";
-import Notify from "common/notify";
+import $api from "common/api";
+import $notify from "common/notify";
 import download from "common/download";
 import PPhotoAlbumDialog from "component/photo/album/dialog.vue";
 
@@ -116,20 +116,20 @@ export default {
     addToAlbum(ppid) {
       this.dialog.album = false;
 
-      Api.post(`albums/${ppid}/photos`, { files: this.selection }).then(() => this.onAdded());
+      $api.post(`albums/${ppid}/photos`, { files: this.selection }).then(() => this.onAdded());
     },
     onAdded() {
       this.clearClipboard();
     },
     download() {
-      Api.post("zip", { files: this.selection }).then((r) => {
+      $api.post("zip", { files: this.selection }).then((r) => {
         this.onDownload(`${this.$config.apiUri}/zip/${r.data.filename}?t=${this.$config.downloadToken}`);
       });
 
       this.expanded = false;
     },
     onDownload(path) {
-      Notify.success(this.$gettext("Downloading…"));
+      $notify.success(this.$gettext("Downloading…"));
 
       download(path, "photos.zip");
     },

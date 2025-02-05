@@ -4,14 +4,14 @@ Settings.defaultLocale = "en";
 Settings.defaultZoneName = "UTC";
 
 import clientConfig from "./config";
-import { config } from "app/session";
+import { $config } from "app/session";
 
-config.setValues(clientConfig);
+$config.setValues(clientConfig);
 
 import MockAdapter from "axios-mock-adapter";
-import Api from "common/api";
+import $api from "common/api";
 
-const Mock = new MockAdapter(Api, { onNoMatch: "throwException" });
+const Mock = new MockAdapter($api, { onNoMatch: "throwException" });
 
 const mockHeaders = {
   "Content-Type": "application/json; charset=utf-8",
@@ -376,4 +376,4 @@ Mock.onPut().reply(200, { Description: "Test description" });
 Mock.onPost().reply(200, { Description: "Test description" });
 */
 
-export { Api, Mock };
+export { $api, Mock };

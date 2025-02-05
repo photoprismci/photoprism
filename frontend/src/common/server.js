@@ -23,9 +23,9 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import Api from "api.js";
-import { config } from "app/session";
-import Notify from "notify.js";
+import $api from "common/api";
+import { $config } from "app/session";
+import $notify from "notify.js";
 
 function poll(interval, maxAttempts) {
   let attempts = 0;
@@ -35,7 +35,7 @@ function poll(interval, maxAttempts) {
 
     try {
       const xhr = new XMLHttpRequest();
-      xhr.open("GET", config.apiUri + "/status", false);
+      xhr.open("GET", $config.apiUri + "/status", false);
       xhr.send(null);
 
       if (xhr.status === 200 && xhr.response && xhr.response.includes("operational")) {
@@ -57,11 +57,11 @@ function poll(interval, maxAttempts) {
 }
 
 export function restart(uri) {
-  Notify.blockUI("progress");
-  Notify.wait();
-  Notify.ajaxStart();
+  $notify.blockUI("progress");
+  $notify.wait();
+  $notify.ajaxStart();
 
-  return Api.post("server/stop")
+  return $api.post("server/stop")
     .then(() => {
       return poll(1000, 180)
         .then(() => {
@@ -73,14 +73,14 @@ export function restart(uri) {
           }
         })
         .catch(() => {
-          Notify.ajaxEnd();
-          Notify.error("Failed to restart server");
-          Notify.unblockUI();
+          $notify.ajaxEnd();
+          $notify.error("Failed to restart server");
+          $notify.unblockUI();
         });
     })
     .catch(() => {
-      Notify.ajaxEnd();
-      Notify.error("Failed to restart server");
-      Notify.unblockUI();
+      $notify.ajaxEnd();
+      $notify.error("Failed to restart server");
+      $notify.unblockUI();
     });
 }

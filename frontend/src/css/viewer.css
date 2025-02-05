@@ -7,19 +7,44 @@
     bottom: 0;
     right: 0;
     z-index: 2500;
+    border-radius: 0;
+}
+
+.p-viewer__content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
     justify-content: space-between;
     align-items: stretch;
     overflow: hidden;
+    border-radius: 0;
+    z-index: 1;
+}
+
+.p-viewer__underlay {
+    pointer-events: auto;
+    touch-action: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background-color: inherit;
+    border-radius: 0;
+    opacity: 0;
+    z-index: -1;
 }
 
 .pswp {
     position: absolute;
 }
 
-.p-viewer .p-viewer__lightbox {
+.p-viewer__content > .p-viewer__lightbox {
     position: relative;
     display: block;
     overflow: hidden;
@@ -28,7 +53,7 @@
     height: 100%;
 }
 
-.p-viewer .p-viewer__sidebar {
+.p-viewer__content > .p-viewer__sidebar {
     position: relative;
     display: block;
     overflow: auto;
@@ -77,15 +102,15 @@
     color: #f3f3f3;
 }
 
-.p-viewer__lightbox.slideshow-active .pswp__dynamic-caption {
+.p-viewer__content > .p-viewer__lightbox.slideshow-active .pswp__dynamic-caption {
     opacity: 1 !important;
 }
 
-.p-viewer__lightbox.sidebar-visible .pswp__dynamic-caption {
+.p-viewer__content > .p-viewer__lightbox.sidebar-visible .pswp__dynamic-caption {
     display: none !important;
 }
 
-.p-viewer__lightbox:not(.slideshow-active) .pswp__dynamic-caption--faded {
+.p-viewer__content > .p-viewer__lightbox:not(.slideshow-active) .pswp__dynamic-caption--faded {
     opacity: 0 !important;
 }
 
@@ -116,7 +141,7 @@
     bottom: 0;
 }
 
-.p-viewer__lightbox.is-playable .pswp__dynamic-caption--mobile {
+.p-viewer__content > .p-viewer__lightbox.is-playable .pswp__dynamic-caption--mobile {
     background: transparent;
     padding: 0;
     width: auto;
@@ -217,18 +242,18 @@
 
 /* Zoom Button */
 
-.p-viewer__lightbox.is-playable .pswp__button.pswp__button--zoom,
-.p-viewer__lightbox.slideshow-active .pswp__button.pswp__button--zoom {
+.p-viewer__content > .p-viewer__lightbox.is-playable .pswp__button.pswp__button--zoom,
+.p-viewer__content > .p-viewer__lightbox.slideshow-active .pswp__button.pswp__button--zoom {
     display: none;
 }
 
 /* Slideshow Toggle Icon and Animation */
 
-.p-viewer__lightbox.slideshow-active .pswp__button--slideshow-toggle .pswp__icn-slideshow-off {
+.p-viewer__content > .p-viewer__lightbox.slideshow-active .pswp__button--slideshow-toggle .pswp__icn-slideshow-off {
     display: none;
 }
 
-.p-viewer__lightbox:not(.slideshow-active) .pswp__button--slideshow-toggle .pswp__icn-slideshow-on {
+.p-viewer__content > .p-viewer__lightbox:not(.slideshow-active) .pswp__button--slideshow-toggle .pswp__icn-slideshow-on {
     display: none;
 }
 
@@ -238,31 +263,31 @@
 
 /* Fullscreen Toggle Icon */
 
-.p-viewer__lightbox.is-fullscreen .pswp__button--fullscreen-toggle .pswp__icn-fullscreen-off {
+.p-viewer__content > .p-viewer__lightbox.is-fullscreen .pswp__button--fullscreen-toggle .pswp__icn-fullscreen-off {
     display: none;
 }
 
-.p-viewer__lightbox:not(.is-fullscreen) .pswp__button--fullscreen-toggle .pswp__icn-fullscreen-on {
+.p-viewer__content > .p-viewer__lightbox:not(.is-fullscreen) .pswp__button--fullscreen-toggle .pswp__icn-fullscreen-on {
     display: none;
 }
 
 /* Favorite Toggle Icon */
 
-.p-viewer__lightbox.is-favorite .pswp__button--favorite-toggle .pswp__icn-favorite-off {
+.p-viewer__content > .p-viewer__lightbox.is-favorite .pswp__button--favorite-toggle .pswp__icn-favorite-off {
     display: none;
 }
 
-.p-viewer__lightbox:not(.is-favorite) .pswp__button--favorite-toggle .pswp__icn-favorite-on {
+.p-viewer__content > .p-viewer__lightbox:not(.is-favorite) .pswp__button--favorite-toggle .pswp__icn-favorite-on {
     display: none;
 }
 
 /* Selection Toggle Icon */
 
-.p-viewer__lightbox.is-selected .pswp__button--select-toggle .pswp__icn-select-off {
+.p-viewer__content > .p-viewer__lightbox.is-selected .pswp__button--select-toggle .pswp__icn-select-off {
     display: none;
 }
 
-.p-viewer__lightbox:not(.is-selected) .pswp__button--select-toggle .pswp__icn-select-on {
+.p-viewer__content > .p-viewer__lightbox:not(.is-selected) .pswp__button--select-toggle .pswp__icn-select-on {
     display: none;
 }
 

@@ -182,8 +182,8 @@
   </div>
 </template>
 <script>
-import Api from "common/api";
-import Notify from "common/notify";
+import $api from "common/api";
+import $notify from "common/notify";
 import Event from "pubsub-js";
 import download from "common/download";
 import Photo from "model/photo";
@@ -246,14 +246,15 @@ export default {
 
       this.busy = true;
 
-      Api.post("batch/photos/approve", { photos: this.selection })
+      $api
+        .post("batch/photos/approve", { photos: this.selection })
         .then(() => this.onApproved())
         .finally(() => {
           this.busy = false;
         });
     },
     onApproved() {
-      Notify.success(this.$gettext("Selection approved"));
+      $notify.success(this.$gettext("Selection approved"));
       this.clearClipboard();
     },
     archivePhotos() {
@@ -275,14 +276,15 @@ export default {
       this.busy = true;
       this.dialog.archive = false;
 
-      Api.post("batch/photos/archive", { photos: this.selection })
+      $api
+        .post("batch/photos/archive", { photos: this.selection })
         .then(() => this.onArchived())
         .finally(() => {
           this.busy = false;
         });
     },
     onArchived() {
-      Notify.success(this.$gettext("Selection archived"));
+      $notify.success(this.$gettext("Selection archived"));
       this.clearClipboard();
     },
     deletePhotos() {
@@ -299,23 +301,23 @@ export default {
 
       this.dialog.delete = false;
 
-      Api.post("batch/photos/delete", { photos: this.selection }).then(() => this.onDeleted());
+      $api.post("batch/photos/delete", { photos: this.selection }).then(() => this.onDeleted());
     },
     onDeleted() {
-      Notify.success(this.$gettext("Permanently deleted"));
+      $notify.success(this.$gettext("Permanently deleted"));
       this.clearClipboard();
     },
     batchPrivate() {
-      Api.post("batch/photos/private", { photos: this.selection }).then(() => this.onPrivateSaved());
+      $api.post("batch/photos/private", { photos: this.selection }).then(() => this.onPrivateSaved());
     },
     onPrivateSaved() {
       this.clearClipboard();
     },
     batchRestore() {
-      Api.post("batch/photos/restore", { photos: this.selection }).then(() => this.onRestored());
+      $api.post("batch/photos/restore", { photos: this.selection }).then(() => this.onRestored());
     },
     onRestored() {
-      Notify.success(this.$gettext("Selection restored"));
+      $notify.success(this.$gettext("Selection restored"));
       this.clearClipboard();
     },
     addToAlbum(ppid) {
@@ -330,7 +332,8 @@ export default {
       this.busy = true;
       this.dialog.album = false;
 
-      Api.post(`albums/${ppid}/photos`, { photos: this.selection })
+      $api
+        .post(`albums/${ppid}/photos`, { photos: this.selection })
         .then(() => this.onAdded())
         .finally(() => {
           this.busy = false;
@@ -355,7 +358,8 @@ export default {
 
       this.dialog.album = false;
 
-      Api.delete(`albums/${uid}/photos`, { data: { photos: this.selection } })
+      $api
+        .delete(`albums/${uid}/photos`, { data: { photos: this.selection } })
         .then(() => this.onRemoved())
         .finally(() => {
           this.busy = false;
@@ -384,7 +388,8 @@ export default {
             });
           break;
         default:
-          Api.post("zip", { photos: this.selection })
+          $api
+            .post("zip", { photos: this.selection })
             .then((r) => {
               this.onDownload(`${this.$config.apiUri}/zip/${r.data.filename}?t=${this.$config.downloadToken}`);
             })
@@ -393,7 +398,7 @@ export default {
             });
       }
 
-      Notify.success(this.$gettext("Downloading…"));
+      $notify.success(this.$gettext("Downloading…"));
 
       this.expanded = false;
     },

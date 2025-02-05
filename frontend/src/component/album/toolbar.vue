@@ -103,7 +103,7 @@
 </template>
 <script>
 import Event from "pubsub-js";
-import Notify from "common/notify";
+import $notify from "common/notify";
 import download from "common/download";
 import { T } from "common/gettext";
 
@@ -207,7 +207,7 @@ export default {
       this.onDownload(`${this.$config.apiUri}/albums/${this.album.UID}/dl?t=${this.$config.downloadToken}`);
     },
     onDownload(path) {
-      Notify.success(this.$gettext("Downloading…"));
+      $notify.success(this.$gettext("Downloading…"));
 
       download(path, "album.zip");
     },

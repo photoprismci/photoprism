@@ -343,7 +343,6 @@ import PSettingsPasscode from "component/settings/passcode.vue";
 import PSettingsPassword from "component/settings/password.vue";
 import PSettingsWebdav from "component/settings/webdav.vue";
 import countries from "options/countries.json";
-import Notify from "common/notify";
 import User from "model/user";
 import * as options from "options/options";
 import { rules } from "common/form";
@@ -475,7 +474,7 @@ export default {
 
       this.busy = true;
 
-      Notify.info(this.$gettext("Uploading…"));
+      this.$notify.info(this.$gettext("Uploading…"));
 
       this.user
         .uploadAvatar(this.$refs.upload.files)

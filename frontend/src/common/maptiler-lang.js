@@ -3,7 +3,7 @@
  * (c) 2018 Klokan Technologies GmbH
  */
 import maplibregl from "maplibre-gl";
-import { config } from "app/session";
+import { $config } from "app/session";
 
 const langFallbackDecorate = function (style, cfg) {
   let layers = style.layers;
@@ -120,11 +120,11 @@ maplibregl.Map.prototype.setLanguage = function (language, noAlt) {
 };
 
 maplibregl.Map.prototype.autodetectLanguage = function (opt_fallback) {
-  this.setLanguage(config.values.settings.ui.language.split("-")[0] || opt_fallback || "native");
+  this.setLanguage($config.values.settings.ui.language.split("-")[0] || opt_fallback || "native");
 };
 
 // Add plugin to support right-to-left languages such as Arabic and Hebrew.
 maplibregl.setRTLTextPlugin(
-  `${config.staticUri}/plugins/maplibre-gl-rtl-text/v0.2.3/maplibre-gl-rtl-text.js`,
+  `${$config.staticUri}/plugins/maplibre-gl-rtl-text/v0.2.3/maplibre-gl-rtl-text.js`,
   true // Lazy load the plugin
 );

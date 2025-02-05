@@ -21,11 +21,11 @@ export function $ngettext(msgid, plural, n) {
   return gettext.$ngettext(msgid, plural, n);
 }
 
-export function createGettext($config) {
+export function createGettext(config) {
   gettext = vue3Gettext({
-    translations: $config.translations,
+    translations: config.translations,
     silent: true, // !config.values.debug,
-    defaultLanguage: $config.getLanguageLocale(),
+    defaultLanguage: config.getLanguageLocale(),
     // autoAddKeyAttributes: true,
   });
 

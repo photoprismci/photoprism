@@ -23,8 +23,8 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import Event from "pubsub-js";
-import { config } from "app/session";
+import $event from "pubsub-js";
+import { $config } from "app/session";
 import { reactive } from "vue";
 
 class Log {
@@ -43,11 +43,11 @@ class Log {
 
     this.logId = 0;
 
-    Event.subscribe("log", this.onLog.bind(this));
+    $event.subscribe("log", this.onLog.bind(this));
   }
 
   debug(msg, data) {
-    if (config.debug && msg) {
+    if ($config.debug && msg) {
       if (data) {
         if (Array.isArray(data)) {
           data.forEach((val) => {
@@ -82,6 +82,6 @@ class Log {
   }
 }
 
-const log = reactive(new Log());
+const $log = reactive(new Log());
 
-export default log;
+export default $log;

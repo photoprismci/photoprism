@@ -23,15 +23,20 @@ Additional information can be found in our Developer Guide:
 
 */
 
-let hidePending = 0;
-let hideDefault = document.body.classList.contains("hide-scrollbar");
+let active = 0;
+let scrollbarHidden = document.body.classList.contains("hide-scrollbar");
 
-const Scrollbar = {
+const Modal = {
   html: function () {
     return document.getElementsByTagName("html")[0];
   },
   body: function () {
     return document.body;
+  },
+  preventDefault(ev) {
+    if (ev && typeof ev.preventDefault === "function") {
+      ev.preventDefault();
+    }
   },
   update: function (preserveOverflow) {
     const htmlEl = this.html();
@@ -41,36 +46,52 @@ const Scrollbar = {
       return;
     }
 
-    if (this.hidden()) {
+    if (this.active()) {
+      if (!bodyEl.classList.contains("disable-gestures")) {
+        bodyEl.classList.add("disable-gestures");
+        document.addEventListener("touchmove", this.preventDefault, false);
+      }
+    } else if (bodyEl.classList.contains("disable-gestures")) {
+      bodyEl.classList.remove("disable-gestures");
+      document.removeEventListener("touchmove", this.preventDefault, false);
+    }
+
+    if (this.scrollbarHidden()) {
       if (!preserveOverflow) {
         htmlEl.setAttribute("class", "overflow-y-hidden");
       }
-      bodyEl.classList.add("hide-scrollbar");
+
+      if (!bodyEl.classList.contains("hide-scrollbar")) {
+        bodyEl.classList.add("hide-scrollbar");
+      }
     } else {
       htmlEl.removeAttribute("class");
-      bodyEl.classList.remove("hide-scrollbar");
+
+      if (bodyEl.classList.contains("hide-scrollbar")) {
+        bodyEl.classList.remove("hide-scrollbar");
+      }
     }
   },
-  show: function () {
-    if (hidePending > 0) {
-      hidePending--;
+  leave: function () {
+    if (active > 0) {
+      active--;
     }
 
     this.update();
   },
-  hide: function (preserveOverflow) {
-    hidePending++;
+  enter: function (preserveOverflow) {
+    active++;
 
     this.update(preserveOverflow);
   },
-  disabled: function () {
-    return hidePending > 0;
+  active: function () {
+    return active > 0;
   },
-  hidden: function () {
-    return this.disabled() || hideDefault;
+  scrollbarHidden: function () {
+    return this.active() || scrollbarHidden;
   },
 };
 
-Scrollbar.update();
+Modal.update();
 
-export default Scrollbar;
+export default Modal;

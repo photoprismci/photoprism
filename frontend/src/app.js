@@ -26,20 +26,20 @@ Additional information can be found in our Developer Guide:
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import "common/navigation";
-import Api from "common/api";
-import Notify from "common/notify";
-import Scrollbar from "common/scrollbar";
+import $api from "common/api";
+import $notify from "common/notify";
+import $modal from "common/modal";
 import { PhotoClipboard } from "common/clipboard";
-import Event from "pubsub-js";
-import Log from "common/log";
-import Util from "common/util";
+import $event from "pubsub-js";
+import $log from "common/log";
+import $util from "common/util";
 import * as components from "component/components";
 import icons from "component/icons";
 import defaults from "component/defaults";
 import PhotoPrism from "app.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import routes from "app/routes";
-import { config, session } from "app/session";
+import { $config, $session } from "app/session";
 import { Settings as Luxon } from "luxon";
 import Socket from "common/websocket";
 import { createApp } from "vue";
@@ -68,43 +68,43 @@ const $isMobile =
   /Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
   (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
 
-config.progress(50);
+$config.progress(50);
 
-config.update().finally(() => {
+$config.update().finally(() => {
   // Initialize libs and framework.
-  config.progress(66);
+  $config.progress(66);
 
   // Check if running in public mode.
-  const $isPublic = config.isPublic();
+  const $isPublic = $config.isPublic();
 
   let app = createApp(PhotoPrism);
 
   // Initialize language and detect its alignment.
-  app.config.globalProperties.$language = config.getLanguageLocale();
-  Luxon.defaultLocale = config.getLanguageCode();
+  app.config.globalProperties.$language = $config.getLanguageLocale();
+  Luxon.defaultLocale = $config.getLanguageCode();
 
   // Detect right-to-left languages such as Arabic and Hebrew
-  const rtl = config.isRtl();
+  const rtl = $config.isRtl();
 
   // HTTP Live Streaming (video support).
   window.Hls = Hls;
 
   // Assign helpers to VueJS prototype.
-  app.config.globalProperties.$event = Event;
-  app.config.globalProperties.$notify = Notify;
-  app.config.globalProperties.$scrollbar = Scrollbar;
-  app.config.globalProperties.$session = session;
-  app.config.globalProperties.$api = Api;
-  app.config.globalProperties.$log = Log;
+  app.config.globalProperties.$event = $event;
+  app.config.globalProperties.$notify = $notify;
+  app.config.globalProperties.$modal = $modal;
+  app.config.globalProperties.$session = $session;
+  app.config.globalProperties.$api = $api;
+  app.config.globalProperties.$log = $log;
   app.config.globalProperties.$socket = Socket;
-  app.config.globalProperties.$config = config;
+  app.config.globalProperties.$config = $config;
   app.config.globalProperties.$clipboard = PhotoClipboard;
   app.config.globalProperties.$isMobile = $isMobile;
   app.config.globalProperties.$rtl = rtl;
-  app.config.globalProperties.$util = Util;
+  app.config.globalProperties.$util = $util;
   app.config.globalProperties.$sponsorFeatures = () => {
-    return config.load().finally(() => {
-      if (config.values.sponsor) {
+    return $config.load().finally(() => {
+      if ($config.values.sponsor) {
         return Promise.resolve();
       } else {
         return Promise.reject();
@@ -113,7 +113,7 @@ config.update().finally(() => {
   };
 
   // Create Vue 3 Gettext instance.
-  const gettext = createGettext(config);
+  const gettext = createGettext($config);
 
   // Create Vuetify 3 instance.
   const vuetify = createVuetify({
@@ -127,7 +127,7 @@ config.update().finally(() => {
       },
     },
     theme: {
-      defaultTheme: config.themeName,
+      defaultTheme: $config.themeName,
       themes: themes.All(),
       variations: themes.variations,
     },
@@ -189,7 +189,7 @@ config.update().finally(() => {
 
   // Configure client-side routing.
   const router = createRouter({
-    history: createWebHistory(config.baseUri + "/library/"),
+    history: createWebHistory($config.baseUri + "/library/"),
     routes: routes,
     scrollBehavior(to, from, savedPosition) {
       let prevScrollPos = savedPosition;
@@ -201,7 +201,7 @@ config.update().finally(() => {
 
       if (prevScrollPos) {
         return new Promise((resolve) => {
-          Notify.ajaxWait().then(() => {
+          $notify.ajaxWait().then(() => {
             setTimeout(() => {
               resolve(prevScrollPos);
             }, 200);
@@ -214,13 +214,13 @@ config.update().finally(() => {
   });
 
   router.beforeEach((to) => {
-    if (document.querySelector(".pswp--open")) {
-      // Don't navigate back when a dialog or the photo/video viewer is open.
+    if ($modal.active()) {
+      // Disable navigation when a fullscreen dialog or viewer is open.
       return false;
-    } else if (to.matched.some((record) => record.meta.settings) && config.values.disable.settings) {
+    } else if (to.matched.some((record) => record.meta.settings) && $config.values.disable.settings) {
       return { name: "home" };
     } else if (to.matched.some((record) => record.meta.admin)) {
-      if ($isPublic || session.isAdmin()) {
+      if ($isPublic || $session.isAdmin()) {
         return true;
       } else {
         return {
@@ -229,7 +229,7 @@ config.update().finally(() => {
         };
       }
     } else if (to.matched.some((record) => record.meta.requiresAuth)) {
-      if ($isPublic || session.isUser()) {
+      if ($isPublic || $session.isUser()) {
         return true;
       } else {
         return {
@@ -245,23 +245,23 @@ config.update().finally(() => {
   router.afterEach((to) => {
     const t = to.meta["title"] ? to.meta["title"] : "";
 
-    if (t !== "" && config.values.siteTitle !== t && config.values.name !== t) {
-      config.page.title = T(t);
+    if (t !== "" && $config.values.siteTitle !== t && $config.values.name !== t) {
+      $config.page.title = T(t);
 
-      if (config.page.title.startsWith(config.values.siteTitle)) {
-        window.document.title = config.page.title;
-      } else if (config.page.title === "") {
-        window.document.title = config.values.siteTitle;
+      if ($config.page.title.startsWith($config.values.siteTitle)) {
+        window.document.title = $config.page.title;
+      } else if ($config.page.title === "") {
+        window.document.title = $config.values.siteTitle;
       } else {
-        window.document.title = config.page.title + " – " + config.values.siteTitle;
+        window.document.title = $config.page.title + " – " + $config.values.siteTitle;
       }
     } else {
-      config.page.title = config.values.name;
+      $config.page.title = $config.values.name;
 
-      if (config.values.siteCaption === "") {
-        window.document.title = config.values.siteTitle;
+      if ($config.values.siteCaption === "") {
+        window.document.title = $config.values.siteTitle;
       } else {
-        window.document.title = config.values.siteCaption;
+        window.document.title = $config.values.siteCaption;
       }
     }
   });
@@ -274,14 +274,14 @@ config.update().finally(() => {
     document.body.classList.add("mobile");
   } else {
     // Pull client config every 10 minutes in case push fails (except on mobile to save battery).
-    setInterval(() => config.update(), 600000);
+    setInterval(() => $config.update(), 600000);
   }
 
   // Mount to #app.
   app.mount("#app");
 
   // Allows the application to be installed as a PWA.
-  if (config.baseUri === "") {
+  if ($config.baseUri === "") {
     offline.install();
   }
 });

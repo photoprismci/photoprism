@@ -23,7 +23,7 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import Api from "common/api";
+import $api from "common/api";
 import Model from "./model";
 
 export class Settings extends Model {
@@ -48,13 +48,13 @@ export class Settings extends Model {
   }
 
   load() {
-    return Api.get("settings").then((response) => {
+    return $api.get("settings").then((response) => {
       return Promise.resolve(this.setValues(response.data));
     });
   }
 
   save() {
-    return Api.post("settings", this.getValues(true)).then((response) => Promise.resolve(this.setValues(response.data)));
+    return $api.post("settings", this.getValues(true)).then((response) => Promise.resolve(this.setValues(response.data)));
   }
 }
 

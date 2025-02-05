@@ -371,7 +371,7 @@
 <script>
 import Thumb from "model/thumb";
 import { DateTime } from "luxon";
-import Notify from "common/notify";
+import $notify from "common/notify";
 import Util from "common/util";
 import * as options from "options/options";
 
@@ -490,7 +490,7 @@ export default {
       }
     },
     downloadFile(file) {
-      Notify.success(this.$gettext("Downloading…"));
+      $notify.success(this.$gettext("Downloading…"));
 
       file.download();
     },

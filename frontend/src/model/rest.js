@@ -23,7 +23,7 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import Api from "common/api";
+import $api from "common/api";
 import { Form } from "common/form";
 import Model from "model.js";
 import Link from "link.js";
@@ -51,7 +51,7 @@ export class Rest extends Model {
   }
 
   find(id, params) {
-    return Api.get(this.getEntityResource(id), params).then((resp) => Promise.resolve(new this.constructor(resp.data)));
+    return $api.get(this.getEntityResource(id), params).then((resp) => Promise.resolve(new this.constructor(resp.data)));
   }
 
   load() {
@@ -59,7 +59,7 @@ export class Rest extends Model {
       return;
     }
 
-    return Api.get(this.getEntityResource(this.getId())).then((resp) => Promise.resolve(this.setValues(resp.data)));
+    return $api.get(this.getEntityResource(this.getId())).then((resp) => Promise.resolve(this.setValues(resp.data)));
   }
 
   save() {
@@ -67,7 +67,7 @@ export class Rest extends Model {
       return this.update();
     }
 
-    return Api.post(this.constructor.getCollectionResource(), this.getValues()).then((resp) =>
+    return $api.post(this.constructor.getCollectionResource(), this.getValues()).then((resp) =>
       Promise.resolve(this.setValues(resp.data))
     );
   }
@@ -82,15 +82,15 @@ export class Rest extends Model {
     }
 
     // Send PUT request.
-    return Api.put(this.getEntityResource(), values).then((resp) => Promise.resolve(this.setValues(resp.data)));
+    return $api.put(this.getEntityResource(), values).then((resp) => Promise.resolve(this.setValues(resp.data)));
   }
 
   remove() {
-    return Api.delete(this.getEntityResource()).then(() => Promise.resolve(this));
+    return $api.delete(this.getEntityResource()).then(() => Promise.resolve(this));
   }
 
   getEditForm() {
-    return Api.options(this.getEntityResource()).then((resp) => Promise.resolve(new Form(resp.data)));
+    return $api.options(this.getEntityResource()).then((resp) => Promise.resolve(new Form(resp.data)));
   }
 
   getEntityResource(id) {
@@ -106,7 +106,7 @@ export class Rest extends Model {
   }
 
   createLink(password, expires) {
-    return Api.post(this.getEntityResource() + "/links", {
+    return $api.post(this.getEntityResource() + "/links", {
       Password: password ? password : "",
       Expires: expires ? expires : 0,
       Slug: this.getSlug(),
@@ -126,19 +126,19 @@ export class Rest extends Model {
       values["Password"] = link.Password;
     }
 
-    return Api.put(this.getEntityResource() + "/links/" + link.getId(), values).then((resp) =>
+    return $api.put(this.getEntityResource() + "/links/" + link.getId(), values).then((resp) =>
       Promise.resolve(link.setValues(resp.data))
     );
   }
 
   removeLink(link) {
-    return Api.delete(this.getEntityResource() + "/links/" + link.getId()).then((resp) =>
+    return $api.delete(this.getEntityResource() + "/links/" + link.getId()).then((resp) =>
       Promise.resolve(link.setValues(resp.data))
     );
   }
 
   links() {
-    return Api.get(this.getEntityResource() + "/links").then((resp) => {
+    return $api.get(this.getEntityResource() + "/links").then((resp) => {
       resp.models = [];
       resp.count = resp.data.length;
 
@@ -164,7 +164,7 @@ export class Rest extends Model {
   }
 
   static getCreateForm() {
-    return Api.options(this.getCreateResource()).then((resp) => Promise.resolve(new Form(resp.data)));
+    return $api.options(this.getCreateResource()).then((resp) => Promise.resolve(new Form(resp.data)));
   }
 
   static getModelName() {
@@ -172,7 +172,7 @@ export class Rest extends Model {
   }
 
   static getSearchForm() {
-    return Api.options(this.getCollectionResource()).then((resp) => Promise.resolve(new Form(resp.data)));
+    return $api.options(this.getCollectionResource()).then((resp) => Promise.resolve(new Form(resp.data)));
   }
 
   static limit() {
@@ -184,7 +184,7 @@ export class Rest extends Model {
       params: params,
     };
 
-    return Api.get(this.getCollectionResource(), options).then((resp) => {
+    return $api.get(this.getCollectionResource(), options).then((resp) => {
       let count = resp.data ? resp.data.length : 0;
       let limit = 0;
       let offset = 0;

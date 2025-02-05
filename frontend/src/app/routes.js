@@ -42,7 +42,7 @@ import License from "page/about/license.vue";
 import Help from "page/help.vue";
 import Connect from "page/connect.vue";
 import { $gettext } from "common/gettext";
-import { config, session } from "./session";
+import { $config, $session } from "./session";
 
 const c = window.__CONFIG__;
 const siteTitle = c.siteTitle ? c.siteTitle : c.name;
@@ -83,9 +83,9 @@ export default [
     component: Login,
     meta: { title: siteTitle, requiresAuth: false, hideNav: true },
     beforeEnter: (to, from, next) => {
-      if (session.loginRequired()) {
+      if ($session.loginRequired()) {
         next();
-      } else if (config.deny("photos", "search")) {
+      } else if ($config.deny("photos", "search")) {
         next({ name: "albums" });
       } else {
         next({ name: "browse" });
@@ -132,9 +132,9 @@ export default [
     component: Photos,
     meta: { title: siteTitle, icon: true, requiresAuth: true },
     beforeEnter: (to, from, next) => {
-      if (session.loginRequired()) {
+      if ($session.loginRequired()) {
         next({ name: "login" });
-      } else if (config.deny("photos", "search")) {
+      } else if ($config.deny("photos", "search")) {
         next({ name: "albums" });
       } else {
         next();
@@ -274,9 +274,9 @@ export default [
     component: Photos,
     meta: { title: $gettext("Places"), requiresAuth: true },
     beforeEnter: (to, from, next) => {
-      if (session.loginRequired()) {
+      if ($session.loginRequired()) {
         next({ name: "login" });
-      } else if (config.deny("photos", "search")) {
+      } else if ($config.deny("photos", "search")) {
         next({ name: "albums" });
       } else {
         next();
@@ -327,13 +327,13 @@ export default [
     component: People,
     meta: { title: $gettext("People"), requiresAuth: true, background: "background" },
     beforeEnter: (to, from, next) => {
-      if (!config || !from || !from.name || from.name.startsWith("people")) {
+      if (!$config || !from || !from.name || from.name.startsWith("people")) {
         next();
       } else {
-        config.load().finally(() => {
+        $config.load().finally(() => {
           // Open new faces tab when there are no people.
-          if (config.values.count.people === 0) {
-            if (config.allow("people", "manage")) {
+          if ($config.values.count.people === 0) {
+            if ($config.allow("people", "manage")) {
               next({ name: "people_faces" });
             } else {
               next({ name: "albums" });

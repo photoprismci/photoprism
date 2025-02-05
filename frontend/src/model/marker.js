@@ -24,9 +24,9 @@ Additional information can be found in our Developer Guide:
 */
 
 import RestModel from "model/rest";
-import Api from "common/api";
+import $api from "common/api";
 import { DateTime } from "luxon";
-import { config } from "app/session";
+import { $config } from "app/session";
 import { $gettext } from "common/gettext";
 import * as src from "common/src";
 
@@ -84,9 +84,9 @@ export class Marker extends RestModel {
     }
 
     if (this.Thumb) {
-      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
+      return `${$config.contentUri}/t/${this.Thumb}/${$config.previewToken}/${size}`;
     } else {
-      return `${config.contentUri}/svg/portrait`;
+      return `${$config.contentUri}/svg/portrait`;
     }
   }
 
@@ -116,11 +116,11 @@ export class Marker extends RestModel {
 
     const payload = { SubjSrc: this.SubjSrc, Name: this.Name };
 
-    return Api.put(this.getEntityResource(), payload).then((resp) => Promise.resolve(this.setValues(resp.data)));
+    return $api.put(this.getEntityResource(), payload).then((resp) => Promise.resolve(this.setValues(resp.data)));
   }
 
   clearSubject() {
-    return Api.delete(this.getEntityResource(this.getId()) + "/subject").then((r) => Promise.resolve(this.setValues(r.data)));
+    return $api.delete(this.getEntityResource(this.getId()) + "/subject").then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   static batchSize() {

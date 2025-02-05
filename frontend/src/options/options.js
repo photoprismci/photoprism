@@ -1,7 +1,7 @@
 import { timeZonesNames } from "@vvo/tzdb";
 import { $gettext } from "common/gettext";
 import { Info } from "luxon";
-import { config } from "app/session";
+import { $config } from "app/session";
 import * as media from "common/media";
 
 export const GmtOffsets = [
@@ -73,11 +73,11 @@ export const Years = (start) => {
 export const IndexedYears = () => {
   let result = [];
 
-  if (config.values.years) {
-    for (let i = 0; i < config.values.years.length; i++) {
+  if ($config.values.years) {
+    for (let i = 0; i < $config.values.years.length; i++) {
       result.push({
-        value: parseInt(config.values.years[i]),
-        text: config.values.years[i].toString(),
+        value: parseInt($config.values.years[i]),
+        text: $config.values.years[i].toString(),
       });
     }
   }
@@ -478,7 +478,7 @@ export const FeedbackCategories = () => [
 ];
 
 export const Thumbs = () => {
-  return config.values.thumbs;
+  return $config.values.thumbs;
 };
 
 export const ThumbSizes = () => {

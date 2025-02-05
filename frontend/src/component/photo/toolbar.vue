@@ -321,8 +321,8 @@
 <script>
 import Event from "pubsub-js";
 import * as options from "options/options";
-import Api from "common/api";
-import Notify from "common/notify";
+import $api from "common/api";
+import $notify from "common/notify";
 
 export default {
   name: "PPhotoToolbar",
@@ -523,10 +523,10 @@ export default {
 
       this.dialog.delete = false;
 
-      Api.post("batch/photos/delete", { all: true }).then(() => this.onDeleted());
+      $api.post("batch/photos/delete", { all: true }).then(() => this.onDeleted());
     },
     onDeleted() {
-      Notify.success(this.$gettext("Permanently deleted"));
+      $notify.success(this.$gettext("Permanently deleted"));
       this.$clipboard.clear();
     },
   },

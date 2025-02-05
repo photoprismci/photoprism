@@ -309,7 +309,7 @@ export default {
       return true;
     },
     loadMore() {
-      if (this.scrollDisabled || this.$scrollbar.disabled()) return;
+      if (this.scrollDisabled || this.$modal.active()) return;
 
       this.scrollDisabled = true;
       this.listen = false;

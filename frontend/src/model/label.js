@@ -24,9 +24,9 @@ Additional information can be found in our Developer Guide:
 */
 
 import RestModel from "model/rest";
-import Api from "common/api";
+import $api from "common/api";
 import { DateTime } from "luxon";
-import { config } from "app/session";
+import { $config } from "app/session";
 import { $gettext } from "common/gettext";
 
 export let BatchSize = 120;
@@ -73,11 +73,11 @@ export class Label extends RestModel {
 
   thumbnailUrl(size) {
     if (this.Thumb) {
-      return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;
+      return `${$config.contentUri}/t/${this.Thumb}/${$config.previewToken}/${size}`;
     } else if (this.UID) {
-      return `${config.contentUri}/labels/${this.UID}/t/${config.previewToken}/${size}`;
+      return `${$config.contentUri}/labels/${this.UID}/t/${$config.previewToken}/${size}`;
     } else {
-      return `${config.contentUri}/svg/label`;
+      return `${$config.contentUri}/svg/label`;
     }
   }
 
@@ -89,20 +89,20 @@ export class Label extends RestModel {
     this.Favorite = !this.Favorite;
 
     if (this.Favorite) {
-      return Api.post(this.getEntityResource() + "/like");
+      return $api.post(this.getEntityResource() + "/like");
     } else {
-      return Api.delete(this.getEntityResource() + "/like");
+      return $api.delete(this.getEntityResource() + "/like");
     }
   }
 
   like() {
     this.Favorite = true;
-    return Api.post(this.getEntityResource() + "/like");
+    return $api.post(this.getEntityResource() + "/like");
   }
 
   unlike() {
     this.Favorite = false;
-    return Api.delete(this.getEntityResource() + "/like");
+    return $api.delete(this.getEntityResource() + "/like");
   }
 
   static batchSize() {

@@ -85,7 +85,7 @@
 import Event from "pubsub-js";
 import RestModel from "model/rest";
 import { Folder } from "model/folder";
-import Notify from "common/notify";
+import $notify from "common/notify";
 import { MaxItems } from "common/clipboard";
 import download from "common/download";
 import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
@@ -194,7 +194,7 @@ export default {
       }
     },
     downloadFile(index) {
-      Notify.success(this.$gettext("Downloading…"));
+      $notify.success(this.$gettext("Downloading…"));
 
       const model = this.results[index];
       download(`${this.$config.apiUri}/dl/${model.Hash}?t=${this.$config.downloadToken}`, model.Name);
@@ -288,7 +288,7 @@ export default {
 
       if (pos === -1) {
         if (this.selection.length >= MaxItems) {
-          Notify.warn(this.$gettext("Can't select more items"));
+          $notify.warn(this.$gettext("Can't select more items"));
           return;
         }
 
@@ -304,7 +304,7 @@ export default {
         this.lastId = "";
       } else {
         if (this.selection.length >= MaxItems) {
-          Notify.warn(this.$gettext("Can't select more items"));
+          $notify.warn(this.$gettext("Can't select more items"));
           return;
         }
 

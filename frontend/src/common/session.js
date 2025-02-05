@@ -23,8 +23,8 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import Api from "api.js";
-import Event from "pubsub-js";
+import $api from "common/api";
+import $event from "pubsub-js";
 import User from "model/user";
 import Socket from "websocket.js";
 
@@ -75,11 +75,11 @@ export default class Session {
     this.auth = this.isUser();
 
     // Subscribe to session events.
-    Event.subscribe("session.logout", () => {
+    $event.subscribe("session.logout", () => {
       return this.onLogout();
     });
 
-    Event.subscribe("websocket.connected", () => {
+    $event.subscribe("websocket.connected", () => {
       this.sendClientInfo();
     });
 
@@ -148,7 +148,7 @@ export default class Session {
 
     this.authToken = authToken;
 
-    Api.defaults.headers.common[RequestHeader] = authToken;
+    $api.defaults.headers.common[RequestHeader] = authToken;
 
     return true;
   }
@@ -194,7 +194,7 @@ export default class Session {
     // but should continue to be removed when logging out:
     this.storage.removeItem("session_id");
 
-    delete Api.defaults.headers.common[RequestHeader];
+    delete $api.defaults.headers.common[RequestHeader];
   }
 
   setProvider(provider) {
@@ -399,7 +399,7 @@ export default class Session {
   login(username, password, code, token) {
     this.reset();
 
-    return Api.post("session", { username, password, code, token }).then((resp) => {
+    return $api.post("session", { username, password, code, token }).then((resp) => {
       const reload = this.config.getLanguageLocale() !== resp.data?.config?.settings?.ui?.language;
       this.setResp(resp);
       this.onLogin();
@@ -417,13 +417,14 @@ export default class Session {
       // Use a static auth token in public mode, as no additional authentication is required.
       this.setAuthToken(PublicAuthToken);
       this.setId(PublicSessionID);
-      return Api.get("session").then((resp) => {
+      return $api.get("session").then((resp) => {
         this.setResp(resp);
         return Promise.resolve();
       });
     } else if (this.isAuthenticated()) {
       // Check the auth token by fetching the client session data from the API.
-      return Api.get("session")
+      return $api
+        .get("session")
         .then((resp) => {
           this.setResp(resp);
           return Promise.resolve();
@@ -446,7 +447,7 @@ export default class Session {
       return Promise.reject();
     }
 
-    return Api.post("session", { token }).then((resp) => {
+    return $api.post("session", { token }).then((resp) => {
       this.setResp(resp);
       this.sendClientInfo();
     });
@@ -461,20 +462,24 @@ export default class Session {
       scope = "*";
     }
 
-    return Api.post("oauth/token", {
-      grant_type: password ? "password" : "session",
-      client_name: client_name,
-      scope: scope,
-      expires_in: expires_in,
-      username: this.user.Name,
-      password: password,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .post("oauth/token", {
+        grant_type: password ? "password" : "session",
+        client_name: client_name,
+        scope: scope,
+        expires_in: expires_in,
+        username: this.user.Name,
+        password: password,
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   deleteApp(token) {
-    return Api.post("oauth/revoke", {
-      token: token,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .post("oauth/revoke", {
+        token: token,
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   onLogout(noRedirect) {
@@ -491,7 +496,8 @@ export default class Session {
 
   logout(noRedirect) {
     if (this.isAuthenticated()) {
-      return Api.delete("session")
+      return $api
+        .delete("session")
         .then(() => {
           return this.onLogout(noRedirect);
         })

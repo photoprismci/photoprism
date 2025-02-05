@@ -1,10 +1,10 @@
-import { config } from "app/session";
+import { $config } from "app/session";
 import { T } from "common/gettext";
 
 // Returns the id and messages of the current locale.
 export const Locale = () => {
-  const locale = config.getLanguageLocale();
-  const isRTL = config.isRtl();
+  const locale = $config.getLanguageLocale();
+  const isRTL = $config.isRtl();
 
   return {
     locale: locale,

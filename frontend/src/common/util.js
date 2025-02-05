@@ -23,12 +23,12 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import { config } from "app/session";
+import { $config } from "app/session";
 import { DATE_FULL } from "model/photo";
 import sanitizeHtml from "sanitize-html";
 import { DateTime } from "luxon";
 import { $gettext } from "common/gettext";
-import Notify from "common/notify";
+import $notify from "common/notify";
 import * as media from "common/media";
 import * as can from "common/can";
 
@@ -560,7 +560,7 @@ export default class Util {
   }
 
   static thumbSize(pixelsWidth, pixelsHeight) {
-    const thumbs = config.values.thumbs;
+    const thumbs = $config.values.thumbs;
 
     for (let i = 0; i < thumbs.length; i++) {
       let t = thumbs[i];
@@ -615,7 +615,7 @@ export default class Util {
       format = media.FormatAvc;
     }
 
-    return `${config.videoUri}/videos/${hash}/${config.previewToken}/${format}`;
+    return `${$config.videoUri}/videos/${hash}/${$config.previewToken}/${format}`;
   }
 
   static videoUrl(hash, codec, mime) {
@@ -667,10 +667,10 @@ export default class Util {
 
     try {
       await Util.copyToMachineClipboard(text);
-      Notify.success($gettext("Copied to clipboard"));
+      $notify.success($gettext("Copied to clipboard"));
       return true;
     } catch (_) {
-      Notify.error($gettext("Cannot copy to clipboard"));
+      $notify.error($gettext("Cannot copy to clipboard"));
     }
 
     return false;
