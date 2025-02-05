@@ -318,13 +318,21 @@ export default {
       // Check if a slideshow is running.
       const slideshow = this.slideshow.active;
 
+      let preload = "none";
+
+      if (autoplay) {
+        preload = "auto";
+      } else if (slideshow || loop) {
+        preload = "metadata";
+      }
+
       // Set HTMLMediaElement properties.
       video.className = "pswp__video";
       video.poster = posterSrc;
       video.autoplay = autoplay;
       video.loop = loop && !slideshow;
       video.mute = mute;
-      video.preload = autoplay ? "auto" : "metadata";
+      video.preload = preload;
       video.playsInline = true;
       video.controls = true;
 
@@ -907,6 +915,10 @@ export default {
     playVideo(el, loop) {
       if (!el || typeof el.play !== "function") {
         return;
+      }
+
+      if (el.preload === "none") {
+        el.preload = "auto";
       }
 
       el.loop = loop && !this.slideshow.active;
