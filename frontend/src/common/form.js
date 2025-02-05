@@ -158,7 +158,7 @@ export class rules {
   }
 
   static isTime(v) {
-    return /^\d{2}\D\d{2}\D\d{2}$/.test(v);
+    return /^(2[0-3]|[0-1][0-9])\D[0-5][0-9]\D[0-5][0-9]$/.test(v); // 23:59:59
   }
 
   static isEmail(v) {
