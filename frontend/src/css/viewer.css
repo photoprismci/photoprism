@@ -240,14 +240,14 @@
     height: 20px;
 }
 
-/* Zoom Button */
+/* Zoom Button Control */
 
 .p-viewer__container > .is-playable .pswp__button.pswp__button--zoom,
 .p-viewer__container > .p-viewer__lightbox.slideshow-active .pswp__button.pswp__button--zoom {
     display: none;
 }
 
-/* Slideshow Toggle Icon and Animation */
+/* Slideshow Toggle Control and Animation */
 
 .p-viewer__container > .p-viewer__lightbox.slideshow-active .pswp__button--slideshow-toggle .pswp__icn-slideshow-off {
     display: none;
@@ -261,7 +261,7 @@
     transition: transform .8s ease-in-out;
 }
 
-/* Fullscreen Toggle Icon */
+/* Fullscreen Toggle Control */
 
 .p-viewer__container > .p-viewer__lightbox.is-fullscreen .pswp__button--fullscreen-toggle .pswp__icn-fullscreen-off {
     display: none;
@@ -271,7 +271,7 @@
     display: none;
 }
 
-/* Favorite Toggle Icon */
+/* Favorite/Dislike Toggle Control */
 
 .p-viewer__container > .p-viewer__lightbox.is-favorite .pswp__button--favorite-toggle .pswp__icn-favorite-off {
     display: none;
@@ -281,7 +281,21 @@
     display: none;
 }
 
-/* Selection Toggle Icon */
+/* Sound Mute/Unmute Toggle Control */
+
+.p-viewer__container > .p-viewer__lightbox:not(.is-playable) .pswp__button--sound-toggle {
+    display: none;
+}
+
+.p-viewer__container > .p-viewer__lightbox.is-muted .pswp__button--sound-toggle .pswp__icn-sound-on {
+    display: none;
+}
+
+.p-viewer__container > .p-viewer__lightbox:not(.is-muted) .pswp__button--sound-toggle .pswp__icn-sound-off {
+    display: none;
+}
+
+/* Selection Toggle Control */
 
 .p-viewer__container > .p-viewer__lightbox.is-selected .pswp__button--select-toggle .pswp__icn-select-off {
     display: none;
@@ -291,12 +305,13 @@
     display: none;
 }
 
-/* Navigation Arrows */
+/* Navigation Arrow Controls */
 
 .pswp__button--arrow {
     height: 220px;
     margin-top: -110px;
     width: 150px;
+    max-width: 15vw;
 }
 
 .pswp__button--arrow .pswp__icn {
@@ -304,6 +319,7 @@
     margin-top: -25px;
     top: 50%;
     width: 50px;
+    max-width: 15vw;
 }
 
 .p-viewer__container > .is-playable:not(.slideshow-active) .pswp--touch .pswp__button--arrow {

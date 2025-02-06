@@ -26,6 +26,7 @@
           'is-fullscreen': isFullscreen,
           'is-favorite': model.Favorite,
           'is-playable': model.Playable,
+          'is-muted': muted,
           'is-selected': $clipboard.has(model),
         }"
         @keydown.space.prevent="onSpace"
@@ -57,6 +58,7 @@ export default {
       sidebarVisible: false,
       lightbox: null, // Current PhotoSwipe lightbox instance.
       captionPlugin: null, // Current PhotoSwipe caption plugin instance.
+      muted: window.sessionStorage.getItem("viewer.muted") === "true",
       hasTouch: false,
       shortVideoDuration: 5, // 5 Seconds.
       playControlHideDelay: 2000, // Hide the viewer controls after only 2 seconds when a video starts playing.
@@ -328,7 +330,7 @@ export default {
       video.poster = posterSrc;
       video.autoplay = autoplay;
       video.loop = loop && !slideshow;
-      video.mute = mute;
+      video.muted = mute || this.muted;
       video.preload = preload;
       video.playsInline = true;
       video.controls = controls;
@@ -367,7 +369,9 @@ export default {
       // Add an event listener to automatically hide the viewer controls
       // after a video has started playing.
       video.addEventListener("playing", () => {
-        this.hideControlsWithDelay(this.playControlHideDelay);
+        if (!video.paused || !video.ended) {
+          this.hideControlsWithDelay(this.playControlHideDelay);
+        }
       });
 
       // Add an event listener to automatically hide the viewer controls
@@ -573,13 +577,37 @@ export default {
               size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
             },
             onClick: (ev) => {
-              return this.toggleSidebar(ev);
+              if (ev && ev.cancelable) {
+                ev.stopPropagation();
+                ev.preventDefault();
+              }
+              return this.toggleSidebar();
             },
           });
         }
 
-        // Add slideshow play/pause toggle control,
-        // see https://photoswipe.com/adding-ui-elements/.
+        // Add sound mute/unmute control for videos.
+        lightbox.pswp.ui.registerElement({
+          name: "sound-toggle",
+          className: "pswp__button--sound-toggle pswp__button--mdi", // Sets the icon style/size in viewer.css.
+          ariaLabel: this.$gettext("Sound"),
+          order: 10,
+          isButton: true,
+          html: {
+            isCustomSVG: true,
+            inner: `<use class="pswp__icn-shadow pswp__icn-sound-on" xlink:href="#pswp__icn-sound-on"></use><path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.84 14,18.7V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z" id="pswp__icn-sound-on" class="pswp__icn-sound-on" /><use class="pswp__icn-shadow pswp__icn-sound-off" xlink:href="#pswp__icn-sound-off"></use><path d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,17.53C15.58,18.04 14.83,18.46 14,18.7V20.77C15.38,20.45 16.63,19.82 17.68,18.96L19.73,21L21,19.73L12,10.73M19,12C19,12.94 18.8,13.82 18.46,14.64L19.97,16.15C20.62,14.91 21,13.5 21,12C21,7.72 18,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,7.97V10.18L16.45,12.63C16.5,12.43 16.5,12.21 16.5,12Z" id="pswp__icn-sound-off" class="pswp__icn-sound-off" />`,
+            size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
+          },
+          onClick: (ev) => {
+            if (ev && ev.cancelable) {
+              ev.stopPropagation();
+              ev.preventDefault();
+            }
+            return this.toggleSound();
+          },
+        });
+
+        // Add slideshow play/pause toggle control.
         lightbox.pswp.ui.registerElement({
           name: "slideshow-toggle",
           className: "pswp__button--slideshow-toggle pswp__button--mdi", // Sets the icon style/size in viewer.css.
@@ -591,13 +619,16 @@ export default {
             inner: `<use class="pswp__icn-shadow pswp__icn-slideshow-on" xlink:href="#pswp__icn-slideshow-on"></use><path d="M14,19H18V5H14M6,19H10V5H6V19Z" id="pswp__icn-slideshow-on" class="pswp__icn-slideshow-on" /><use class="pswp__icn-shadow pswp__icn-slideshow-off" xlink:href="#pswp__icn-slideshow-off"></use><path d="M8,5.14V19.14L19,12.14L8,5.14Z" id="pswp__icn-slideshow-off" class="pswp__icn-slideshow-off" />`,
             size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
           },
-          onClick: () => {
+          onClick: (ev) => {
+            if (ev && ev.cancelable) {
+              ev.stopPropagation();
+              ev.preventDefault();
+            }
             return this.toggleSlideshow();
           },
         });
 
-        // Add fullscreen mode toggle control,
-        // see https://photoswipe.com/adding-ui-elements/.
+        // Add fullscreen mode toggle control.
         if (this.canFullscreen) {
           lightbox.pswp.ui.registerElement({
             name: "fullscreen-toggle",
@@ -610,14 +641,17 @@ export default {
               inner: `<use class="pswp__icn-shadow pswp__icn-fullscreen-on" xlink:href="#pswp__icn-fullscreen-on"></use><path d="M14,14H19V16H16V19H14V14M5,14H10V19H8V16H5V14M8,5H10V10H5V8H8V5M19,8V10H14V5H16V8H19Z" id="pswp__icn-fullscreen-on" class="pswp__icn-fullscreen-on" /><use class="pswp__icn-shadow pswp__icn-fullscreen-off" xlink:href="#pswp__icn-fullscreen-off"></use><path d="M5,5H10V7H7V10H5V5M14,5H19V10H17V7H14V5M17,14H19V19H14V17H17V14M10,17V19H5V14H7V17H10Z" id="pswp__icn-fullscreen-off" class="pswp__icn-fullscreen-off" />`,
               size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
             },
-            onClick: () => {
+            onClick: (ev) => {
+              if (ev && ev.cancelable) {
+                ev.stopPropagation();
+                ev.preventDefault();
+              }
               return this.onFullscreen();
             },
           });
         }
 
-        // Add favorite toggle control if user has permission to use it,
-        // see https://photoswipe.com/adding-ui-elements/.
+        // Add favorite toggle control if user has permission to use it.
         if (this.canLike) {
           lightbox.pswp.ui.registerElement({
             name: "favorite-toggle",
@@ -630,14 +664,17 @@ export default {
               inner: `<use class="pswp__icn-shadow pswp__icn-favorite-on" xlink:href="#pswp__icn-favorite-on"></use><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z" id="pswp__icn-favorite-on" class="pswp__icn-favorite-on" /><use class="pswp__icn-shadow pswp__icn-favorite-off" xlink:href="#pswp__icn-favorite-off"></use><path d="M12,15.39L8.24,17.66L9.23,13.38L5.91,10.5L10.29,10.13L12,6.09L13.71,10.13L18.09,10.5L14.77,13.38L15.76,17.66M22,9.24L14.81,8.63L12,2L9.19,8.63L2,9.24L7.45,13.97L5.82,21L12,17.27L18.18,21L16.54,13.97L22,9.24Z" id="pswp__icn-favorite-off" class="pswp__icn-favorite-off" />`,
               size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
             },
-            onClick: () => {
+            onClick: (ev) => {
+              if (ev && ev.cancelable) {
+                ev.stopPropagation();
+                ev.preventDefault();
+              }
               return this.onLike();
             },
           });
         }
 
-        // Add selection toggle control,
-        // see https://photoswipe.com/adding-ui-elements/.
+        // Add selection toggle control.
         lightbox.pswp.ui.registerElement({
           name: "select-toggle",
           className: "pswp__button--select-toggle pswp__button--mdi", // Sets the icon style/size in viewer.css.
@@ -649,13 +686,16 @@ export default {
             inner: `<use class="pswp__icn-shadow pswp__icn-select-on" xlink:href="#pswp__icn-select-on"></use><path d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" id="pswp__icn-select-on" class="pswp__icn-select-on" /><use class="pswp__icn-shadow pswp__icn-select-off" xlink:href="#pswp__icn-select-off"></use><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" id="pswp__icn-select-off" class="pswp__icn-select-off" />`,
             size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
           },
-          onClick: () => {
+          onClick: (ev) => {
+            if (ev && ev.cancelable) {
+              ev.stopPropagation();
+              ev.preventDefault();
+            }
             return this.onSelect();
           },
         });
 
         // Add edit button control if user has permission to use it.
-        // see https://photoswipe.com/adding-ui-elements/.
         if (this.canEdit) {
           lightbox.pswp.ui.registerElement({
             name: "edit-button",
@@ -669,14 +709,17 @@ export default {
               outlineID: "pswp__icn-edit", // Add this to the <path> in the inner property.
               size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
             },
-            onClick: () => {
+            onClick: (ev) => {
+              if (ev && ev.cancelable) {
+                ev.stopPropagation();
+                ev.preventDefault();
+              }
               return this.onEdit();
             },
           });
         }
 
         // Add download button control if user has permission to use it.
-        // see https://photoswipe.com/adding-ui-elements/.
         if (this.canDownload) {
           lightbox.pswp.ui.registerElement({
             name: "download-button",
@@ -691,7 +734,11 @@ export default {
               size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
             },
             onClick: (ev) => {
-              return this.onDownload(ev);
+              if (ev && ev.cancelable) {
+                ev.stopPropagation();
+                ev.preventDefault();
+              }
+              return this.onDownload();
             },
           });
         }
@@ -1014,7 +1061,7 @@ export default {
           try {
             // Calling pause() before a play promise has been resolved may result in an error,
             // see https://github.com/flutter/flutter/issues/136309 (we'll ignore this for now).
-            if (!video.paused) {
+            if (!video.paused && !video.ended) {
               video.pause();
             }
           } catch (e) {
@@ -1035,8 +1082,9 @@ export default {
 
       el.loop = loop && !this.slideshow.active;
       el.controls = !(loop || this.slideshow.active);
+      el.muted = this.muted;
 
-      if (el.paused) {
+      if (el.paused || el.ended) {
         try {
           // Calling pause() before a play promise has been resolved may result in an error,
           // see https://developer.chrome.com/blog/play-request-was-interrupted.
@@ -1078,7 +1126,7 @@ export default {
       }
 
       // Play video if it is currently paused and pause it otherwise.
-      if (video.paused) {
+      if (video.paused || video.ended) {
         this.playVideo(video, data.loop);
       } else {
         this.pauseVideo(video);
@@ -1108,7 +1156,7 @@ export default {
     },
     // Stops playback on the specified video element, if any.
     pauseVideo(el) {
-      if (el && typeof el.pause === "function" && !el.paused) {
+      if (el && typeof el.pause === "function" && !el.paused && !el.ended) {
         try {
           el.pause();
           this.showControls();
@@ -1116,6 +1164,20 @@ export default {
           console.log(e);
         }
       }
+    },
+    // Mutes/unmutes the sound for videos.
+    toggleSound() {
+      this.muted = !this.muted;
+
+      window.sessionStorage.setItem("viewer.muted", this.muted.toString());
+
+      const { video } = this.getContent();
+
+      if (!video) {
+        return;
+      }
+
+      video.muted = this.muted;
     },
     // Starts/stops a slideshow so that the next slide opens automatically at regular intervals.
     toggleSlideshow() {
@@ -1170,9 +1232,9 @@ export default {
         return;
       }
 
-      const content = pswp.currSlide.content;
+      const { video } = this.getContent();
 
-      if (content?.element instanceof HTMLMediaElement && !content.element?.paused) {
+      if (video && !video.paused && !video.ended) {
         // Do nothing if a video is still playing.
       } else if (this.models.length > this.index + 1) {
         // Show the next slide.
@@ -1196,11 +1258,7 @@ export default {
       this.showControls();
     },
     // Downloads the original files of the current picture.
-    onDownload(ev) {
-      if (ev && typeof ev.stopPropagation === "function") {
-        ev.stopPropagation();
-      }
-
+    onDownload() {
       this.pauseSlideshow();
 
       /*
@@ -1248,16 +1306,12 @@ export default {
         pswp.updateSize(force);
       }
     },
-    toggleSidebar(ev) {
+    toggleSidebar() {
       this.sidebarVisible = !this.sidebarVisible;
 
       this.$nextTick(() => {
         this.updateSize(true);
       });
-
-      if (ev && typeof ev.stopPropagation === "function") {
-        ev.stopPropagation();
-      }
     },
     // Hides the viewer sidebar, if visible.
     hideSidebar() {
