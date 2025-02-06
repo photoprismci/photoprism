@@ -10,7 +10,12 @@
     class="p-dialog p-viewer v-dialog--viewer"
   >
     <div class="p-viewer__underlay"></div>
-    <div ref="container" class="p-viewer__content" @click="onContainerClick">
+    <div
+      ref="container"
+      class="p-viewer__container"
+      @click.capture="onContainerClick"
+      @pointerdown.capture="onContainerPointerDown"
+    >
       <div
         ref="lightbox"
         tabindex="0"
@@ -63,7 +68,8 @@ export default {
       captionPlugin: null, // Current PhotoSwipe caption plugin instance.
       hasTouch: false,
       shortVideoDuration: 5, // 5 Seconds.
-      idleTime: 6000, // Automatically hide viewer controls after 6 seconds until user settings are implemented.
+      playControlHideDelay: 2500, // Hide the viewer controls after 0.5 seconds when a video starts playing.
+      defaultControlHideDelay: 5000, // Automatically hide viewer controls after 6 seconds until user settings are implemented.
       idleTimer: false,
       controlsShown: -1, // -1 or a positive Date.now() timestamp indicates that the PhotoSwipe controls are shown.
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
@@ -84,6 +90,7 @@ export default {
         active: false,
         interval: false,
         wait: 5000,
+        waitAfterVideo: 2500,
         next: -1,
       },
       debug,
@@ -134,8 +141,8 @@ export default {
         showHideAnimationType: "none",
         mainClass: "media-viewer-lightbox",
         tapAction: (point, ev) => this.onContentTap(ev),
-        bgClickAction: (point, ev) => this.onBgClick(ev),
         imageClickAction: (point, ev) => this.onContentClick(ev),
+        bgClickAction: (point, ev) => this.onBgClick(ev),
         paddingFn: (viewport, data) => this.getLightboxPadding(viewport, data),
         getViewportSizeFn: () => this.getLightboxViewport(),
         closeTitle: this.$gettext("Close"),
@@ -371,6 +378,24 @@ export default {
         }
       });
 
+      // Add an event listener to automatically hide the viewer controls
+      // after a video has started playing.
+      video.addEventListener("playing", () => {
+        this.hideControlsWithDelay(this.playControlHideDelay);
+      });
+
+      // Add an event listener to automatically hide the viewer controls
+      // after a video has started playing.
+      video.addEventListener("ended", () => {
+        if (!this.slideshow.active) {
+          this.showControls();
+        } else {
+          this.clearSlideshowInterval();
+          this.onSlideshowNext();
+          this.setSlideshowInterval();
+        }
+      });
+
       // Create and append video source elements, depending on file format support.
       if (
         format !== media.FormatAvc &&
@@ -449,9 +474,9 @@ export default {
 
       // Add a custom pointer event handler to prevent the default
       // action when events are triggered on an HTMLMediaElement.
-      this.lightbox.on("pointerUp", (ev) => this.handlePointerEvent(ev));
-      this.lightbox.on("pointerDown", (ev) => this.handlePointerEvent(ev));
-      this.lightbox.on("pointerMove", (ev) => this.handlePointerEvent(ev));
+      this.lightbox.on("pointerUp", (ev) => this.onLightboxPointerEvent(ev));
+      this.lightbox.on("pointerDown", (ev) => this.onLightboxPointerEvent(ev));
+      this.lightbox.on("pointerMove", (ev) => this.onLightboxPointerEvent(ev));
 
       // Add PhotoSwipe lightbox controls,
       // see https://photoswipe.com/adding-ui-elements/.
@@ -581,7 +606,7 @@ export default {
             size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
           },
           onClick: () => {
-            return this.onSlideshow();
+            return this.toggleSlideshow();
           },
         });
 
@@ -760,13 +785,6 @@ export default {
       this.resetControls();
       this.resetModels();
     },
-    // Resets the timer for hiding the viewer controls.
-    resetTimer() {
-      if (this.idleTimer) {
-        window.clearTimeout(this.idleTimer);
-        this.idleTimer = false;
-      }
-    },
     // Resets the state of the viewer controls.
     resetControls() {
       this.hasTouch = false;
@@ -846,25 +864,14 @@ export default {
         return;
       }
 
-      if (this.slideshow.active) {
-        this.pauseSlideshow();
-      }
-
       if (this.controlsVisible()) {
         this.onClose();
       } else {
         this.showControls();
       }
     },
-    onContentTap(ev) {
-      if (!ev) {
-        return;
-      }
-
-      this.toggleControls(ev);
-    },
-    // Called when PhotoSwipe receives a pointer move, down or up event.
-    handlePointerEvent(ev) {
+    // Called when the lightbox receives a pointer move, down or up event.
+    onLightboxPointerEvent(ev) {
       if (!ev) {
         return;
       }
@@ -885,26 +892,37 @@ export default {
         return;
       }
 
-      if (ev.target instanceof HTMLMediaElement) {
-        // Don't continue and prevent default when an event occurs on a video at
-        // the bottom of the screen, so that the player controls remain usable.
-        if (window.innerHeight - ev.y < 128) {
-          ev.preventDefault();
-          return;
-        }
-
+      if (ev.target instanceof HTMLMediaElement && window.innerHeight - ev.y > 128) {
         ev.stopPropagation();
         ev.preventDefault();
-
-        if (this.slideshow.active) {
-          this.pauseSlideshow();
-        }
-
-        // Toggle video playback.
-        this.toggleVideo();
       }
     },
-    // Called when the user clicks on a slide.
+    // Called when a pointer down (click, touch) event is captured by the lightbox container.
+    onContainerPointerDown(ev) {
+      if (!ev) {
+        return;
+      }
+
+      // Handle the event and prevent it from propagating when it occurs on a video element
+      // except at the bottom of the screen, so that the player controls remain usable.
+      if (ev.target instanceof HTMLMediaElement) {
+        if (window.innerHeight - ev.y > 128) {
+          ev.stopPropagation();
+          ev.preventDefault();
+
+          if (this.slideshow.active) {
+            this.pauseSlideshow();
+          }
+
+          // Toggle video playback.
+          this.toggleVideo();
+        } else {
+          ev.stopPropagation();
+          this.resetTimer();
+        }
+      }
+    },
+    // Called when the user clicks on an image slide in the lightbox.
     onContentClick(ev) {
       if (!ev) {
         return;
@@ -918,6 +936,20 @@ export default {
 
       if (pswp.currSlide.isZoomable()) {
         pswp.currSlide.toggleZoom();
+      }
+    },
+    // Called when the user taps on an image slide in the lightbox.
+    onContentTap(ev) {
+      if (!ev) {
+        return;
+      }
+
+      if (ev.target instanceof HTMLMediaElement) {
+        // Do nothing.
+      } else {
+        this.toggleControls(ev);
+        ev.stopPropagation();
+        ev.preventDefault();
       }
     },
     onFullscreen() {
@@ -1094,13 +1126,14 @@ export default {
       if (el && typeof el.pause === "function" && !el.paused) {
         try {
           el.pause();
+          this.showControls();
         } catch (e) {
           console.log(e);
         }
       }
     },
     // Starts/stops a slideshow so that the next slide opens automatically at regular intervals.
-    onSlideshow() {
+    toggleSlideshow() {
       if (this.slideshow.active || this.slideshow.interval) {
         this.pauseSlideshow();
       } else {
@@ -1124,25 +1157,46 @@ export default {
       this.playVideo(pswp.currSlide?.content?.element, false);
 
       // Show next slide at regular intervals.
+      this.setSlideshowInterval();
+    },
+    setSlideshowInterval() {
+      this.clearSlideshowInterval();
+
+      if (!this.slideshow.active) {
+        return;
+      }
+
       this.slideshow.interval = setInterval(() => {
-        if (!pswp || typeof pswp.next !== "function" || !pswp.currSlide?.content) {
-          this.pauseSlideshow();
-          return;
-        }
-
-        const content = pswp.currSlide.content;
-
-        if (content.data?.type === "html" && content.element instanceof HTMLMediaElement && !content.element?.paused) {
-          // Do nothing if a video is still playing.
-        } else if (this.models.length > this.index + 1) {
-          // Show the next slide.
-          this.slideshow.next = this.index + 1;
-          pswp.next();
-        } else {
-          // Pause slideshow if this is the end.
-          this.pauseSlideshow();
-        }
+        this.onSlideshowNext();
       }, this.slideshow.wait);
+    },
+    clearSlideshowInterval() {
+      if (this.slideshow.interval) {
+        clearInterval(this.slideshow.interval);
+        this.slideshow.interval = false;
+      }
+    },
+    onSlideshowNext() {
+      // Get PhotoSwipe instance.
+      const pswp = this.pswp();
+
+      if (!pswp || typeof pswp.next !== "function" || !pswp.currSlide?.content) {
+        this.pauseSlideshow();
+        return;
+      }
+
+      const content = pswp.currSlide.content;
+
+      if (content?.element instanceof HTMLMediaElement && !content.element?.paused) {
+        // Do nothing if a video is still playing.
+      } else if (this.models.length > this.index + 1) {
+        // Show the next slide.
+        this.slideshow.next = this.index + 1;
+        pswp.next();
+      } else {
+        // Pause slideshow if this is the end.
+        this.pauseSlideshow();
+      }
     },
     // Pauses the slideshow, if currently active.
     pauseSlideshow() {
@@ -1150,12 +1204,11 @@ export default {
         this.slideshow.active = false;
       }
 
-      if (this.slideshow.interval) {
-        clearInterval(this.slideshow.interval);
-        this.slideshow.interval = false;
-      }
+      this.clearSlideshowInterval();
 
       this.slideshow.next = -1;
+
+      this.showControls();
     },
     // Downloads the original files of the current picture.
     onDownload(ev) {
@@ -1256,6 +1309,16 @@ export default {
         this.hideVideoControls();
       }
     },
+    hideControlsWithDelay(delay) {
+      if (!delay) {
+        delay = this.defaultControlHideDelay;
+      }
+
+      this.resetTimer();
+      this.idleTimer = window.setTimeout(() => {
+        this.hideControls();
+      }, delay);
+    },
     controlsVisible() {
       if (this.controlsShown === 0) {
         return false;
@@ -1272,29 +1335,34 @@ export default {
 
       return false;
     },
-    mouseMove() {
+    startTimer() {
+      if (this.hasTouch || this.$isMobile) {
+        return;
+      }
+
+      this.hideControlsWithDelay(this.defaultControlHideDelay);
+
+      document.addEventListener(
+        "mousemove",
+        (ev) => {
+          this.onMouseMove(ev);
+        },
+        { once: true }
+      );
+    },
+    onMouseMove() {
       this.resetTimer();
       if (this.lightbox) {
         this.showControls();
         this.startTimer();
       }
     },
-    startTimer() {
-      if (this.hasTouch || this.$isMobile) {
-        return;
+    // Resets the timer for hiding the viewer controls.
+    resetTimer() {
+      if (this.idleTimer) {
+        window.clearTimeout(this.idleTimer);
+        this.idleTimer = false;
       }
-
-      this.resetTimer();
-      this.idleTimer = window.setTimeout(() => {
-        this.hideControls();
-      }, this.idleTime);
-      document.addEventListener(
-        "mousemove",
-        () => {
-          this.mouseMove();
-        },
-        { once: true }
-      );
     },
     getWindowPixels() {
       return {
