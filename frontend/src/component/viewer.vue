@@ -69,7 +69,7 @@ export default {
       hasTouch: false,
       shortVideoDuration: 5, // 5 Seconds.
       playControlHideDelay: 2000, // Hide the viewer controls after only 2 seconds when a video starts playing.
-      defaultControlHideDelay: 5000, // Automatically hide viewer controls after 6 seconds until user settings are implemented.
+      defaultControlHideDelay: 5000, // Automatically hide viewer controls after 5 seconds, TODO: add custom settings.
       idleTimer: false,
       controlsShown: -1, // -1 or a positive Date.now() timestamp indicates that the PhotoSwipe controls are shown.
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
