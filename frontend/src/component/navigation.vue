@@ -709,7 +709,7 @@
               class="nav-upgrade"
               @click.stop=""
             >
-              <v-icon v-if="isPro" class="ma-auto">mdi-check-circle</v-icon>
+              <v-icon v-if="isPro" class="ma-auto">mdi-check-decagram</v-icon>
               <v-icon v-else class="ma-auto">mdi-diamond</v-icon>
             </v-list-item>
             <v-list-item
@@ -720,7 +720,7 @@
               @click.stop=""
             >
               <v-list-item-title v-if="isPro" class="nav-menu-item">
-                <v-icon>mdi-check-circle</v-icon>
+                <v-icon>mdi-check-decagram</v-icon>
                 <p class="nav-item-title">
                   {{ $gettext(`Upgrade`) }}
                 </p>

@@ -222,7 +222,7 @@ footer.p-about-footer {
     padding: 12px 24px 4px;
 }
 
-footer.p-about-footer p {
+footer.p-about-footer>div {
     user-select: text;
     font-size: .875rem;
     font-weight: 400;
@@ -233,27 +233,24 @@ footer.p-about-footer p {
     text-align: center;
 }
 
-footer.p-about-footer p > * {
-    display: block;
-    margin: 0;
-    padding: 0;
+footer.p-about-footer > div > * {
+    display: inline;
+    float: right;
+    max-width: 45vw;
+    text-wrap: nowrap;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
-@media only screen and (max-width: 599px) {
-    /* footer.p-about-footer p > *,
-    footer.p-about-footer div > * {
-        display: inline-block;
-    } */
-    /* .footer .text-link {
-        float: left;
+footer.p-about-footer > div > strong {
+    float: left;
+}
+
+@media only screen and (min-width: 600px) {
+    footer.p-about-footer>div > * {
+        display: block;
+        float: none!important;
+        margin: 0;
+        padding: 0;
     }
-
-    .footer .body-link {
-        float: right;
-    } */
 }
-
-/* .footer .footer-actions {
-    padding: 0;
-    margin: 0;
-} */
