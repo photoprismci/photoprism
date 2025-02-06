@@ -52,7 +52,7 @@ describe("common/util", () => {
     assert.equal(avc, "avc");
 
     const hevc = Util.videoFormat("hvc1", ContentTypeMp4HvcMain);
-    if (can.useHEVC) {
+    if (can.useMp4Hvc) {
       assert.equal(hevc, "hevc");
     } else {
       assert.equal(hevc, "avc");

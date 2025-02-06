@@ -38,7 +38,7 @@ const (
 	ImageWebp   Type = "webp"  // Google WebP Image
 )
 
-// Supported media.Video file types:
+// Supported media.Video file types, see https://tools.woolyss.com/html5-canplaytype-tester/:
 const (
 	VideoWebm   Type = "webm" // Google WebM Video
 	VideoAvc    Type = "avc"  // H.264, Advanced Video Coding (AVC, MPEG-4 Part 10)
@@ -46,7 +46,9 @@ const (
 	VideoHev    Type = "hev"  // HEVC Bitstream, not supported on macOS
 	VideoVvc    Type = "vvc"  // H.266, Versatile Video Coding (VVC)
 	VideoEvc    Type = "evc"  // Essential Video Coding (MPEG-5 Part 1)
-	VideoAv1    Type = "av1"  // Alliance for Open Media Video
+	VideoAv1    Type = "av1"  // WebM Container with AOMedia Video 1 (AV1)
+	VideoVp8    Type = "vp8"  // WebM Container with VP8 encoded video
+	VideoVp9    Type = "vp9"  // WebM Container with VP9 encoded video
 	VideoMpeg   Type = "mpg"  // Moving Picture Experts Group (MPEG)
 	VideoMjpeg  Type = "mjpg" // Motion JPEG (M-JPEG)
 	VideoMp2    Type = "mp2"  // MPEG-2, H.222/H.262

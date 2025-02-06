@@ -95,7 +95,6 @@ func GetVideo(router *gin.RouterGroup) {
 		// Get video bitrate, codec, and file type.
 		videoFileType := f.Type()
 		videoCodec := f.FileCodec
-		videoHdr := f.IsHDR()
 		videoBitrate := f.Bitrate()
 		videoFileName := photoprism.FileName(f.FileRoot, f.FileName)
 		videoContentType := f.ContentType()
@@ -146,11 +145,12 @@ func GetVideo(router *gin.RouterGroup) {
 			AbortVideo(c)
 			return
 		} else if transcode {
-			if videoCodec != "" {
-				log.Debugf("video: %s is %s encoded and cannot be streamed directly, average bitrate %.1f MBit/s", clean.Log(f.FileName), strings.ToUpper(videoCodec), videoBitrate)
-			} else {
-				log.Debugf("video: %s cannot be streamed directly, average bitrate %.1f MBit/s", clean.Log(f.FileName), videoBitrate)
-			}
+			log.Debugf(
+				"video: %s has content type %s and cannot be streamed directly, average bitrate %.1f MBit/s",
+				clean.Log(f.FileName),
+				clean.Log(videoContentType),
+				videoBitrate,
+			)
 
 			conv := get.Convert()
 
@@ -164,13 +164,22 @@ func GetVideo(router *gin.RouterGroup) {
 				return
 			}
 		} else {
-			if videoCodec != "" && videoFileType.NotEqual(videoCodec) {
-				log.Debugf("video: %s is %s encoded and requires no transcoding, average bitrate %.1f MBit/s", clean.Log(f.FileName), strings.ToUpper(videoCodec), videoBitrate)
-				AddContentTypeHeader(c, video.ContentType(mediaFile.MimeType(), videoFileType.ToUpper(), videoCodec, videoHdr))
+			var contentType string
+
+			if videoFileType != f.Type() {
+				contentType = mediaFile.ContentType()
 			} else {
-				log.Debugf("video: %s is streamed directly, average bitrate %.1f MBit/s", clean.Log(f.FileName), videoBitrate)
-				AddContentTypeHeader(c, f.ContentType())
+				contentType = f.ContentType()
 			}
+
+			log.Debugf(
+				"video: %s has content type %s, average bitrate %.1f MBit/s",
+				clean.Log(f.FileName),
+				clean.Log(contentType),
+				videoBitrate,
+			)
+
+			AddContentTypeHeader(c, contentType)
 		}
 
 		// Add HTTP cache header.

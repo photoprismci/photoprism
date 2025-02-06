@@ -80,15 +80,43 @@ var Extensions = FileExtensions{
 	".srw":      ImageRaw,
 	".sr2":      ImageRaw,
 	".x3f":      ImageRaw,
-	ExtAvc:      VideoAvc, // .avc
-	ExtHevc:     VideoHvc, // .hevc
-	ExtHev1:     VideoHev, // .hev1
-	ExtVvc:      VideoVvc, // .vvc
-	ExtEvc:      VideoEvc, // .evc
-	".mov":      VideoMov,
-	".qt":       VideoMov,
-	".avi":      VideoAVI,
+	ExtMov:      VideoMov, // Apple QuickTime Video Container
+	ExtQT:       VideoMov, //  .qt
+	ExtMp4:      VideoMp4, // MPEG-4 Part 14 Multimedia Container
+	ExtH264:     VideoAvc, // ↓ H.264 MPEG-4 Advanced Video Coding (AVC)
+	ExtAvc:      VideoAvc, //  .avc
+	ExtAvc1:     VideoAvc, //  .avc1
+	ExtDva:      VideoAvc, //  .dva
+	ExtDva1:     VideoAvc, //  .dva1
+	ExtAvc2:     VideoAvc, //  .avc2
+	ExtAvc3:     VideoAvc, //  .avc3
+	ExtDvav:     VideoAvc, //  .avc3
+	ExtAvc10:    VideoAvc, //  .avc10
+	ExtH265:     VideoHvc, // ↓ H.265 MPEG-4 HEVC with parameter sets only in the Sample Entry
+	ExtHvc:      VideoHvc, //  .hvc
+	ExtHvc1:     VideoHvc, //  .hvc1
+	ExtDvh:      VideoHvc, //  .dvh
+	ExtDvh1:     VideoHvc, //  .dvh1
+	ExtHvc2:     VideoHvc, //  .hvc2
+	ExtHvc3:     VideoHvc, //  .hvc3
+	ExtHvc10:    VideoHvc, //  .hvc10
+	ExtHevc:     VideoHvc, //  .hevc
+	ExtHevc10:   VideoHvc, //  .hevc10
+	ExtHev:      VideoHev, // ↓ H.265 video with parameter sets also in the Samples
+	ExtHev1:     VideoHev, //  .hev1
+	ExtDvhe:     VideoHev, //  .dvhe
+	ExtHev2:     VideoHev, //  .hev2
+	ExtHev3:     VideoHev, //  .hev3
+	ExtHev10:    VideoHev, //  .hev10
+	ExtH266:     VideoVvc, // ↓ H.266 MPEG-4 Versatile Video Coding (VVC)
+	ExtVvc:      VideoVvc, //  .vvc
+	ExtVvc1:     VideoVvc, //  .vvc1
+	ExtEvc:      VideoEvc, // ↓ MPEG-5 Essential Video Coding (EVC)
+	ExtEvc1:     VideoEvc, //  .evc1
+	".vp8":      VideoVp8,
+	".vp9":      VideoVp9,
 	".av1":      VideoAv1,
+	".av01":     VideoAv1,
 	".mpg":      VideoMpeg,
 	".mpeg":     VideoMpeg,
 	".mjpg":     VideoMjpeg,
@@ -96,7 +124,6 @@ var Extensions = FileExtensions{
 	".mp2":      VideoMp2,
 	".mpv":      VideoMp2,
 	".mp":       VideoMp4,
-	ExtMp4:      VideoMp4, // .mp4
 	".m4v":      VideoM4V,
 	".mxf":      VideoMXF,
 	".3gp":      Video3GP,
@@ -111,6 +138,7 @@ var Extensions = FileExtensions{
 	".ogx":      VideoTheora,
 	".webm":     VideoWebm,
 	".asf":      VideoASF,
+	".avi":      VideoAVI,
 	".wmv":      VideoWMV,
 	".dv":       VideoDV,
 	".svg":      VectorSVG,

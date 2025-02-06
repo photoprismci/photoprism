@@ -182,7 +182,7 @@ func TestPhoto_MediaInfo(t *testing.T) {
 					FileVideo: true,
 					MediaType: media.Video.String(),
 					FileMime:  header.ContentTypeMp4AvcMain,
-					FileCodec: video.CodecAvc,
+					FileCodec: video.CodecAvc1,
 					FileHash:  "53c89dcfa006c9e592dd9e6db4b31cd57be64b81",
 				},
 			},
@@ -192,7 +192,7 @@ func TestPhoto_MediaInfo(t *testing.T) {
 
 		mediaHash, mediaCodec, mediaMime := r.MediaInfo()
 		assert.Equal(t, "53c89dcfa006c9e592dd9e6db4b31cd57be64b81", mediaHash)
-		assert.Equal(t, video.CodecAvc, mediaCodec)
+		assert.Equal(t, video.CodecAvc1, mediaCodec)
 		assert.Equal(t, header.ContentTypeMp4AvcMain, mediaMime)
 	})
 	t.Run("VideoCodecHVC", func(t *testing.T) {
@@ -223,14 +223,14 @@ func TestPhoto_MediaInfo(t *testing.T) {
 				{
 					FileVideo: true,
 					MediaType: media.Video.String(),
-					FileCodec: video.CodecHvc,
-					FileMime:  header.ContentTypeMp4HvcMain,
+					FileCodec: video.CodecHvc1,
+					FileMime:  header.ContentTypeMp4HvcMain10,
 					FileHash:  "057258b0c88c2e017ec171cc8799a5df7badbadf",
 				},
 				{
 					FileVideo: true,
 					MediaType: media.Video.String(),
-					FileCodec: video.CodecAvc,
+					FileCodec: video.CodecAvc1,
 					FileMime:  header.ContentTypeMp4AvcMain,
 					FileHash:  "ddb3f44eb500d7669cbe0a95e66d5a63f642487d",
 				},
@@ -241,8 +241,8 @@ func TestPhoto_MediaInfo(t *testing.T) {
 
 		mediaHash, mediaCodec, mediaMime := r.MediaInfo()
 		assert.Equal(t, "057258b0c88c2e017ec171cc8799a5df7badbadf", mediaHash)
-		assert.Equal(t, video.CodecHvc, mediaCodec)
-		assert.Equal(t, header.ContentTypeMp4HvcMain, mediaMime)
+		assert.Equal(t, video.CodecHvc1, mediaCodec)
+		assert.Equal(t, header.ContentTypeMp4HvcMain10, mediaMime)
 	})
 	t.Run("NoVideoHash", func(t *testing.T) {
 		r := Photo{

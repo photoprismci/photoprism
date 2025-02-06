@@ -29,6 +29,8 @@ var TypeInfo = TypeMap{
 	VideoVvc:        "Versatile Video Coding (H.266)",
 	VideoEvc:        "Essential Video Coding (MPEG-5 Part 1)",
 	VideoAv1:        "AOMedia Video 1",
+	VideoVp8:        "Google VP8 Video",
+	VideoVp9:        "Google VP9 Video",
 	VideoMov:        "Apple QuickTime",
 	VideoMp4:        "Multimedia Container (MPEG-4 Part 14)",
 	VideoM4V:        "Apple iTunes Multimedia Container",

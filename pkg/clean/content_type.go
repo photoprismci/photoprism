@@ -56,29 +56,42 @@ func ContentType(s string) string {
 		header.ContentTypeMp4Hvc,
 		"video/mp4; codecs=\"hvc\"",
 		"video/mp4; codecs=\"hevc\"":
-		return header.ContentTypeMp4HvcMain // HEVC Mp4 Main10 Profile
+		return header.ContentTypeMp4HvcMain10 // HEVC Mp4 Main10 Profile
 	case
 		header.ContentTypeMp4Hev,
 		"video/mp4; codecs=\"hev\"":
-		return header.ContentTypeMp4HevMain // HEVC bitstream with the parameter sets stored in the samples, not supported on macOS
+		return header.ContentTypeMp4HevMain10 // HEVC with parameter sets also in the Samples, not supported on macOS
 	case
 		"video/webm; codecs=\"vp08\"":
 		return header.ContentTypeWebmVp8 // Google WebM container with VP8 video
 	case
-		"video/webm; codecs=\"vp9\"",
-		"video/webm; codecs=\"vp09\"":
-		return header.ContentTypeWebmVp9 // Google WebM container with VP9 video
+		header.ContentTypeWebmVp9,
+		"video/webm; codecs=\"vp9\"":
+		return header.ContentTypeWebmVp9Main // Google WebM container with VP9 video
 	case
+		header.ContentTypeMp4Av1,
+		"video/mp4; codecs=\"av1\"",
+		header.ContentTypeAv1,
+		"video/av1",
+		"video/av1; codecs=\"av01\"",
+		"video/AV1; codecs=\"av01\"":
+		return header.ContentTypeMp4Av1Main10 // MP4 container with AV1 video
+	case
+		header.ContentTypeWebmAv1,
 		"video/webm; codecs=\"av1\"",
 		"video/webm; codecs=\"av1c\"",
-		"video/webm; codecs=\"av1C\"",
-		"video/webm; codecs=\"av01\"":
-		return header.ContentTypeWebmAv1 // Google WebM container with AV1 video
-	case "video/matroska; codecs=\"av1\"",
+		"video/webm; codecs=\"av1C\"":
+		return header.ContentTypeWebmAv1Main10 // Google WebM container with AV1 video
+	case
+		header.ContentTypeMkvAv1,
+		"video/matroska; codecs=\"av1\"",
 		"video/matroska; codecs=\"av1c\"",
-		"video/matroska; codecs=\"av1C\"",
-		"video/matroska; codecs=\"av01\"":
-		return header.ContentTypeMkvAv1 // Matroska container with AV1 video
+		"video/matroska; codecs=\"av1C\"":
+		return header.ContentTypeMkvAv1Main10 // Matroska container with AV1 video
+	case
+		header.ContentTypeOggVorbis,
+		header.ContentTypeOggTheora:
+		return header.ContentTypeOgg
 	}
 
 	return s

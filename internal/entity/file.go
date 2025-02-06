@@ -890,7 +890,5 @@ func (m *File) ContentType() (contentType string) {
 		contentType = clean.ContentType(m.FileMime)
 	}
 
-	log.Debugf("file: %s has content type %s", clean.Log(m.FileName), clean.LogQuote(contentType))
-
 	return contentType
 }

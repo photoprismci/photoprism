@@ -494,7 +494,7 @@ export class Photo extends RestModel {
       return false;
     }
 
-    let file = files.find((f) => f.Codec === media.CodecAvc);
+    let file = files.find((f) => f.Codec === media.CodecAvc1);
 
     if (!file) {
       file = files.find((f) => f.FileType === media.FormatMp4);

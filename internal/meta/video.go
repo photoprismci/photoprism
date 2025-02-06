@@ -11,5 +11,10 @@ const CodecXMP = "xmp"
 
 // CodecAvc returns true if the video codec is AVC.
 func (data Data) CodecAvc() bool {
-	return data.Codec == video.CodecAvc || data.Codec == video.CodecAvc3
+	switch data.Codec {
+	case video.CodecAvc1, video.CodecAvc2, video.CodecAvc3, video.CodecAvc4:
+		return true
+	default:
+		return false
+	}
 }

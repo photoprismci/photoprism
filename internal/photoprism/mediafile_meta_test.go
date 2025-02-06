@@ -142,7 +142,7 @@ func TestMediaFile_CreateExifToolJson(t *testing.T) {
 		assert.Equal(t, "2020-05-11 14:18:35 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "2020-05-11 14:18:35 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, time.Duration(2410000000), data.Duration)
-		assert.Equal(t, video.CodecAvc, data.Codec)
+		assert.Equal(t, video.CodecAvc1, data.Codec)
 		assert.Equal(t, 270, data.Width)
 		assert.Equal(t, 480, data.Height)
 		assert.Equal(t, false, data.Flash)
@@ -376,7 +376,7 @@ func TestMediaFile_VideoInfo(t *testing.T) {
 			info := mf.VideoInfo()
 
 			assert.Equal(t, video.Mp4, info.VideoType)
-			assert.Equal(t, video.CodecAvc, info.VideoCodec)
+			assert.Equal(t, video.CodecAvc1, info.VideoCodec)
 			assert.Equal(t, 1440, info.VideoWidth)
 			assert.Equal(t, 1080, info.VideoHeight)
 			assert.Equal(t, int64(2685814), info.VideoOffset)

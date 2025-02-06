@@ -889,6 +889,6 @@ func TestFile_ContentType(t *testing.T) {
 		assert.Equal(t, header.ContentTypeMp4AvcMain, avc.ContentType())
 		hevc := FileFixtures.Get("Photo21.mp4")
 		assert.Equal(t, true, hevc.FileVideo)
-		assert.Equal(t, header.ContentTypeMp4HvcMain, hevc.ContentType())
+		assert.Equal(t, header.ContentTypeMp4HvcMain10, hevc.ContentType())
 	})
 }

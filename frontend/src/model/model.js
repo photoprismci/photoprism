@@ -24,7 +24,7 @@ Additional information can be found in our Developer Guide:
 */
 
 export class Model {
-  constructor(values) {
+  constructor(values = false) {
     this.__originalValues = {};
 
     if (values) {
