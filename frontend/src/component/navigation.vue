@@ -10,11 +10,11 @@
           class="nav-small elevation-2"
           @click.stop.prevent
         >
-          <v-btn icon variant="text" class="bg-transparent nav-logo" @click.stop.prevent="showNavigation()">
+          <v-btn icon variant="text" class="bg-transparent nav-logo" @click.stop.prevent="toggleDrawer">
             <img :src="appIcon" :alt="appName" :class="{ 'animate-hue': indexing }" />
           </v-btn>
           <v-toolbar-title class="nav-toolbar-title">
-            <span :class="{ clickable: auth }" @click.stop.prevent="showNavigation()">{{ page.title }}</span>
+            <span :class="{ clickable: auth }" @click.stop.prevent="toggleDrawer">{{ page.title }}</span>
           </v-toolbar-title>
           <v-btn
             icon="mdi-dots-vertical"
@@ -61,7 +61,7 @@
       >
         <div class="nav-container">
           <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
-            <v-list class="navigation-home elevation-0" bg-color="navigation-home" width="100%" density="compact">
+            <v-list class="navigation-home elevation-0" bg-color="navigation-home" width="100%" density="compact" @click.capture="toggleDrawer">
               <v-list-item class="px-3" :elevation="0" :ripple="false" @click.stop.prevent="goHome">
                 <template #prepend>
                   <div class="v-avatar bg-transparent nav-logo">
@@ -1094,10 +1094,30 @@ export default {
         this.$router.push({ name: "home" });
       }
     },
-    showNavigation() {
+    showDrawer() {
       if (this.auth) {
         this.drawer = true;
         this.isMini = this.isRestricted;
+      }
+    },
+    hideDrawer() {
+      if (this.auth) {
+        this.drawer = false;
+        this.isMini = this.isRestricted;
+      }
+    },
+    toggleDrawer(ev) {
+      ev?.preventDefault();
+      ev?.stopPropagation();
+
+      if (this.$vuetify.display.smAndDown) {
+        if (this.drawer) {
+          this.hideDrawer();
+        } else {
+          this.showDrawer();
+        }
+      } else {
+        this.toggleIsMini();
       }
     },
     toggleIsMini() {
