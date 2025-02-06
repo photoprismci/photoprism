@@ -47,15 +47,6 @@ import Thumb from "model/thumb";
 import { Photo } from "model/photo";
 import * as media from "common/media";
 
-/*
-  TODO: All previously available features and controls must be preserved in the new hybrid photo/video viewer:
-    1. Some of the controls that the old viewer had are still missing e.g. "play slideshow".
-    2. The already added controls might need further improvements (e.g. (a) the sidebar toggle button (info icon) shows
-       the sidebar, but the functionality there is not implemented yet, (b) the zoom doesn't load a larger version
-       of the image yet).
-    3. Finally, after the refactoring/upgrade, (a) the old/unused code (e.g. for the separate video player) needs
-       to be removed and (b) everything needs to be thoroughly tested on all major browsers and mobile devices.
-*/
 export default {
   name: "PViewer",
   data() {
@@ -246,11 +237,6 @@ export default {
         });
     },
     getItemData(el, i) {
-      /*
-        TODO: Rendering of slides needs to be improved to allow dynamic zooming (loading higher resolution thumbs
-              depending on zoom level and screen resolution).
-       */
-
       // Get the current slide model data.
       const model = this.models[i];
 
@@ -565,13 +551,13 @@ export default {
     // Adds PhotoSwipe lightbox controls, see https://photoswipe.com/adding-ui-elements/.
     addLightboxControls() {
       const lightbox = this.lightbox;
-      // TODO: The same controls as with PhotoSwipe 4 should be usable/available!
+
+      // Add a sidebar toggle button only if the window is large enough.
+      // TODO: Proof-of-concept only, the sidebar needs to be fully implemented before removing the featDevelop check.
+      // TODO: Once this is fully implemented, remove the "this.experimental" flag check below.
+      // IDEA: We can later try to add styles that display the sidebar at the bottom
+      //       instead of on the side, to allow use on mobile devices.
       lightbox.on("uiRegister", () => {
-        // Add a sidebar toggle button only if the window is large enough.
-        // TODO: Proof-of-concept only, the sidebar needs to be fully implemented before removing the featDevelop check.
-        // TODO: Once this is fully implemented, remove the "this.experimental" flag check below.
-        // IDEA: We can later try to add styles that display the sidebar at the bottom
-        //       instead of on the side, to allow use on mobile devices.
         if (this.featDevelop && this.canEdit && window.innerWidth > this.mobileBreakpoint) {
           lightbox.pswp.ui.registerElement({
             name: "sidebar-button",
@@ -744,7 +730,6 @@ export default {
         caption += `<p>${Util.encodeHTML(model.Description)}</p>`;
       }
 
-      // TODO: Perform SECURITY tests to see if ANY unwanted code can be injected.
       return Util.sanitizeHtml(caption);
     },
     onShow() {
