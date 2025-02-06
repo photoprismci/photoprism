@@ -68,7 +68,7 @@ export default {
       captionPlugin: null, // Current PhotoSwipe caption plugin instance.
       hasTouch: false,
       shortVideoDuration: 5, // 5 Seconds.
-      playControlHideDelay: 2500, // Hide the viewer controls after 0.5 seconds when a video starts playing.
+      playControlHideDelay: 2000, // Hide the viewer controls after only 2 seconds when a video starts playing.
       defaultControlHideDelay: 5000, // Automatically hide viewer controls after 6 seconds until user settings are implemented.
       idleTimer: false,
       controlsShown: -1, // -1 or a positive Date.now() timestamp indicates that the PhotoSwipe controls are shown.
