@@ -24,7 +24,7 @@
           autocapitalize="none"
           color="surface-variant"
           class="input-search background-inherit elevation-0"
-          @update:modelValue="
+          @update:model-value="
             (v) => {
               updateFilter({ q: v });
             }

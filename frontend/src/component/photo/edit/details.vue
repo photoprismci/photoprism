@@ -499,35 +499,35 @@ export default {
     setDay(v) {
       if (Number.isInteger(v?.value)) {
         this.model.Day = v?.value;
+        this.syncTime();
       } else if (!v) {
         this.model.Day = -1;
       } else if (this.rules.isNumberRange(v, 1, 31)) {
-        this.model.Day = v;
+        this.model.Day = Number(v);
+        this.syncTime();
       }
-
-      this.syncTime();
     },
     setMonth(v) {
       if (Number.isInteger(v?.value)) {
         this.model.Month = v?.value;
+        this.syncTime();
       } else if (!v) {
         this.model.Month = -1;
       } else if (this.rules.isNumberRange(v, 1, 12)) {
-        this.model.Month = v;
+        this.model.Month = Number(v);
+        this.syncTime();
       }
-
-      this.syncTime();
     },
     setYear(v) {
       if (Number.isInteger(v?.value)) {
         this.model.Year = v?.value;
+        this.syncTime();
       } else if (!v) {
         this.model.Year = -1;
       } else if (this.rules.isNumberRange(v, 1000, Number(new Date().getUTCFullYear()))) {
-        this.model.Year = v;
+        this.model.Year = Number(v);
+        this.syncTime();
       }
-
-      this.syncTime();
     },
     setTime() {
       if (this.rules.isTime(this.time)) {

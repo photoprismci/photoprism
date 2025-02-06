@@ -214,55 +214,62 @@
           <v-card-actions class="ma-0 pa-0">
             <v-row align="start" dense>
               <v-col cols="6" sm="3">
-                <v-autocomplete
-                  v-model="user.Details.BirthDay"
+                <v-combobox
+                  :model-value="user?.Details?.BirthDay > 0 ? user.Details.BirthDay : null"
                   :disabled="busy"
                   :label="$gettext('Day')"
+                  :placeholder="$gettext('Unknown')"
+                  density="comfortable"
                   autocomplete="off"
                   hide-no-data
+                  hide-details
                   item-title="text"
                   item-value="value"
                   :items="options.Days()"
+                  validate-on="input"
                   :rules="rules.day(false)"
-                  density="comfortable"
                   class="input-birth-day"
-                  hide-details
-                  @update:modelValue="onChange"
+                  @update:model-value="setBirthDay"
                 >
-                </v-autocomplete>
+                </v-combobox>
               </v-col>
               <v-col cols="6" sm="3">
-                <v-autocomplete
-                  v-model="user.Details.BirthMonth"
+                <v-combobox
+                  :model-value="user?.Details?.BirthMonth > 0 ? user.Details.BirthMonth : null"
                   :disabled="busy"
                   :label="$gettext('Month')"
+                  :placeholder="$gettext('Unknown')"
+                  density="comfortable"
                   autocomplete="off"
                   hide-no-data
+                  hide-details
                   item-title="text"
                   item-value="value"
                   :items="options.MonthsShort()"
+                  validate-on="input"
                   :rules="rules.month(false)"
-                  density="comfortable"
                   class="input-birth-month"
-                  hide-details
-                  @update:modelValue="onChange"
+                  @update:model-value="setBirthMonth"
                 >
-                </v-autocomplete>
+                </v-combobox>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-autocomplete
-                  v-model="user.Details.BirthYear"
+                <v-combobox
+                  :model-value="user?.Details?.BirthYear > 0 ? user.Details.BirthYear : null"
                   :disabled="busy"
                   :label="$gettext('Year')"
-                  autocomplete="off"
-                  :items="options.Years(1900)"
-                  :rules="rules.year(false, 1900)"
+                  :placeholder="$gettext('Unknown')"
                   density="comfortable"
-                  class="input-birth-year"
+                  autocomplete="off"
+                  hide-no-data
                   hide-details
-                  @update:modelValue="onChange"
+                  :items="options.Years(1900)"
+                  validate-on="input"
+                  :rules="rules.year(false, 1000)"
+                  class="input-birth-year"
+                  @update:model-value="setBirthYear"
                 >
-                </v-autocomplete>
+                </v-combobox>
               </v-col>
             </v-row>
           </v-card-actions>
@@ -300,7 +307,7 @@
                   :items="countries"
                   class="input-country"
                   :rules="rules.country()"
-                  @update:modelValue="onChange"
+                  @update:model-value="onChange"
                 >
                 </v-autocomplete>
               </v-col>
@@ -484,6 +491,42 @@ export default {
           this.$notify.success(this.$gettext("Settings saved"));
         })
         .finally(() => (this.busy = false));
+    },
+    setBirthDay(v) {
+      if (Number.isInteger(v?.value)) {
+        this.user.Details.BirthDay = v?.value;
+        this.onChange();
+      } else if (!v) {
+        this.user.Details.BirthDay = -1;
+        this.onChange();
+      } else if (this.rules.isNumberRange(v, 1, 31)) {
+        this.user.Details.BirthDay = Number(v);
+        this.onChange();
+      }
+    },
+    setBirthMonth(v) {
+      if (Number.isInteger(v?.value)) {
+        this.user.Details.BirthMonth = v?.value;
+        this.onChange();
+      } else if (!v) {
+        this.user.Details.BirthMonth = -1;
+        this.onChange();
+      } else if (this.rules.isNumberRange(v, 1, 12)) {
+        this.user.Details.BirthMonth = Number(v);
+        this.onChange();
+      }
+    },
+    setBirthYear(v) {
+      if (Number.isInteger(v?.value)) {
+        this.user.Details.BirthYear = v?.value;
+        this.onChange();
+      } else if (!v) {
+        this.user.Details.BirthYear = -1;
+        this.onChange();
+      } else if (this.rules.isNumberRange(v, 1000, Number(new Date().getUTCFullYear()))) {
+        this.user.Details.BirthYear = Number(v);
+        this.onChange();
+      }
     },
   },
 };
