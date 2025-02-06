@@ -56,6 +56,7 @@
                 :error="invalidDate"
                 :label="$gettext('Day')"
                 :placeholder="$gettext('Unknown')"
+                :prepend-inner-icon="$vuetify.display.xs ? undefined : 'mdi-calendar'"
                 autocomplete="off"
                 hide-details
                 hide-no-data
@@ -118,6 +119,7 @@
                 :append-inner-icon="model.TakenSrc === 'manual' ? 'mdi-check' : ''"
                 :disabled="disabled"
                 :label="model.timeIsUTC() ? $gettext('Time UTC') : $gettext('Local Time')"
+                :prepend-inner-icon="$vuetify.display.xs ? undefined : 'mdi-clock-time-eight-outline'"
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
