@@ -10,7 +10,7 @@
     class="p-dialog p-viewer v-dialog--viewer"
   >
     <div class="p-viewer__underlay"></div>
-    <div ref="container" class="p-viewer__content">
+    <div ref="container" class="p-viewer__content" @click="onContainerClick">
       <div
         ref="lightbox"
         tabindex="0"
@@ -127,15 +127,15 @@ export default {
         returnFocus: false,
         allowPanToNext: false,
         initialZoomLevel: "fit",
-        secondaryZoomLevel: "fill",
+        secondaryZoomLevel: 1,
         maxZoomLevel: 6,
         bgOpacity: 1,
         preload: [1, 1],
         showHideAnimationType: "none",
-        tapAction: (point, ev) => this.toggleControls(ev),
-        imageClickAction: "zoom",
         mainClass: "media-viewer-lightbox",
+        tapAction: (point, ev) => this.onContentTap(ev),
         bgClickAction: (point, ev) => this.onBgClick(ev),
+        imageClickAction: (point, ev) => this.onContentClick(ev),
         paddingFn: (viewport, data) => this.getLightboxPadding(viewport, data),
         getViewportSizeFn: () => this.getLightboxViewport(),
         closeTitle: this.$gettext("Close"),
@@ -195,7 +195,8 @@ export default {
       params.offset = 0;
 
       // Fetch viewer results from API.
-      return $api.get("photos/view", { params })
+      return $api
+        .get("photos/view", { params })
         .then((response) => {
           const count = response && response.data ? response.data.length : 0;
           if (count === 0) {
@@ -295,14 +296,7 @@ export default {
 
         try {
           // Create video element.
-          content.element = this.createVideoElement(
-            content.data.model,
-            content.data.format,
-            content.data.msrc,
-            false,
-            false,
-            false
-          );
+          content.element = this.createVideoElement(content.data, false, false, false);
           content.state = "loading";
           content.onLoaded();
         } catch (err) {
@@ -311,7 +305,11 @@ export default {
       }
     },
     // Creates an HTMLMediaElement for playing videos, animations, and live photos.
-    createVideoElement(model, format, posterSrc, autoplay = false, loop = false, mute = false) {
+    createVideoElement(data, autoplay = false, loop = false, mute = false) {
+      const model = data.model;
+      const format = data.format;
+      const posterSrc = data.msrc;
+
       // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement.
       const video = document.createElement("video");
 
@@ -326,6 +324,12 @@ export default {
         preload = "metadata";
       }
 
+      let controls = true;
+
+      if (loop || slideshow) {
+        controls = false;
+      }
+
       // Set HTMLMediaElement properties.
       video.className = "pswp__video";
       video.poster = posterSrc;
@@ -334,7 +338,7 @@ export default {
       video.mute = mute;
       video.preload = preload;
       video.playsInline = true;
-      video.controls = true;
+      video.controls = controls;
 
       // Disable the remote playback button on mobile devices to save space.
       video.disableRemotePlayback = this.$isMobile;
@@ -358,8 +362,12 @@ export default {
       // Add an event listener to loop short videos of 5 seconds or less,
       // even if the server does not know the duration.
       video.addEventListener("loadedmetadata", () => {
-        if (video.duration && video.duration <= this.shortVideoDuration && !this.slideshow.active) {
-          video.loop = true;
+        if (video.duration && video.duration <= this.shortVideoDuration) {
+          data.loop = true;
+          video.loop = data.loop && !this.slideshow.active;
+          video.controls = false;
+        } else {
+          video.controls = !this.slideshow.active;
         }
       });
 
@@ -416,7 +424,7 @@ export default {
       // Use dynamic caption plugin,
       // see https://github.com/dimsemenov/photoswipe-dynamic-caption-plugin.
       this.captionPlugin = new Captions(this.lightbox, {
-        type: "auto",
+        type: "below",
         captionContent: (slide) => {
           if (!slide || !this.models || slide?.index < 0) {
             return "";
@@ -438,6 +446,12 @@ export default {
         this.$event.publish("viewer.pause");
         this.$event.publish("viewer.close");
       });
+
+      // Add a custom pointer event handler to prevent the default
+      // action when events are triggered on an HTMLMediaElement.
+      this.lightbox.on("pointerUp", (ev) => this.handlePointerEvent(ev));
+      this.lightbox.on("pointerDown", (ev) => this.handlePointerEvent(ev));
+      this.lightbox.on("pointerMove", (ev) => this.handlePointerEvent(ev));
 
       // Add PhotoSwipe lightbox controls,
       // see https://photoswipe.com/adding-ui-elements/.
@@ -470,17 +484,30 @@ export default {
       this.lightbox.on("contentActivate", (ev) => {
         const { content } = ev;
 
+        if (!content) {
+          return;
+        }
+
+        const data = typeof content?.data === "object" ? content?.data : {};
+
+        if (!data) {
+          return;
+        }
+
+        let video;
+
+        // Get <video> element, if any.
+        if (content?.element && content?.element instanceof HTMLMediaElement) {
+          video = content?.element;
+        } else {
+          video = false;
+        }
+
         // Automatically play video on this slide if it's the first item,
         // a slideshow is active, or it's an animation or live photo.
-        if (content.data?.type === "html" && content?.element) {
-          const data = content.data;
-          if (
-            data.model?.Type === media.Animated ||
-            data.model?.Type === media.Live ||
-            this.slideshow.active ||
-            firstPicture
-          ) {
-            this.playVideo(content.element, content.data?.loop);
+        if (video) {
+          if (data.loop || this.slideshow.active || firstPicture) {
+            this.playVideo(content.element, data.loop);
           }
         }
 
@@ -496,7 +523,7 @@ export default {
         const { content } = ev;
 
         // Stop any video currently playing on this slide.
-        if (content.data?.type === "html" && content?.element) {
+        if (content?.element && content?.element instanceof HTMLMediaElement) {
           this.pauseVideo(content.element);
         }
       });
@@ -815,14 +842,82 @@ export default {
     // Called when the user clicks on the PhotoSwipe lightbox background,
     // see https://photoswipe.com/click-and-tap-actions.
     onBgClick(ev) {
+      if (!ev) {
+        return;
+      }
+
+      if (this.slideshow.active) {
+        this.pauseSlideshow();
+      }
+
       if (this.controlsVisible()) {
         this.onClose();
       } else {
         this.showControls();
       }
+    },
+    onContentTap(ev) {
+      if (!ev) {
+        return;
+      }
 
-      if (ev && typeof ev.stopPropagation === "function") {
+      this.toggleControls(ev);
+    },
+    // Called when PhotoSwipe receives a pointer move, down or up event.
+    handlePointerEvent(ev) {
+      if (!ev) {
+        return;
+      }
+
+      const target = ev?.originalEvent?.target;
+
+      // Don't trigger the built-in default action when an event occurs on a video
+      // at the bottom of the screen, so that the player controls remain usable.
+      if (target && target instanceof HTMLMediaElement) {
+        if (window.innerHeight - ev?.originalEvent.y < 128) {
+          ev.preventDefault();
+          return true;
+        }
+      }
+    },
+    onContainerClick(ev) {
+      if (!ev) {
+        return;
+      }
+
+      if (ev.target instanceof HTMLMediaElement) {
+        // Don't continue and prevent default when an event occurs on a video at
+        // the bottom of the screen, so that the player controls remain usable.
+        if (window.innerHeight - ev.y < 128) {
+          ev.preventDefault();
+          return;
+        }
+
         ev.stopPropagation();
+        ev.preventDefault();
+
+        if (this.slideshow.active) {
+          this.pauseSlideshow();
+        }
+
+        // Toggle video playback.
+        this.toggleVideo();
+      }
+    },
+    // Called when the user clicks on a slide.
+    onContentClick(ev) {
+      if (!ev) {
+        return;
+      }
+
+      if (this.slideshow.active) {
+        this.pauseSlideshow();
+      }
+
+      const pswp = this.pswp();
+
+      if (pswp.currSlide.isZoomable()) {
+        pswp.currSlide.toggleZoom();
       }
     },
     onFullscreen() {
@@ -922,6 +1017,7 @@ export default {
       }
 
       el.loop = loop && !this.slideshow.active;
+      el.controls = !(loop || this.slideshow.active);
 
       if (el.paused) {
         try {
@@ -974,13 +1070,13 @@ export default {
     // Shows the controls on the current video element, if any.
     showVideoControls() {
       // Get active video element, if any.
-      const { video } = this.getContent();
+      const { video, data } = this.getContent();
 
       if (!video) {
         return;
       }
 
-      video.controls = true;
+      video.controls = !data?.loop && !this.slideshow.active;
     },
     // Hides the controls on the current video element, if any.
     hideVideoControls() {
@@ -1104,7 +1200,7 @@ export default {
 
       let album = null;
 
-      pswp.close(); // Close Gallery
+      pswp.close();
 
       this.$event.publish("dialog.edit", { selection, album, index }); // Open Edit Dialog
     },
