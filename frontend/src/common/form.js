@@ -157,6 +157,28 @@ export class rules {
     return !isNaN(Number(v));
   }
 
+  static isNumberRange(v, min, max) {
+    if (typeof v !== "string" || !v || v === "-1") {
+      return true;
+    }
+
+    v = Number(v);
+
+    if (isNaN(v)) {
+      return false;
+    }
+
+    if (typeof min === "number" && v < min) {
+      return false;
+    }
+
+    if (typeof max === "number" && v > max) {
+      return false;
+    }
+
+    return true;
+  }
+
   static isTime(v) {
     return /^(2[0-3]|[0-1][0-9])\D[0-5][0-9]\D[0-5][0-9]$/.test(v); // 23:59:59
   }
@@ -188,10 +210,7 @@ export class rules {
 
   static lat(required) {
     if (required) {
-      return [
-        (v) => !!v || $gettext("This field is required"),
-        (v) => this.isLat(v) || $gettext("Invalid"),
-      ];
+      return [(v) => !!v || $gettext("This field is required"), (v) => this.isLat(v) || $gettext("Invalid")];
     } else {
       return [(v) => this.isLat(v) || $gettext("Invalid")];
     }
@@ -199,10 +218,7 @@ export class rules {
 
   static lng(required) {
     if (required) {
-      return [
-        (v) => !!v || $gettext("This field is required"),
-        (v) => this.isLng(v) || $gettext("Invalid"),
-      ];
+      return [(v) => !!v || $gettext("This field is required"), (v) => this.isLng(v) || $gettext("Invalid")];
     } else {
       return [(v) => this.isLng(v) || $gettext("Invalid")];
     }
@@ -296,10 +312,10 @@ export class rules {
     if (required) {
       return [
         (v) => !!v || Number(v) < -1 || $gettext("This field is required"),
-        (v) => !v || (this.isNumber(v) && (v === -1 || (v >= 1 && v <= 31))) || $gettext("Invalid"),
+        (v) => this.isNumberRange(v, 1, 31) || $gettext("Invalid"),
       ];
     } else {
-      return [(v) => !v || (this.isNumber(v) && (v === -1 || (v >= 1 && v <= 31))) || $gettext("Invalid")];
+      return [(v) => this.isNumberRange(v, 1, 31) || $gettext("Invalid")];
     }
   }
 
@@ -307,10 +323,10 @@ export class rules {
     if (required) {
       return [
         (v) => !!v || Number(v) < -1 || $gettext("This field is required"),
-        (v) => !v || (this.isNumber(v) && (v === -1 || (v >= 1 && v <= 12))) || $gettext("Invalid"),
+        (v) => this.isNumberRange(v, 1, 12) || $gettext("Invalid"),
       ];
     } else {
-      return [(v) => !v || (this.isNumber(v) && (v === -1 || (v >= 1 && v <= 12))) || $gettext("Invalid")];
+      return [(v) => this.isNumberRange(v, 1, 12) || $gettext("Invalid")];
     }
   }
 
@@ -326,14 +342,10 @@ export class rules {
     if (required) {
       return [
         (v) => !!v || Number(v) < -1 || $gettext("This field is required"),
-        (v) => !v || (this.isNumber(v) && (v === -1 || v >= min)) || $gettext("Invalid"),
-        (v) => !v || (this.isNumber(v) && (v === -1 || v <= max)) || $gettext("Invalid"),
+        (v) => this.isNumberRange(v, min, max) || $gettext("Invalid"),
       ];
     } else {
-      return [
-        (v) => !v || (this.isNumber(v) && (v === -1 || v >= min)) || $gettext("Invalid"),
-        (v) => !v || (this.isNumber(v) && (v === -1 || v <= max)) || $gettext("Invalid"),
-      ];
+      return [(v) => this.isNumberRange(v, min, max) || $gettext("Invalid")];
     }
   }
 }

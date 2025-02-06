@@ -50,11 +50,12 @@
           </v-row>
           <v-row dense>
             <v-col cols="4" lg="2">
-              <v-autocomplete
-                v-model="model.Day"
+              <v-combobox
+                :model-value="model.Day > 0 ? model.Day : null"
                 :disabled="disabled"
                 :error="invalidDate"
                 :label="$gettext('Day')"
+                :placeholder="$gettext('Unknown')"
                 autocomplete="off"
                 hide-details
                 hide-no-data
@@ -63,18 +64,19 @@
                 item-value="value"
                 density="comfortable"
                 validate-on="input"
-                :rules="rules.day(true)"
+                :rules="rules.day(false)"
                 class="input-day"
-                @update:model-value="syncTime"
+                @update:model-value="setDay"
               >
-              </v-autocomplete>
+              </v-combobox>
             </v-col>
             <v-col cols="4" lg="2">
-              <v-autocomplete
-                v-model="model.Month"
+              <v-combobox
+                :model-value="model.Month > 0 ? model.Month : null"
                 :disabled="disabled"
                 :error="invalidDate"
                 :label="$gettext('Month')"
+                :placeholder="$gettext('Unknown')"
                 autocomplete="off"
                 hide-details
                 hide-no-data
@@ -83,31 +85,32 @@
                 item-value="value"
                 density="comfortable"
                 validate-on="input"
-                :rules="rules.month(true)"
+                :rules="rules.month(false)"
                 class="input-month"
-                @update:model-value="syncTime"
+                @update:model-value="setMonth"
               >
-              </v-autocomplete>
+              </v-combobox>
             </v-col>
             <v-col cols="4" lg="2">
-              <v-autocomplete
-                v-model="model.Year"
+              <v-combobox
+                :model-value="model.Year > 0 ? model.Year : null"
                 :disabled="disabled"
                 :error="invalidDate"
                 :label="$gettext('Year')"
+                :placeholder="$gettext('Unknown')"
                 autocomplete="off"
                 hide-details
                 hide-no-data
-                :items="options.Years(1000)"
+                :items="options.Years(1900)"
                 item-title="text"
                 item-value="value"
                 density="comfortable"
                 validate-on="input"
-                :rules="rules.year(true, 1000)"
+                :rules="rules.year(false, 1000)"
                 class="input-year"
-                @update:model-value="syncTime"
+                @update:model-value="setYear"
               >
-              </v-autocomplete>
+              </v-combobox>
             </v-col>
             <v-col cols="6" lg="2">
               <v-text-field
@@ -491,6 +494,39 @@ export default {
     this.syncTime();
   },
   methods: {
+    setDay(v) {
+      if (Number.isInteger(v?.value)) {
+        this.model.Day = v?.value;
+      } else if (!v) {
+        this.model.Day = -1;
+      } else if (this.rules.isNumberRange(v, 1, 31)) {
+        this.model.Day = v;
+      }
+
+      this.syncTime();
+    },
+    setMonth(v) {
+      if (Number.isInteger(v?.value)) {
+        this.model.Month = v?.value;
+      } else if (!v) {
+        this.model.Month = -1;
+      } else if (this.rules.isNumberRange(v, 1, 12)) {
+        this.model.Month = v;
+      }
+
+      this.syncTime();
+    },
+    setYear(v) {
+      if (Number.isInteger(v?.value)) {
+        this.model.Year = v?.value;
+      } else if (!v) {
+        this.model.Year = -1;
+      } else if (this.rules.isNumberRange(v, 1000, Number(new Date().getUTCFullYear()))) {
+        this.model.Year = v;
+      }
+
+      this.syncTime();
+    },
     setTime() {
       if (this.rules.isTime(this.time)) {
         this.updateModel();
