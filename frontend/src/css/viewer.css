@@ -152,10 +152,6 @@
     bottom: 72px !important;
 }
 
-.p-viewer__container > .is-playable .pswp--touch .pswp__button--arrow {
-    visibility: visible;
-}
-
 .pswp__dynamic-caption--mobile h4,
 .pswp__dynamic-caption--mobile p,
 .pswp__dynamic-caption--mobile a {
@@ -308,6 +304,10 @@
     margin-top: -25px;
     top: 50%;
     width: 50px;
+}
+
+.p-viewer__container > .is-playable:not(.slideshow-active) .pswp--touch .pswp__button--arrow {
+    visibility: visible;
 }
 
 /* Other / Unused Styles */
