@@ -879,13 +879,9 @@
           </div>
           <div v-if="featUpgrade" class="menu-action nav-upgrade">
             <router-link :to="{ name: 'upgrade' }">
-              <template #default="{ href, navigate, isActive }">
-                <a :href="href" :class="{ active: isActive }" @click="navigate">
-                  <v-icon v-if="isPro">mdi-check-circle</v-icon>
-                  <v-icon v-else>mdi-diamond</v-icon>
-                  {{ $gettext(`Upgrade`) }}
-                </a>
-              </template>
+              <v-icon v-if="isPro">mdi-check-decagram</v-icon>
+              <v-icon v-else>mdi-diamond</v-icon>
+              {{ $gettext(`Upgrade`) }}
             </router-link>
           </div>
           <div v-if="config.legalUrl" class="menu-action nav-legal">
