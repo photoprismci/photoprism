@@ -1092,21 +1092,21 @@ export class Photo extends RestModel {
   }
 
   setPrimaryFile(fileUID) {
-    return $api.post(`${this.getEntityResource()}/files/${fileUID}/primary`).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return $api
+      .post(`${this.getEntityResource()}/files/${fileUID}/primary`)
+      .then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   unstackFile(fileUID) {
-    return $api.post(`${this.getEntityResource()}/files/${fileUID}/unstack`).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return $api
+      .post(`${this.getEntityResource()}/files/${fileUID}/unstack`)
+      .then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   deleteFile(fileUID) {
-    return $api.delete(`${this.getEntityResource()}/files/${fileUID}`).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return $api
+      .delete(`${this.getEntityResource()}/files/${fileUID}`)
+      .then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   changeFileOrientation(file) {
@@ -1124,9 +1124,9 @@ export class Photo extends RestModel {
     }
 
     // Change file orientation.
-    return $api.put(`${this.getEntityResource()}/files/${file.UID}/orientation`, values).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return $api
+      .put(`${this.getEntityResource()}/files/${file.UID}/orientation`, values)
+      .then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   like() {
@@ -1140,21 +1140,21 @@ export class Photo extends RestModel {
   }
 
   addLabel(name) {
-    return $api.post(this.getEntityResource() + "/label", { Name: name, Priority: 10 }).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return $api
+      .post(this.getEntityResource() + "/label", { Name: name, Priority: 10 })
+      .then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   activateLabel(id) {
-    return $api.put(this.getEntityResource() + "/label/" + id, { Uncertainty: 0 }).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return $api
+      .put(this.getEntityResource() + "/label/" + id, { Uncertainty: 0 })
+      .then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   renameLabel(id, name) {
-    return $api.put(this.getEntityResource() + "/label/" + id, { Label: { Name: name } }).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return $api
+      .put(this.getEntityResource() + "/label/" + id, { Label: { Name: name } })
+      .then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   removeLabel(id) {
@@ -1210,27 +1210,27 @@ export class Photo extends RestModel {
 
     // Update details source if needed.
     if (values.Details) {
-      if (values.Details.Keywords) {
+      if (values.Details.Keywords !== this.__originalValues.Details.Keywords) {
         values.Details.KeywordsSrc = src.Manual;
       }
 
-      if (values.Details.Notes) {
+      if (values.Details.Notes !== this.__originalValues.Details.Notes) {
         values.Details.NotesSrc = src.Manual;
       }
 
-      if (values.Details.Subject) {
+      if (values.Details.Subject !== this.__originalValues.Details.Subject) {
         values.Details.SubjectSrc = src.Manual;
       }
 
-      if (values.Details.Artist) {
+      if (values.Details.Artist !== this.__originalValues.Details.Artist) {
         values.Details.ArtistSrc = src.Manual;
       }
 
-      if (values.Details.Copyright) {
+      if (values.Details.Copyright !== this.__originalValues.Details.Copyright) {
         values.Details.CopyrightSrc = src.Manual;
       }
 
-      if (values.Details.License) {
+      if (values.Details.License !== this.__originalValues.Details.License) {
         values.Details.LicenseSrc = src.Manual;
       }
     }
