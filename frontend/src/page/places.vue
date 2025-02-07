@@ -494,7 +494,8 @@ export default {
       this.loading = true;
 
       // Perform get request to find nearby photos.
-      return $api.get("geo/view", options)
+      return $api
+        .get("geo/view", options)
         .then((r) => {
           if (r && r.data && r.data.length > 0) {
             // Show photos.
@@ -582,7 +583,8 @@ export default {
       };
 
       // Fetch results from server.
-      return $api.get("geo", options)
+      return $api
+        .get("geo", options)
         .then((response) => {
           if (!response.data.features || response.data.features.length === 0) {
             this.loading = false;
@@ -631,7 +633,7 @@ export default {
         controlPos
       );
 
-      // Add terrain control, if supported.
+      // Add 3D terrain toggle control, if supported.
       if (this.terrain[this.style]) {
         this.map.addControl(
           new maplibregl.TerrainControl({
@@ -641,11 +643,16 @@ export default {
         );
       }
 
-      // Add 3D globe control.
+      // Add 3D globe toggle control.
       this.map.addControl(new maplibregl.GlobeControl());
 
-      // Add fullscreen control.
-      this.map.addControl(new maplibregl.FullscreenControl({ container: document.querySelector("body") }), controlPos);
+      // Add fullscreen toggle control, except on mobile devices.
+      if (!this.$isMobile) {
+        this.map.addControl(
+          new maplibregl.FullscreenControl({ container: document.querySelector("body") }),
+          controlPos
+        );
+      }
 
       // Add locate position control.
       this.map.addControl(
