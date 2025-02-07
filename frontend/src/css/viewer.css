@@ -311,7 +311,7 @@
     height: 220px;
     margin-top: -110px;
     width: 150px;
-    max-width: 15vw;
+    max-width: 16vw;
 }
 
 .pswp__button--arrow .pswp__icn {
@@ -319,7 +319,7 @@
     margin-top: -25px;
     top: 50%;
     width: 50px;
-    max-width: 15vw;
+    max-width: 16vw;
 }
 
 .p-viewer__container > .is-playable:not(.slideshow-active) .pswp--touch .pswp__button--arrow {
