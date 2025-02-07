@@ -242,6 +242,11 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
     --v-input-control-height: 40px;
 }
 
+.v-input--density-comfortable .v-field {
+    --v-field-padding-start: 12px;
+    --v-field-padding-end: 12px;
+}
+
 .v-selection-control--density-compact .v-label {
     margin-inline-start: .5em;
 }
