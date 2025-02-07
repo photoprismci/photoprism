@@ -584,7 +584,7 @@ export default {
         lightbox.pswp.ui.registerElement({
           name: "sound-toggle",
           className: "pswp__button--sound-toggle pswp__button--mdi", // Sets the icon style/size in viewer.css.
-          ariaLabel: this.$gettext("Sound"),
+          ariaLabel: this.$gettext("Mute"),
           order: 10,
           isButton: true,
           html: {
