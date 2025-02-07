@@ -64,7 +64,7 @@ export default {
       playControlHideDelay: 2000, // Hide the viewer controls after only 2 seconds when a video starts playing.
       defaultControlHideDelay: 5000, // Automatically hide viewer controls after 5 seconds, TODO: add custom settings.
       idleTimer: false,
-      controlsShown: -1, // -1 or a positive Date.now() timestamp indicates that the PhotoSwipe controls are shown.
+      controlsShown: -1, // -1 or a positive timestamp indicates that the controls are shown (0 means hidden).
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
       canLike: this.$config.allow("photos", "manage") && this.$config.feature("favorites"),
       canDownload: this.$config.allow("photos", "download") && this.$config.feature("download"),
@@ -848,10 +848,10 @@ export default {
         return;
       }
 
-      if (this.controlsVisible()) {
-        this.onClose();
-      } else {
+      if (this.controlsShown === 0) {
         this.showControls();
+      } else {
+        this.onClose();
       }
     },
     // Called when the lightbox receives a pointer move, down or up event.
@@ -877,7 +877,7 @@ export default {
         ev.preventDefault();
       }
 
-      if (typeof action === "function" && this.controlsVisible()) {
+      if (typeof action === "function" && this.controlsShown !== 0) {
         action();
       }
     },
@@ -888,7 +888,7 @@ export default {
 
       if (ev.y <= 128) {
         // Reveal controls when user clicks/touches the top of the screen.
-        if (!this.controlsVisible()) {
+        if (this.controlsShown === 0) {
           ev.stopPropagation();
           ev.preventDefault();
           this.resetTimer();
