@@ -61,7 +61,13 @@
       >
         <div class="nav-container">
           <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
-            <v-list class="navigation-home elevation-0" bg-color="navigation-home" width="100%" density="compact" @click.capture="toggleDrawer">
+            <v-list
+              class="navigation-home elevation-0"
+              bg-color="navigation-home"
+              width="100%"
+              density="compact"
+              @click.capture="toggleDrawer"
+            >
               <v-list-item class="px-3" :elevation="0" :ripple="false" @click.stop.prevent="goHome">
                 <template #prepend>
                   <div class="v-avatar bg-transparent nav-logo">
@@ -377,15 +383,33 @@
               <span v-show="config.count.favorites > 0" class="nav-count-item">{{ config.count.favorites }}</span>
             </v-list-item>
 
-            <v-list-item
-              v-if="isRestricted && $config.feature('places')"
-              :to="{ name: 'states' }"
-              variant="text"
-              class="nav-states nav-regions"
-              @click.stop=""
-            >
-              <v-icon class="ma-auto">mdi-near-me</v-icon>
-            </v-list-item>
+            <template v-if="isRestricted && $config.feature('places')">
+              <v-list-item
+                v-if="isMini"
+                :to="{ name: 'states' }"
+                variant="text"
+                class="nav-states nav-regions"
+                :ripple="false"
+                @click.stop=""
+              >
+                <v-icon class="ma-auto">mdi-near-me</v-icon>
+              </v-list-item>
+              <v-list-item
+                v-else-if="!isMini"
+                :to="{ name: 'states' }"
+                variant="text"
+                class="nav-states nav-regions"
+                :ripple="false"
+                @click.stop=""
+              >
+                <v-list-item-title class="nav-menu-item">
+                  <v-icon>mdi-near-me</v-icon>
+                  <p class="nav-item-title">
+                    {{ $gettext(`Regions`) }}
+                  </p>
+                </v-list-item-title>
+              </v-list-item>
+            </template>
 
             <template v-if="canSearchPlaces">
               <v-list-item
@@ -1117,6 +1141,10 @@ export default {
       }
     },
     toggleIsMini() {
+      if (this.isRestricted) {
+        return;
+      }
+
       this.isMini = !this.isMini;
       localStorage.setItem("last_navigation_mode", `${this.isMini}`);
     },
