@@ -1,7 +1,9 @@
 <template>
   <transition name="fade-transition">
     <button v-if="showButton" type="button" class="p-scroll" @click.stop="scrollToTop">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path>
+      </svg>
       {{ $gettext(`Back to top`) }}
     </button>
   </transition>
@@ -48,14 +50,13 @@ export default {
       showButton: false,
       showButtonDistance: 100,
       maxScrollY: 0,
-      onScrollOptions: { passive: true },
     };
   },
   created() {
-    window.addEventListener("scroll", this.onScroll, this.onScrollOptions);
+    window.addEventListener("scroll", this.onScroll, { passive: true });
   },
   beforeUnmount() {
-    window.removeEventListener("scroll", this.onScroll, this.onScrollOptions);
+    window.removeEventListener("scroll", this.onScroll, false);
   },
   methods: {
     onScroll() {
