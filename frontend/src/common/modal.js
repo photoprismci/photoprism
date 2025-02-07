@@ -49,11 +49,13 @@ const Modal = {
     if (this.active()) {
       if (!bodyEl.classList.contains("disable-gestures")) {
         bodyEl.classList.add("disable-gestures");
-        document.addEventListener("touchmove", this.preventDefault, false);
+        // TODO: Find a better solution that plays nice with modal dialogs.
+        // document.addEventListener("touchmove", this.preventDefault, false);
       }
     } else if (bodyEl.classList.contains("disable-gestures")) {
       bodyEl.classList.remove("disable-gestures");
-      document.removeEventListener("touchmove", this.preventDefault, false);
+      // TODO: Find a better solution that plays nice with modal dialogs.
+      // document.removeEventListener("touchmove", this.preventDefault, false);
     }
 
     if (this.scrollbarHidden()) {

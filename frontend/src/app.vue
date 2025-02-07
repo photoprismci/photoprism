@@ -48,8 +48,9 @@ export default {
     },
   },
   created() {
-    window.addEventListener("touchstart", this.onTouchStart.bind(this), { passive: true });
-    window.addEventListener("touchmove", this.onTouchMove.bind(this), { passive: true });
+    // TODO: Find a better solution that plays nice with modal dialogs.
+    // document.addEventListener("touchstart", this.onTouchStart.bind(this), { passive: true });
+    // document.addEventListener("touchmove", this.onTouchMove.bind(this), { passive: true });
 
     this.subscriptions["view.refresh"] = Event.subscribe("view.refresh", (ev, data) => this.onRefresh(data));
     this.$config.setVuetify(this.$vuetify);
@@ -59,8 +60,9 @@ export default {
       Event.unsubscribe(this.subscriptions[i]);
     }
 
-    window.removeEventListener("touchstart", this.onTouchStart.bind(this), false);
-    window.removeEventListener("touchmove", this.onTouchMove.bind(this), false);
+    // TODO: Find a better solution that plays nice with modal dialogs.
+    // document.removeEventListener("touchstart", this.onTouchStart.bind(this), false);
+    // document.removeEventListener("touchmove", this.onTouchMove.bind(this), false);
   },
   methods: {
     onRefresh(config) {
