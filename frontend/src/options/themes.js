@@ -447,7 +447,7 @@ let themes = {
       "edit": "#88C0D0",
       "share": "#B48EAD",
       "love": "#ef5350",
-      "terminal": "#4C566A",
+      "terminal": "#e5e9f0",
       "navigation": "#E5E9F0",
       "on-navigation": "#3e4757",
       "navigation-home": "#dde3eb",

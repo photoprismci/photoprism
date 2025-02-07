@@ -1,7 +1,7 @@
-/* Event Logs */
+/* Library Event Logs */
 
 .p-logs {
-    color: white;
+    color: rgb(var(--v-theme-on-surface));
     border-radius: 4px;
 }
 
@@ -12,7 +12,7 @@
     font-size: 0.825rem;
     font-family: monospace;
     white-space: normal;
-    color: white;
+    color: rgb(var(--v-theme-on-surface));
     padding: 4px;
     margin: 0;
 }
@@ -26,28 +26,24 @@
 }
 
 .p-log-message span {
-    color: #FEFEFE;
+    color: rgba(var(--v-theme-on-surface), .95);
     font-weight: normal;
 }
 
 .p-log-fatal,
 .p-log-critical,
 .p-log-error {
-    color: #F48FB1;
+    color: rgba(var(--v-theme-error), .95);
 }
 
 .p-log-warning {
-    color: #FFD600;
-}
-
-.p-log-fatal {
-    color: #FFECB3;
+    color: rgba(var(--v-theme-warning), .95);
 }
 
 .p-log-info {
-    color: #82B1FF;
+    color: rgba(var(--v-theme-info), .95);
 }
 
 .p-log-debug {
-    color: #DDDDDD;
+    color: rgba(var(--v-theme-on-surface), .9);
 }

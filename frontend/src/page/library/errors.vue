@@ -68,7 +68,7 @@
           v-for="err in errors"
           :key="err.ID"
           :prepend-icon="err.Level === 'error' ? 'mdi-alert-circle-outline' : 'mdi-alert'"
-          density="compact"
+          density="default"
           :title="err.Message"
           :subtitle="formatTime(err.Time)"
           @click="showDetails(err)"
@@ -77,6 +77,9 @@
             <v-icon v-if="err.Level === 'error'" icon="mdi-alert-circle-outline" color="error"></v-icon>
             <v-icon v-else-if="err.Level === 'warning'" icon="mdi-alert" color="warning"></v-icon>
             <v-icon v-else icon="mdi-information-outline" color="info"></v-icon>
+          </template>
+          <template #title="{ title }">
+            <div class="text-body-2 text-truncate">{{ title }}</div>
           </template>
         </v-list-item>
       </v-list>
@@ -111,10 +114,10 @@
         </v-card-title>
 
         <v-card-text>
-          <p :class="'p-log-' + details.err.Level" class="p-log-message text-body-2 text-selectable" dir="ltr">
+          <div :class="'p-log-' + details.err.Level" class="p-log-message text-body-2 text-selectable" dir="ltr">
             <span class="font-weight-medium">{{ formatTime(details.err.Time) }}</span
             >&puncsp;<span class="text-break">{{ details.err.Message }}</span>
-          </p>
+          </div>
         </v-card-text>
 
         <v-card-actions>
@@ -243,7 +246,8 @@ export default {
       this.scrollDisabled = true;
 
       // Delete error logs.
-      $api.delete("errors")
+      $api
+        .delete("errors")
         .then((resp) => {
           if (resp && resp.data.code && resp.data.code === 200) {
             this.errors = [];
@@ -284,7 +288,8 @@ export default {
       const params = { count, offset, q };
 
       // Fetch error logs.
-      $api.get("errors", { params })
+      $api
+        .get("errors", { params })
         .then((resp) => {
           if (!resp.data) {
             resp.data = [];
