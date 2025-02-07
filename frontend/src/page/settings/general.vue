@@ -1,6 +1,12 @@
 <template>
   <div class="p-tab p-settings-general py-2">
-    <v-form ref="form" validate-on="invalid-input" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
+    <v-form
+      ref="form"
+      validate-on="invalid-input"
+      class="p-form-settings"
+      accept-charset="UTF-8"
+      @submit.prevent="onChange"
+    >
       <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-2 text-subtitle-2">
           {{ $gettext(`User Interface`) }}
@@ -94,7 +100,9 @@
                 class="ma-0 pa-0 input-private"
                 density="compact"
                 :label="$gettext('Private')"
-                :hint="$gettext('Exclude content marked as private from search results, shared albums, labels, and places.')"
+                :hint="
+                  $gettext('Exclude content marked as private from search results, shared albums, labels, and places.')
+                "
                 prepend-icon="mdi-lock"
                 persistent-hint
                 @update:model-value="onChange"
@@ -436,7 +444,9 @@ export default {
   },
   created() {
     this.load();
-    this.subscriptions.push(Event.subscribe("config.updated", (ev, data) => this.settings.setValues(data.config.settings)));
+    this.subscriptions.push(
+      Event.subscribe("config.updated", (ev, data) => this.settings.setValues(data.config.settings))
+    );
   },
   unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
