@@ -1849,6 +1849,10 @@ msgstr "Przenieś pliki"
 msgid "Must have at least %{n} characters."
 msgstr "Musi mieć co najmniej %{n} znaków."
 
+#: src/component/viewer.vue:546
+msgid "Mute"
+msgstr ""
+
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
 #: src/component/people/edit/dialog.vue:68
@@ -2715,10 +2719,6 @@ msgstr "Posortowane rosnąco."
 #: src/locales.js:35
 msgid "Sorted descending."
 msgstr "Posortowane malejąco."
-
-#: src/component/viewer.vue:546
-msgid "Sound"
-msgstr ""
 
 #: src/component/photo/edit/labels.vue:24
 #: src/component/photo/edit/labels.vue:105

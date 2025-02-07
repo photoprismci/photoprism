@@ -1849,6 +1849,10 @@ msgstr "移动文件"
 msgid "Must have at least %{n} characters."
 msgstr "必须至少有%{n}个字符。"
 
+#: src/component/viewer.vue:546
+msgid "Mute"
+msgstr ""
+
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
 #: src/component/people/edit/dialog.vue:68
@@ -2717,10 +2721,6 @@ msgstr "按升序排列。"
 #: src/locales.js:35
 msgid "Sorted descending."
 msgstr "按降序排列。"
-
-#: src/component/viewer.vue:546
-msgid "Sound"
-msgstr ""
 
 #: src/component/photo/edit/labels.vue:24
 #: src/component/photo/edit/labels.vue:105

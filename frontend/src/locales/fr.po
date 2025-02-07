@@ -1867,6 +1867,10 @@ msgstr "Déplacer les fichiers"
 msgid "Must have at least %{n} characters."
 msgstr "Doit comporter au moins %{n} caractères."
 
+#: src/component/viewer.vue:546
+msgid "Mute"
+msgstr ""
+
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
 #: src/component/people/edit/dialog.vue:68
@@ -2737,10 +2741,6 @@ msgstr "Triés par ordre croissant."
 #: src/locales.js:35
 msgid "Sorted descending."
 msgstr "Trié par ordre décroissant."
-
-#: src/component/viewer.vue:546
-msgid "Sound"
-msgstr ""
 
 #: src/component/photo/edit/labels.vue:24
 #: src/component/photo/edit/labels.vue:105

@@ -1846,6 +1846,10 @@ msgstr "Перамясціць файлы"
 msgid "Must have at least %{n} characters."
 msgstr "Павінна быць не менш за %{n} сімвалаў."
 
+#: src/component/viewer.vue:546
+msgid "Mute"
+msgstr ""
+
 #: src/page/about/feedback.vue:129 src/component/album/edit/dialog.vue:75
 #: src/component/label/edit/dialog.vue:68
 #: src/component/people/edit/dialog.vue:68
@@ -2712,10 +2716,6 @@ msgstr "Адсартавана па ўзрастанні."
 #: src/locales.js:35
 msgid "Sorted descending."
 msgstr "Адсартавана па змяншэнні."
-
-#: src/component/viewer.vue:546
-msgid "Sound"
-msgstr ""
 
 #: src/component/photo/edit/labels.vue:24
 #: src/component/photo/edit/labels.vue:105
