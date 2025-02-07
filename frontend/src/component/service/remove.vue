@@ -31,18 +31,33 @@ export default {
       loading: false,
     };
   },
+  watch: {
+    show: function (show) {
+      if (show) {
+        this.loading = false;
+      }
+    },
+  },
   methods: {
     close() {
       this.$emit("close");
     },
     confirm() {
+      if (this.loading) {
+        return;
+      }
+
       this.loading = true;
 
-      this.model.remove().then(() => {
-        this.loading = false;
-        this.$notify.success(this.$gettext("Account deleted"));
-        this.$emit("confirm");
-      });
+      this.model
+        .remove()
+        .then(() => {
+          this.$notify.success(this.$gettext("Account deleted"));
+          this.$emit("confirm");
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
   },
 };
