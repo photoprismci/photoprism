@@ -576,13 +576,7 @@ export default {
               outlineID: "pswp__icn-sidebar", // Add this to the <path> in the inner property.
               size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
             },
-            onClick: (ev) => {
-              if (ev && ev.cancelable) {
-                ev.stopPropagation();
-                ev.preventDefault();
-              }
-              return this.toggleSidebar();
-            },
+            onClick: (ev) => this.onControlClick(ev, this.toggleSidebar),
           });
         }
 
@@ -598,13 +592,7 @@ export default {
             inner: `<use class="pswp__icn-shadow pswp__icn-sound-on" xlink:href="#pswp__icn-sound-on"></use><path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.84 14,18.7V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z" id="pswp__icn-sound-on" class="pswp__icn-sound-on" /><use class="pswp__icn-shadow pswp__icn-sound-off" xlink:href="#pswp__icn-sound-off"></use><path d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,17.53C15.58,18.04 14.83,18.46 14,18.7V20.77C15.38,20.45 16.63,19.82 17.68,18.96L19.73,21L21,19.73L12,10.73M19,12C19,12.94 18.8,13.82 18.46,14.64L19.97,16.15C20.62,14.91 21,13.5 21,12C21,7.72 18,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,7.97V10.18L16.45,12.63C16.5,12.43 16.5,12.21 16.5,12Z" id="pswp__icn-sound-off" class="pswp__icn-sound-off" />`,
             size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
           },
-          onClick: (ev) => {
-            if (ev && ev.cancelable) {
-              ev.stopPropagation();
-              ev.preventDefault();
-            }
-            return this.toggleSound();
-          },
+          onClick: (ev) => this.onControlClick(ev, this.toggleSound),
         });
 
         // Add slideshow play/pause toggle control.
@@ -619,13 +607,7 @@ export default {
             inner: `<use class="pswp__icn-shadow pswp__icn-slideshow-on" xlink:href="#pswp__icn-slideshow-on"></use><path d="M14,19H18V5H14M6,19H10V5H6V19Z" id="pswp__icn-slideshow-on" class="pswp__icn-slideshow-on" /><use class="pswp__icn-shadow pswp__icn-slideshow-off" xlink:href="#pswp__icn-slideshow-off"></use><path d="M8,5.14V19.14L19,12.14L8,5.14Z" id="pswp__icn-slideshow-off" class="pswp__icn-slideshow-off" />`,
             size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
           },
-          onClick: (ev) => {
-            if (ev && ev.cancelable) {
-              ev.stopPropagation();
-              ev.preventDefault();
-            }
-            return this.toggleSlideshow();
-          },
+          onClick: (ev) => this.onControlClick(ev, this.toggleSlideshow),
         });
 
         // Add fullscreen mode toggle control.
@@ -641,13 +623,7 @@ export default {
               inner: `<use class="pswp__icn-shadow pswp__icn-fullscreen-on" xlink:href="#pswp__icn-fullscreen-on"></use><path d="M14,14H19V16H16V19H14V14M5,14H10V19H8V16H5V14M8,5H10V10H5V8H8V5M19,8V10H14V5H16V8H19Z" id="pswp__icn-fullscreen-on" class="pswp__icn-fullscreen-on" /><use class="pswp__icn-shadow pswp__icn-fullscreen-off" xlink:href="#pswp__icn-fullscreen-off"></use><path d="M5,5H10V7H7V10H5V5M14,5H19V10H17V7H14V5M17,14H19V19H14V17H17V14M10,17V19H5V14H7V17H10Z" id="pswp__icn-fullscreen-off" class="pswp__icn-fullscreen-off" />`,
               size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
             },
-            onClick: (ev) => {
-              if (ev && ev.cancelable) {
-                ev.stopPropagation();
-                ev.preventDefault();
-              }
-              return this.onFullscreen();
-            },
+            onClick: (ev) => this.onControlClick(ev, this.toggleFullscreen),
           });
         }
 
@@ -664,13 +640,7 @@ export default {
               inner: `<use class="pswp__icn-shadow pswp__icn-favorite-on" xlink:href="#pswp__icn-favorite-on"></use><path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z" id="pswp__icn-favorite-on" class="pswp__icn-favorite-on" /><use class="pswp__icn-shadow pswp__icn-favorite-off" xlink:href="#pswp__icn-favorite-off"></use><path d="M12,15.39L8.24,17.66L9.23,13.38L5.91,10.5L10.29,10.13L12,6.09L13.71,10.13L18.09,10.5L14.77,13.38L15.76,17.66M22,9.24L14.81,8.63L12,2L9.19,8.63L2,9.24L7.45,13.97L5.82,21L12,17.27L18.18,21L16.54,13.97L22,9.24Z" id="pswp__icn-favorite-off" class="pswp__icn-favorite-off" />`,
               size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
             },
-            onClick: (ev) => {
-              if (ev && ev.cancelable) {
-                ev.stopPropagation();
-                ev.preventDefault();
-              }
-              return this.onLike();
-            },
+            onClick: (ev) => this.onControlClick(ev, this.toggleLike),
           });
         }
 
@@ -686,13 +656,7 @@ export default {
             inner: `<use class="pswp__icn-shadow pswp__icn-select-on" xlink:href="#pswp__icn-select-on"></use><path d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" id="pswp__icn-select-on" class="pswp__icn-select-on" /><use class="pswp__icn-shadow pswp__icn-select-off" xlink:href="#pswp__icn-select-off"></use><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" id="pswp__icn-select-off" class="pswp__icn-select-off" />`,
             size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
           },
-          onClick: (ev) => {
-            if (ev && ev.cancelable) {
-              ev.stopPropagation();
-              ev.preventDefault();
-            }
-            return this.onSelect();
-          },
+          onClick: (ev) => this.onControlClick(ev, this.toggleSelect),
         });
 
         // Add edit button control if user has permission to use it.
@@ -709,13 +673,7 @@ export default {
               outlineID: "pswp__icn-edit", // Add this to the <path> in the inner property.
               size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
             },
-            onClick: (ev) => {
-              if (ev && ev.cancelable) {
-                ev.stopPropagation();
-                ev.preventDefault();
-              }
-              return this.onEdit();
-            },
+            onClick: (ev) => this.onControlClick(ev, this.onEdit),
           });
         }
 
@@ -733,13 +691,7 @@ export default {
               outlineID: "pswp__icn-download", // Add this to the <path> in the inner property.
               size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
             },
-            onClick: (ev) => {
-              if (ev && ev.cancelable) {
-                ev.stopPropagation();
-                ev.preventDefault();
-              }
-              return this.onDownload();
-            },
+            onClick: (ev) => this.onControlClick(ev, this.onDownload),
           });
         }
       });
@@ -919,14 +871,36 @@ export default {
         }
       }
     },
+    onControlClick(ev, action) {
+      if (ev && ev.cancelable) {
+        ev.stopPropagation();
+        ev.preventDefault();
+      }
+
+      if (typeof action === "function" && this.controlsVisible()) {
+        action();
+      }
+    },
     onContainerClick(ev) {
       if (!ev) {
         return;
       }
 
-      if (ev.target instanceof HTMLMediaElement && window.innerHeight - ev.y > 128) {
-        ev.stopPropagation();
-        ev.preventDefault();
+      if (ev.y <= 128) {
+        // Reveal controls when user clicks/touches the top of the screen.
+        if (!this.controlsVisible()) {
+          ev.stopPropagation();
+          ev.preventDefault();
+          this.resetTimer();
+          this.showLightboxControls();
+          this.hideControlsWithDelay();
+        }
+      } else if (ev.target instanceof HTMLMediaElement) {
+        // Stop event default and propagation when user clicks/touches the player controls at the bottom of the screen.
+        if (window.innerHeight - ev.y > 128) {
+          ev.stopPropagation();
+          ev.preventDefault();
+        }
       }
     },
     // Called when a pointer down (click, touch) event is captured by the lightbox container.
@@ -938,9 +912,11 @@ export default {
       // Handle the event and prevent it from propagating when it occurs on a video element
       // except at the bottom of the screen, so that the player controls remain usable.
       if (ev.target instanceof HTMLMediaElement) {
+        ev.stopPropagation();
+
         if (window.innerHeight - ev.y > 128) {
-          ev.stopPropagation();
           ev.preventDefault();
+          this.resetTimer();
 
           if (this.slideshow.active) {
             this.pauseSlideshow();
@@ -949,8 +925,7 @@ export default {
           // Toggle video playback.
           this.toggleVideo();
         } else {
-          ev.stopPropagation();
-          this.resetTimer();
+          this.revealControls();
         }
       }
     },
@@ -979,12 +954,12 @@ export default {
       if (ev.target instanceof HTMLMediaElement) {
         // Do nothing.
       } else {
-        this.toggleControls(ev);
         ev.stopPropagation();
         ev.preventDefault();
+        this.toggleControls();
       }
     },
-    onFullscreen() {
+    toggleFullscreen() {
       if (document.fullscreenElement) {
         document
           .exitFullscreen()
@@ -1005,11 +980,11 @@ export default {
       }
     },
     // Toggles the favorite flag of the current picture.
-    onLike() {
+    toggleLike() {
       this.model.toggleLike();
     },
     // Toggles the selection of the current picture in the global photo clipboard.
-    onSelect() {
+    toggleSelect() {
       this.$clipboard.toggle(this.model);
     },
     // Returns the active HTMLMediaElement element in the lightbox, if any.
@@ -1102,7 +1077,7 @@ export default {
       }
     },
     // Handles the space keyboard press event.
-    onSpace(ev) {
+    onSpace() {
       if (!this.visible || this.sidebarVisible) {
         return;
       }
@@ -1113,7 +1088,7 @@ export default {
       if (video) {
         this.toggleVideo();
       } else {
-        this.toggleControls(ev);
+        this.toggleControls();
       }
     },
     // Toggles video playback on the current video element, if any.
@@ -1320,7 +1295,7 @@ export default {
         this.sidebarVisible = false;
       }
     },
-    toggleControls(ev) {
+    toggleControls() {
       if (this.pswp() && this.pswp().element) {
         const el = this.pswp().element;
         if (el.classList.contains("pswp--ui-visible")) {
@@ -1329,23 +1304,25 @@ export default {
           this.showControls();
         }
       }
-
-      if (ev && typeof ev.stopPropagation === "function") {
-        ev.stopPropagation();
-      }
     },
     showControls() {
+      this.showLightboxControls();
+      this.showVideoControls();
+    },
+    showLightboxControls() {
       if (this.pswp() && this.pswp().element) {
         this.controlsShown = Date.now();
         this.pswp().element.classList.add("pswp--ui-visible");
-        this.showVideoControls();
       }
     },
     hideControls() {
+      this.hideLightboxControls();
+      this.hideVideoControls();
+    },
+    hideLightboxControls() {
       if (this.pswp() && this.pswp().element) {
         this.controlsShown = 0;
         this.pswp().element.classList.remove("pswp--ui-visible");
-        this.hideVideoControls();
       }
     },
     hideControlsWithDelay(delay) {
@@ -1384,12 +1361,12 @@ export default {
       document.addEventListener(
         "mousemove",
         (ev) => {
-          this.onMouseMove(ev);
+          this.revealControls(ev);
         },
         { once: true }
       );
     },
-    onMouseMove() {
+    revealControls() {
       this.resetTimer();
       if (this.lightbox) {
         this.showControls();
