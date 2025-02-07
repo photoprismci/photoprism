@@ -1,6 +1,12 @@
 <template>
   <div class="p-tab p-settings-advanced py-2">
-    <v-form ref="form" validate-on="invalid-input" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
+    <v-form
+      ref="form"
+      validate-on="invalid-input"
+      class="p-form-settings"
+      accept-charset="UTF-8"
+      @submit.prevent="onChange"
+    >
       <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-actions v-if="$config.values.restart">
           <v-row align="start" dense>
@@ -140,7 +146,11 @@
                 density="compact"
                 color="surface-variant"
                 :label="$gettext('Disable TensorFlow')"
-                :hint="$gettext('TensorFlow is required for image classification, facial recognition, and detecting unsafe content.')"
+                :hint="
+                  $gettext(
+                    'TensorFlow is required for image classification, facial recognition, and detecting unsafe content.'
+                  )
+                "
                 prepend-icon="mdi-layers-off"
                 persistent-hint
                 @update:model-value="onChange"
@@ -179,7 +189,7 @@
                   :disabled="busy"
                   class="ma-0 pa-0 input-backup-albums"
                   density="compact"
-                color="surface-variant"
+                  color="surface-variant"
                   :label="$gettext('Album Backups')"
                   :hint="$gettext('Create YAML files to back up album metadata.')"
                   prepend-icon="mdi-image-album"
@@ -215,22 +225,50 @@
         <v-card-actions class="grid">
           <v-row align="start">
             <v-col v-if="settings.ThumbLibrary === 'imaging'" cols="12" class="py-2">
-              <v-select v-model="settings.ThumbFilter" :disabled="busy" :items="options.ThumbFilters()" :label="$gettext('Downscaling Filter')" density="compact"
-                color="surface-variant" bg-color="secondary-light" hide-details variant="solo" @update:model-value="onChange"></v-select>
+              <v-select
+                v-model="settings.ThumbFilter"
+                :disabled="busy"
+                :items="options.ThumbFilters()"
+                :label="$gettext('Downscaling Filter')"
+                density="compact"
+                color="surface-variant"
+                bg-color="secondary-light"
+                hide-details
+                variant="solo"
+                @update:model-value="onChange"
+              ></v-select>
             </v-col>
 
             <v-col cols="12" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("Static Size Limit: %{n}px"), { n: settings.ThumbSize }) }}
+                {{ $gettextInterpolate($gettext("Static Size Limit: %{n}px"), { n: parseInt(settings.ThumbSize) }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.ThumbSize" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="ma-0" @update:model-value="onChange"></v-slider>
+              <v-slider
+                v-model="settings.ThumbSize"
+                :min="720"
+                :max="7680"
+                :step="4"
+                :disabled="busy"
+                hide-details
+                class="ma-0"
+                @end="onChange"
+              ></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("Dynamic Size Limit: %{n}px"), { n: settings.ThumbSizeUncached }) }}
+                {{ $gettextInterpolate($gettext("Dynamic Size Limit: %{n}px"), { n: parseInt(settings.ThumbSizeUncached) }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.ThumbSizeUncached" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="ma-0" @update:model-value="onChange"></v-slider>
+              <v-slider
+                v-model="settings.ThumbSizeUncached"
+                :min="720"
+                :max="7680"
+                :step="4"
+                :disabled="busy"
+                hide-details
+                class="ma-0"
+                @end="onChange"
+              ></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="py-2">
@@ -241,7 +279,11 @@
                 density="compact"
                 color="surface-variant"
                 :label="$gettext('Dynamic Previews')"
-                :hint="$gettext('On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices.')"
+                :hint="
+                  $gettext(
+                    'On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices.'
+                  )
+                "
                 prepend-icon="mdi-memory"
                 persistent-hint
                 @update:model-value="onChange"
@@ -259,23 +301,47 @@
           <v-row align="start">
             <v-col cols="12" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("JPEG Quality: %{n}"), { n: settings.JpegQuality }) }}
+                {{ $gettextInterpolate($gettext("JPEG Quality: %{n}"), { n: parseInt(settings.JpegQuality) }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :disabled="busy" hide-details class="ma-0" @update:model-value="onChange"></v-slider>
+              <v-slider
+                v-model="settings.JpegQuality"
+                :min="25"
+                :max="100"
+                :disabled="busy"
+                hide-details
+                class="ma-0"
+                @end="onChange"
+              ></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("JPEG Size Limit: %{n}px"), { n: settings.JpegSize }) }}
+                {{ $gettextInterpolate($gettext("JPEG Size Limit: %{n}px"), { n: parseInt(settings.JpegSize) }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.JpegSize" :min="720" :max="30000" :step="20" :disabled="busy" class="ma-0" @update:model-value="onChange"></v-slider>
+              <v-slider
+                v-model="settings.JpegSize"
+                :min="720"
+                :max="30000"
+                :step="20"
+                :disabled="busy"
+                class="ma-0"
+                @end="onChange"
+              ></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("PNG Size Limit: %{n}px"), { n: settings.PngSize }) }}
+                {{ $gettextInterpolate($gettext("PNG Size Limit: %{n}px"), { n: parseInt(settings.PngSize) }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.PngSize" :min="720" :max="30000" :step="20" :disabled="busy" class="ma-0" @update:model-value="onChange"></v-slider>
+              <v-slider
+                v-model="settings.PngSize"
+                :min="720"
+                :max="30000"
+                :step="20"
+                :disabled="busy"
+                class="ma-0"
+                @end="onChange"
+              ></v-slider>
             </v-col>
           </v-row>
         </v-card-actions>
@@ -386,7 +452,13 @@
 
         <v-card-actions v-if="!config.disable.restart" class="pt-6 d-flex flex-wrap ga-2">
           <a id="restart"></a>
-          <v-btn color="highlight" :block="$vuetify.display.xs" :disabled="busy || !$config.values.restart" variant="flat" @click.stop.p.prevent="onRestart">
+          <v-btn
+            color="highlight"
+            :block="$vuetify.display.xs"
+            :disabled="busy || !$config.values.restart"
+            variant="flat"
+            @click.stop.p.prevent="onRestart"
+          >
             {{ $gettext(`Restart`) }}
             <v-icon end>mdi-restart</v-icon>
           </v-btn>
