@@ -234,12 +234,13 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
 }
 
 .v-input--density-compact {
-    --v-input-control-height: 32x;
+    --v-input-control-height: 32px;
     --v-input-padding-top: 8px;
 }
 
 .v-input--density-comfortable {
-    --v-input-control-height: 40px;
+    --v-input-control-height: 48px;
+    --v-input-padding-top: 12px;
 }
 
 .v-input--density-comfortable .v-field {
