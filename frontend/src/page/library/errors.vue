@@ -63,7 +63,7 @@
         :loading="loading"
       ></p-scroll>
 
-      <v-list lines="one" bg-color="table" density="compact">
+      <v-list lines="one" bg-color="table" density="compact" class="py-0">
         <v-list-item
           v-for="err in errors"
           :key="err.ID"
@@ -71,6 +71,7 @@
           density="default"
           :title="err.Message"
           :subtitle="formatTime(err.Time)"
+          class="py-2"
           @click="showDetails(err)"
         >
           <template #prepend>
