@@ -417,6 +417,12 @@ export default {
   components: {
     PAboutFooter,
   },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
+  },
   data() {
     return {};
   },

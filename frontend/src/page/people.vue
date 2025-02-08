@@ -104,7 +104,11 @@ export default {
     },
   },
   mounted() {
+    this.$view.enter(this);
     this.openTab();
+  },
+  unmounted() {
+    this.$view.leave(this);
   },
   methods: {
     openTab() {

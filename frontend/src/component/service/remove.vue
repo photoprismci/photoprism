@@ -32,9 +32,12 @@ export default {
     };
   },
   watch: {
-    show: function (show) {
-      if (show) {
+    show: function (visible) {
+      if (visible) {
+        this.$view.enter(this);
         this.loading = false;
+      } else {
+        this.$view.leave(this);
       }
     },
   },

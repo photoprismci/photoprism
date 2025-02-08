@@ -161,8 +161,9 @@ export default {
     };
   },
   watch: {
-    show: function (show) {
-      if (show) {
+    show: function (visible) {
+      if (visible) {
+        this.$view.enter(this);
         this.links = [];
         this.loading = true;
         this.expanded = [];
@@ -177,6 +178,8 @@ export default {
             }
           })
           .finally(() => (this.loading = false));
+      } else {
+        this.$view.leave(this);
       }
     },
   },

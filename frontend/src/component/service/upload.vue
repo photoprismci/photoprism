@@ -120,12 +120,14 @@ export default {
         this.pathItems = this.paths.concat([{ abs: q }]);
       }
     },
-    show: function (show) {
-      if (show) {
+    show: function (visible) {
+      if (visible) {
+        this.$view.enter(this);
         this.loading = false;
         this.load();
       } else if (this.selection) {
         this.selection.clear();
+        this.$view.leave(this);
       }
     },
   },

@@ -262,6 +262,12 @@ export default {
       isSponsor: this.$config.isSponsor(),
     };
   },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
+  },
   methods: {
     getMembership() {
       if (this.isDemo) {

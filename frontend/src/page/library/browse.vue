@@ -45,13 +45,13 @@
                 :style="`background-image: url(${m.thumbnailUrl('tile_500')})`"
                 class="preview"
                 @touchstart.passive="input.touchStart($event, index)"
-                @touchend.stop.prevent="onClick($event, index)"
+                @touchend.stop="onClick($event, index)"
                 @mousedown.stop.prevent="input.mouseDown($event, index)"
                 @click.stop.prevent="onClick($event, index)"
               >
                 <div class="preview__overlay"></div>
 
-                <button class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                <button class="input-select" @touchstart.stop="input.touchStart($event, index)" @touchend.stop="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
                   <i class="mdi mdi-check-circle select-on" />
                   <i class="mdi mdi-circle-outline select-off" />
                 </button>

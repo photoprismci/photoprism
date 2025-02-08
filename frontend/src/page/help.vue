@@ -39,5 +39,11 @@ export default {
       topic: this.$route.params.pathMatch,
     };
   },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
+  },
 };
 </script>

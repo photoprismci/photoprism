@@ -106,7 +106,7 @@
               :style="`background-image: url(${label.thumbnailUrl('tile_500')})`"
               class="preview"
               @touchstart.passive="input.touchStart($event, index)"
-              @touchend.stop.prevent="onClick($event, index)"
+              @touchend.stop="onClick($event, index)"
               @mousedown.stop.prevent="input.mouseDown($event, index)"
               @click.stop.prevent="onClick($event, index)"
             >
@@ -114,8 +114,8 @@
               <button
                 v-if="canSelect"
                 class="input-select"
-                @touchstart.stop.prevent="input.touchStart($event, index)"
-                @touchend.stop.prevent="onSelect($event, index)"
+                @touchstart.stop="input.touchStart($event, index)"
+                @touchend.stop="onSelect($event, index)"
                 @touchmove.stop.prevent
                 @click.stop.prevent="onSelect($event, index)"
               >
@@ -124,8 +124,8 @@
               </button>
               <button
                 class="input-favorite"
-                @touchstart.stop.prevent="input.touchStart($event, index)"
-                @touchend.stop.prevent="toggleLike($event, index)"
+                @touchstart.stop="input.touchStart($event, index)"
+                @touchend.stop="toggleLike($event, index)"
                 @touchmove.stop.prevent
                 @click.stop.prevent="toggleLike($event, index)"
               >
@@ -424,7 +424,7 @@ export default {
       this.lastId = "";
     },
     loadMore() {
-      if (this.scrollDisabled || this.$modal.active()) return;
+      if (this.scrollDisabled || this.$view.isHidden(this)) return;
 
       this.scrollDisabled = true;
       this.listen = false;

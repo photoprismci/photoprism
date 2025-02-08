@@ -239,6 +239,12 @@ export default {
       }
     });
   },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
+  },
   methods: {
     onRestart() {
       restart(this.$router.resolve({ name: "about" }).href);
@@ -264,7 +270,8 @@ export default {
       if (values.Token.length >= 4) {
         this.busy = true;
         this.$notify.blockUI();
-        $api.put("connect/hub", values)
+        $api
+          .put("connect/hub", values)
           .then(() => {
             this.$notify.success(this.$gettext("Connected"));
             this.success = true;

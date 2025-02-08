@@ -134,6 +134,7 @@ export default {
     },
   },
   mounted() {
+    this.$view.enter(this);
     this.initMap()
       .then(() => {
         this.renderMap();
@@ -142,6 +143,9 @@ export default {
       .catch((err) => {
         this.mapError = err;
       });
+  },
+  unmounted() {
+    this.$view.leave(this);
   },
   methods: {
     noWebGlSupport() {

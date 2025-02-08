@@ -60,9 +60,9 @@ export default {
       captionPlugin: null, // Current PhotoSwipe caption plugin instance.
       muted: window.sessionStorage.getItem("viewer.muted") === "true",
       hasTouch: false,
-      shortVideoDuration: 5, // 5 Seconds.
-      playControlHideDelay: 2000, // Hide the viewer controls after only 2 seconds when a video starts playing.
-      defaultControlHideDelay: 5000, // Automatically hide viewer controls after 5 seconds, TODO: add custom settings.
+      shortVideoDuration: 5, // Duration in seconds for videos that are short enough to automatically loop.
+      playControlHideDelay: 1000, // Hide the viewer controls after this time in ms when a video starts playing.
+      defaultControlHideDelay: 5000, // Automatically hide viewer controls this time in ms, TODO: add custom settings.
       idleTimer: false,
       controlsShown: -1, // -1 or a positive timestamp indicates that the controls are shown (0 means hidden).
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
@@ -89,6 +89,15 @@ export default {
       debug,
       trace,
     };
+  },
+  watch: {
+    visible: function (value) {
+      if (value) {
+        this.$view.enter(this);
+      } else {
+        this.$view.leave(this);
+      }
+    },
   },
   created() {
     // this.subscriptions["viewer.change"] = this.$event.subscribe("viewer.change", this.onChange);
@@ -127,7 +136,8 @@ export default {
         returnFocus: false,
         allowPanToNext: false,
         initialZoomLevel: "fit",
-        secondaryZoomLevel: 1,
+        secondaryZoomLevel: "fill",
+        wheelToZoom: true,
         maxZoomLevel: 6,
         bgOpacity: 1,
         preload: [1, 1],
@@ -369,7 +379,7 @@ export default {
       // Add an event listener to automatically hide the viewer controls
       // after a video has started playing.
       video.addEventListener("playing", () => {
-        if (!video.paused || !video.ended) {
+        if (!video.paused && !video.ended) {
           this.hideControlsWithDelay(this.playControlHideDelay);
         }
       });
@@ -732,9 +742,6 @@ export default {
       return Util.sanitizeHtml(caption);
     },
     onShow() {
-      // Hide the browser scrollbar as it is not wanted in the viewer.
-      this.$modal.enter();
-
       // Render the component template.
       this.visible = true;
 
@@ -790,9 +797,6 @@ export default {
         this.$refs?.lightbox?.blur();
         this.visible = false;
       }
-
-      // Restore browser scrollbar state.
-      this.$modal.leave();
     },
     // Returns the active PhotoSwipe instance, if any.
     // Be sure to check the result before using it!

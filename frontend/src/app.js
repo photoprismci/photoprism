@@ -28,7 +28,7 @@ import "regenerator-runtime/runtime";
 import "common/navigation";
 import $api from "common/api";
 import $notify from "common/notify";
-import $modal from "common/modal";
+import { $view } from "common/view";
 import { PhotoClipboard } from "common/clipboard";
 import $event from "pubsub-js";
 import $log from "common/log";
@@ -68,6 +68,8 @@ const $isMobile =
   /Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
   (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
 
+window.$isMobile = $isMobile;
+
 $config.progress(50);
 
 $config.update().finally(() => {
@@ -92,7 +94,7 @@ $config.update().finally(() => {
   // Assign helpers to VueJS prototype.
   app.config.globalProperties.$event = $event;
   app.config.globalProperties.$notify = $notify;
-  app.config.globalProperties.$modal = $modal;
+  app.config.globalProperties.$view = $view;
   app.config.globalProperties.$session = $session;
   app.config.globalProperties.$api = $api;
   app.config.globalProperties.$log = $log;
@@ -214,7 +216,7 @@ $config.update().finally(() => {
   });
 
   router.beforeEach((to) => {
-    if ($modal.active()) {
+    if ($view.preventNavigation) {
       // Disable navigation when a fullscreen dialog or viewer is open.
       return false;
     } else if (to.matched.some((record) => record.meta.settings) && $config.values.disable.settings) {

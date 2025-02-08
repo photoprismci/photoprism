@@ -1,6 +1,14 @@
 <template>
   <div class="p-page p-page-discover">
-    <v-tabs v-model="active" elevation="0" grow class="bg-transparent" bg-color="secondary" slider-color="surface-variant" :height="$vuetify.display.smAndDown ? 48 : 64">
+    <v-tabs
+      v-model="active"
+      elevation="0"
+      grow
+      class="bg-transparent"
+      bg-color="secondary"
+      slider-color="surface-variant"
+      :height="$vuetify.display.smAndDown ? 48 : 64"
+    >
       <v-tab id="tab-discover-colors" ripple @click="changePath('/discover')">
         {{ $gettext(`Colors`) }}
       </v-tab>
@@ -56,6 +64,12 @@ export default {
       readonly: this.$config.get("readonly"),
       active: this.tab,
     };
+  },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
   },
   methods: {
     changePath: function (path) {

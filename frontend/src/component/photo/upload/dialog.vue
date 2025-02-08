@@ -173,10 +173,9 @@ export default {
     },
   },
   watch: {
-    show: function (show) {
-      if (show) {
-        // Disable the browser scrollbar.
-        this.$modal.enter();
+    show: function (visible) {
+      if (visible) {
+        this.$view.enter(this);
         this.reset();
         this.isDemo = this.$config.get("demo");
         this.fileLimit = this.isDemo ? 3 : 0;
@@ -195,7 +194,7 @@ export default {
       } else {
         this.reset();
         // Re-enable the browser scrollbar.
-        this.$modal.leave();
+        this.$view.leave(this);
       }
     },
   },

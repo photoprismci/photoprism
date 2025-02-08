@@ -156,6 +156,12 @@ export default {
       }
     },
   },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
+  },
   created() {
     if (!this.tabs || this.tabs.length === 0) {
       this.$router.push({ name: "albums" });

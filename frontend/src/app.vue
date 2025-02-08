@@ -55,6 +55,9 @@ export default {
     this.subscriptions["view.refresh"] = Event.subscribe("view.refresh", (ev, data) => this.onRefresh(data));
     this.$config.setVuetify(this.$vuetify);
   },
+  mounted() {
+    this.$view.enter(this);
+  },
   unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
@@ -72,7 +75,7 @@ export default {
       this.touchStart = ev.touches[0].pageY;
     },
     onTouchMove(ev) {
-      if (!this.touchStart || this.$modal.active()) {
+      if (!this.touchStart /* || this.$view.isDialog() */) {
         return;
       }
 

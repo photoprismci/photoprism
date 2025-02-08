@@ -324,10 +324,13 @@ export default {
     };
   },
   watch: {
-    show: function (show) {
-      if (show) {
+    show: function (visible) {
+      if (visible) {
+        this.$view.enter(this);
         this.reset();
         this.find();
+      } else {
+        this.$view.leave(this);
       }
     },
   },

@@ -1,4 +1,4 @@
-/* Photo/Video Viewer Styles */
+/* Media Viewer Styles */
 
 .p-viewer {
     position: fixed;
@@ -62,7 +62,7 @@
     background: #1e1e1e;
 }
 
-/* Image and Video Content */
+/* Media Content */
 
 .pswp__content {
     display: flex;
@@ -90,7 +90,7 @@
     display: none;
 }
 
-/* Dynamic Content Captions */
+/* Dynamic Captions */
 
 .pswp__dynamic-caption {
     position: absolute;
@@ -200,7 +200,7 @@
     white-space: pre-wrap;
 }
 
-/* Top Bar Button and Toggle Controls */
+/* Top Bar Controls */
 
 .pswp__top-bar {
     align-items: center;
@@ -240,14 +240,14 @@
     height: 20px;
 }
 
-/* Zoom Button Control */
+/* Zoom Toggle */
 
 .p-viewer__container > .is-playable .pswp__button.pswp__button--zoom,
 .p-viewer__container > .p-viewer__lightbox.slideshow-active .pswp__button.pswp__button--zoom {
     display: none;
 }
 
-/* Slideshow Toggle Control and Animation */
+/* Slideshow Toggle and Animation */
 
 .p-viewer__container > .p-viewer__lightbox.slideshow-active .pswp__button--slideshow-toggle .pswp__icn-slideshow-off {
     display: none;
@@ -261,7 +261,7 @@
     transition: transform .8s ease-in-out;
 }
 
-/* Fullscreen Toggle Control */
+/* Fullscreen Toggle */
 
 .p-viewer__container > .p-viewer__lightbox.is-fullscreen .pswp__button--fullscreen-toggle .pswp__icn-fullscreen-off {
     display: none;
@@ -271,7 +271,7 @@
     display: none;
 }
 
-/* Favorite/Dislike Toggle Control */
+/* Favorite/Dislike Toggle */
 
 .p-viewer__container > .p-viewer__lightbox.is-favorite .pswp__button--favorite-toggle .pswp__icn-favorite-off {
     display: none;
@@ -281,7 +281,7 @@
     display: none;
 }
 
-/* Sound Mute/Unmute Toggle Control */
+/* Sound Mute/Unmute Toggle */
 
 .p-viewer__container > .p-viewer__lightbox:not(.is-playable) .pswp__button--sound-toggle {
     display: none;
@@ -295,7 +295,7 @@
     display: none;
 }
 
-/* Selection Toggle Control */
+/* Selection Toggle */
 
 .p-viewer__container > .p-viewer__lightbox.is-selected .pswp__button--select-toggle .pswp__icn-select-off {
     display: none;
@@ -305,11 +305,11 @@
     display: none;
 }
 
-/* Navigation Arrow Controls */
+/* Navigation Arrow Buttons */
 
 .pswp__button--arrow {
-    height: 220px;
-    margin-top: -110px;
+    height: 40vh;
+    margin-top: -20vh;
     width: 150px;
     max-width: 16vw;
 }
@@ -322,8 +322,14 @@
     max-width: 16vw;
 }
 
-.p-viewer__container > .is-playable:not(.slideshow-active) .pswp--touch .pswp__button--arrow {
+/* Allow navigation buttons on touch devices to be used without being visible. */
+
+.p-viewer__container > .p-viewer__lightbox > .pswp--touch .pswp__button--arrow {
     visibility: visible;
+}
+
+.p-viewer__container > .p-viewer__lightbox > .pswp--touch .pswp__button--arrow .pswp__icn {
+    display: none;
 }
 
 /* Other / Unused Styles */

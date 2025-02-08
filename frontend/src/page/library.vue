@@ -141,6 +141,12 @@ export default {
       this.$router.push({ name: "albums" });
     }
   },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
+  },
   methods: {
     changePath: function (path) {
       if (this.$route.path !== path) {

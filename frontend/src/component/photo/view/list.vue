@@ -65,8 +65,8 @@
                     v-else
                     :style="`background-image: url(${m.thumbnailUrl('tile_224')})`"
                     class="preview"
-                    @touchstart="onMouseDown($event, index)"
-                    @touchend.stop.prevent="onClick($event, index)"
+                    @touchstart.passive="onMouseDown($event, index)"
+                    @touchend.stop="onClick($event, index)"
                     @mousedown="onMouseDown($event, index)"
                     @contextmenu.stop="onContextMenu($event, index)"
                     @click.stop.prevent="onClick($event, index)"

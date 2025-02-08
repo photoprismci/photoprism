@@ -132,6 +132,12 @@ export default {
       rtl: this.$rtl,
     };
   },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
+  },
   methods: {
     send() {
       if (this.$refs.form.validate()) {

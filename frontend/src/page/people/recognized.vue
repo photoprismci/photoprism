@@ -116,7 +116,7 @@
               aspect-ratio="1"
               class="preview not-selectable"
               @touchstart.passive="input.touchStart($event, index)"
-              @touchend.stop.prevent="onClick($event, index)"
+              @touchend.stop="onClick($event, index)"
               @mousedown.stop.prevent="input.mouseDown($event, index)"
               @click.stop.prevent="onClick($event, index)"
             >
@@ -128,8 +128,8 @@
                 variant="text"
                 density="comfortable"
                 position="absolute"
-                @touchstart.stop.prevent="input.touchStart($event, index)"
-                @touchend.stop.prevent="onToggleHidden($event, index)"
+                @touchstart.stop="input.touchStart($event, index)"
+                @touchend.stop="onToggleHidden($event, index)"
                 @touchmove.stop.prevent
                 @click.stop.prevent="onToggleHidden($event, index)"
               >
@@ -142,8 +142,8 @@
                 variant="text"
                 position="absolute"
                 class="input-select"
-                @touchstart.stop.prevent="input.touchStart($event, index)"
-                @touchend.stop.prevent="onSelect($event, index)"
+                @touchstart.stop="input.touchStart($event, index)"
+                @touchend.stop="onSelect($event, index)"
                 @touchmove.stop.prevent
                 @click.stop.prevent="onSelect($event, index)"
               >
@@ -157,8 +157,8 @@
                 variant="text"
                 position="absolute"
                 class="input-favorite"
-                @touchstart.stop.prevent="input.touchStart($event, index)"
-                @touchend.stop.prevent="toggleLike($event, index)"
+                @touchstart.stop="input.touchStart($event, index)"
+                @touchend.stop="toggleLike($event, index)"
                 @touchmove.stop.prevent
                 @click.stop.prevent="toggleLike($event, index)"
               >

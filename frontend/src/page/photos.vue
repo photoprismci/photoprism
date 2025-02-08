@@ -255,10 +255,14 @@ export default {
     this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
     this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
   },
+  mounted() {
+    this.$view.enter(this);
+  },
   unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }
+    this.$view.leave(this);
   },
   methods: {
     hideExpansionPanel() {
@@ -440,7 +444,7 @@ export default {
       return true;
     },
     loadMore() {
-      if (this.scrollDisabled || this.$modal.active()) return;
+      if (this.scrollDisabled || this.$view.isHidden(this)) return;
 
       this.scrollDisabled = true;
       this.listen = false;

@@ -174,17 +174,15 @@ export default {
     },
   },
   watch: {
-    show: function (show) {
-      if (show) {
-        // Disable the browser scrollbar.
-        this.$modal.enter();
+    show: function (visible) {
+      if (visible) {
+        this.$view.enter(this);
         if (this.tab) {
           this.active = this.tab;
         }
         this.find(this.index);
       } else {
-        // Re-enable the browser scrollbar.
-        this.$modal.leave();
+        this.$view.leave(this);
       }
     },
   },

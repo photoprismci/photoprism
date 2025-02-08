@@ -220,7 +220,7 @@
               :style="`background-image: url(${album.thumbnailUrl('tile_500')})`"
               class="preview"
               @touchstart.passive="input.touchStart($event, index)"
-              @touchend.stop.prevent="onClick($event, index)"
+              @touchend.stop="onClick($event, index)"
               @mousedown.stop.prevent="input.mouseDown($event, index)"
               @click.stop.prevent="onClick($event, index)"
             >
@@ -228,8 +228,8 @@
               <button
                 v-if="canShare && album.LinkCount > 0"
                 class="action-share"
-                @touchstart.stop.prevent="input.touchStart($event, index)"
-                @touchend.stop.prevent="onShare($event, index)"
+                @touchstart.stop="input.touchStart($event, index)"
+                @touchend.stop="onShare($event, index)"
                 @touchmove.stop.prevent
                 @click.stop.prevent="onShare($event, index)"
               >
@@ -237,8 +237,8 @@
               </button>
               <button
                 class="input-select"
-                @touchstart.stop.prevent="input.touchStart($event, index)"
-                @touchend.stop.prevent="onSelect($event, index)"
+                @touchstart.stop="input.touchStart($event, index)"
+                @touchend.stop="onSelect($event, index)"
                 @touchmove.stop.prevent
                 @click.stop.prevent="onSelect($event, index)"
               >
@@ -247,8 +247,8 @@
               </button>
               <button
                 class="input-favorite"
-                @touchstart.stop.prevent="input.touchStart($event, index)"
-                @touchend.stop.prevent="toggleLike($event, index)"
+                @touchstart.stop="input.touchStart($event, index)"
+                @touchend.stop="toggleLike($event, index)"
                 @touchmove.stop.prevent
                 @click.stop.prevent="toggleLike($event, index)"
               >
@@ -258,8 +258,8 @@
               <button
                 v-if="canManage && experimental && featPrivate && album.Private"
                 class="input-private"
-                @touchstart.stop.prevent="input.touchStart($event, index)"
-                @touchend.stop.prevent="onEdit($event, index)"
+                @touchstart.stop="input.touchStart($event, index)"
+                @touchend.stop="onEdit($event, index)"
                 @touchmove.stop.prevent
                 @click.stop.prevent="onEdit($event, index)"
               >
@@ -502,6 +502,12 @@ export default {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }
+  },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
   },
   methods: {
     toggleExpansionPanel() {

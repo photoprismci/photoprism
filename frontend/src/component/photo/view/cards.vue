@@ -110,8 +110,8 @@
             :style="`background-image: url(${m.thumbnailUrl('tile_500')})`"
             class="preview"
             @touchstart.passive="input.touchStart($event, index)"
-            @touchend.stop.prevent="onClick($event, index)"
-            @mousedown.stop.prevent="input.mouseDown($event, index)"
+            @touchend.stop="onClick($event, index)"
+            @mousedown.stop="input.mouseDown($event, index)"
             @click.stop.prevent="onClick($event, index)"
             @mouseover="playLive(m)"
             @mouseleave="pauseLive(m)"
@@ -126,9 +126,9 @@
             <button
               v-if="m.Type !== 'image' || m.isStack()"
               class="input-open"
-              @touchstart.stop.prevent="input.touchStart($event, index)"
-              @touchend.stop.prevent="onOpen($event, index, !isSharedView, m.Type === 'live')"
-              @touchmove.stop.prevent
+              @touchstart.stop="input.touchStart($event, index)"
+              @touchend.stop="onOpen($event, index, !isSharedView, m.Type === 'live')"
+              @touchmove.stop
               @click.stop.prevent="onOpen($event, index, !isSharedView, m.Type === 'live')"
             >
               <i v-if="m.Type === 'raw'" class="action-raw mdi mdi-raw" :title="$gettext('RAW')" />
@@ -147,9 +147,9 @@
               v-if="m.Type === 'image' && selectMode"
               class="input-view"
               :title="$gettext('View')"
-              @touchstart.stop.prevent="input.touchStart($event, index)"
-              @touchend.stop.prevent="onOpen($event, index)"
-              @touchmove.stop.prevent
+              @touchstart.stop="input.touchStart($event, index)"
+              @touchend.stop="onOpen($event, index)"
+              @touchmove.stop
               @click.stop.prevent="onOpen($event, index)"
             >
               <i class="mdi mdi-magnify-plus-outline" />
@@ -172,9 +172,9 @@
             -->
             <button
               class="input-select"
-              @touchstart.stop.prevent="input.touchStart($event, index)"
-              @touchend.stop.prevent="onSelect($event, index)"
-              @touchmove.stop.prevent
+              @touchstart.stop="input.touchStart($event, index)"
+              @touchend.stop="onSelect($event, index)"
+              @touchmove.stop
               @click.stop.prevent="onSelect($event, index)"
             >
               <i class="mdi mdi-check-circle select-on" />
@@ -184,9 +184,9 @@
             <button
               v-if="!isSharedView"
               class="input-favorite"
-              @touchstart.stop.prevent="input.touchStart($event, index)"
-              @touchend.stop.prevent="toggleLike($event, index)"
-              @touchmove.stop.prevent
+              @touchstart.stop="input.touchStart($event, index)"
+              @touchend.stop="toggleLike($event, index)"
+              @touchmove.stop
               @click.stop.prevent="toggleLike($event, index)"
             >
               <i v-if="m.Favorite" class="mdi mdi-star text-favorite favorite-on" />

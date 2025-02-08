@@ -91,11 +91,14 @@ export default {
     };
   },
   watch: {
-    show: function (show) {
-      if (show) {
+    show: function (visible) {
+      if (visible) {
+        this.$view.enter(this);
         this.loading = false;
         this.showPassword = false;
         this.model = new Service();
+      } else {
+        this.$view.leave(this);
       }
     },
   },
