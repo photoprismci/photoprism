@@ -91,18 +91,25 @@ export class View {
     const name = c?.$options?.name ? c.$options.name : "";
 
     let hideOverflow = false;
+    let hideScrollbar = hideScrollbarDefault;
     let preventNavigation = uid > 0 && !name.startsWith("PPage");
-    let hideScrollbar = this.scopes.length > 1 || hideScrollbarDefault;
+    let disableNavigationGestures = false;
 
     switch (name) {
       case "PPageLogin":
         hideOverflow = window.$isMobile;
         break;
-      case "PLightbox":
       case "PPhotoEditDialog":
       case "PPhotoUploadDialog":
-        preventNavigation = true;
         hideOverflow = true;
+        hideScrollbar = true;
+        preventNavigation = true;
+        break;
+      case "PLightbox":
+        hideOverflow = true;
+        hideScrollbar = true;
+        preventNavigation = true;
+        disableNavigationGestures = true;
         break;
     }
 
@@ -118,14 +125,14 @@ export class View {
       }
     }
 
-    if (preventNavigation) {
-      if (!bodyEl.classList.contains("prevent-navigation")) {
-        bodyEl.classList.add("prevent-navigation");
+    if (disableNavigationGestures) {
+      if (!bodyEl.classList.contains("disable-navigation-gestures")) {
+        bodyEl.classList.add("disable-navigation-gestures");
         document.addEventListener(TouchStartEvent, preventNavigationTouchEvent, { passive: false });
         document.addEventListener(TouchMoveEvent, preventNavigationTouchEvent, { passive: false });
       }
-    } else if (bodyEl.classList.contains("prevent-navigation")) {
-      bodyEl.classList.remove("prevent-navigation");
+    } else if (bodyEl.classList.contains("disable-navigation-gestures")) {
+      bodyEl.classList.remove("disable-navigation-gestures");
       document.removeEventListener(TouchStartEvent, preventNavigationTouchEvent, false);
       document.removeEventListener(TouchMoveEvent, preventNavigationTouchEvent, false);
     }
