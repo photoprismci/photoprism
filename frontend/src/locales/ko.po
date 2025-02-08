@@ -1135,8 +1135,8 @@ msgstr "인증코드를 입력하세요"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "작업을 확인하고 계속하려면 비밀번호를 입력하세요."
 
-#: src/page/connect.vue:49 src/component/lightbox.vue:104 src/page/connect.vue:53
-#: src/page/library/errors.vue:197
+#: src/page/connect.vue:49 src/component/lightbox.vue:104
+#: src/page/connect.vue:53 src/page/library/errors.vue:197
 msgid "Error"
 msgstr "오류"
 

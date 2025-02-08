@@ -1132,8 +1132,8 @@ msgstr "Nhập mã xác nhận"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Nhập mật khẩu của bạn để xác nhận hành động và tiếp tục:"
 
-#: src/page/connect.vue:49 src/component/lightbox.vue:104 src/page/connect.vue:53
-#: src/page/library/errors.vue:197
+#: src/page/connect.vue:49 src/component/lightbox.vue:104
+#: src/page/connect.vue:53 src/page/library/errors.vue:197
 msgid "Error"
 msgstr "Lỗi"
 

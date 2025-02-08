@@ -1135,8 +1135,8 @@ msgstr "輸入驗證碼"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "輸入您的密碼以確認操作並繼續："
 
-#: src/page/connect.vue:49 src/component/lightbox.vue:104 src/page/connect.vue:53
-#: src/page/library/errors.vue:197
+#: src/page/connect.vue:49 src/component/lightbox.vue:104
+#: src/page/connect.vue:53 src/page/library/errors.vue:197
 msgid "Error"
 msgstr "錯誤"
 

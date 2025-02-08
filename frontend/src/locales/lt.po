@@ -1135,8 +1135,8 @@ msgstr "Įveskite patvirtinimo kodą"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Įveskite slaptažodį, kad patvirtintumėte veiksmą ir tęstumėte:"
 
-#: src/page/connect.vue:49 src/component/lightbox.vue:104 src/page/connect.vue:53
-#: src/page/library/errors.vue:197
+#: src/page/connect.vue:49 src/component/lightbox.vue:104
+#: src/page/connect.vue:53 src/page/library/errors.vue:197
 msgid "Error"
 msgstr "Klaida"
 
