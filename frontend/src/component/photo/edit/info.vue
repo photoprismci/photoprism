@@ -324,7 +324,7 @@
 
 <script>
 import Thumb from "model/thumb";
-import { DateTime, Info } from "luxon";
+import { DateTime } from "luxon";
 import * as options from "options/options";
 import { $gettext, T } from "common/gettext";
 import Util from "common/util";
