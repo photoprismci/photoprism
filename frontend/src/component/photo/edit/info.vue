@@ -402,7 +402,7 @@ export default {
       this.$emit("close");
     },
     openPhoto() {
-      this.$root.$refs.viewer.showThumbs(Thumb.fromFiles([this.view.model]), 0);
+      this.$root.$refs.lightbox.showThumbs(Thumb.fromFiles([this.view.model]), 0);
     },
     albumUrl(m) {
       if (!m) {

@@ -98,7 +98,7 @@ export class View {
       case "PPageLogin":
         hideOverflow = window.$isMobile;
         break;
-      case "PViewer":
+      case "PLightbox":
       case "PPhotoEditDialog":
       case "PPhotoUploadDialog":
         preventNavigation = true;

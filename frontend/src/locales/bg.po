@@ -689,7 +689,7 @@ msgstr "Удостоверения на клиента"
 #: src/component/settings/passcode.vue:452
 #: src/component/settings/passcode.vue:493
 #: src/component/settings/webdav.vue:130 src/component/share/dialog.vue:228
-#: src/component/update.vue:53 src/component/viewer.vue:100 src/locales.js:22
+#: src/component/update.vue:53 src/component/lightbox.vue:100 src/locales.js:22
 #: src/page/library/errors.vue:267
 msgid "Close"
 msgstr "Затвори"
@@ -1012,7 +1012,7 @@ msgstr "Изпълнено."
 #: src/component/album/clipboard.vue:72 src/component/album/toolbar.vue:120
 #: src/component/file/clipboard.vue:48 src/component/people/clipboard.vue:47
 #: src/component/photo/clipboard.vue:116 src/component/photo/edit/files.vue:166
-#: src/component/viewer.vue:644 src/page/settings/general.vue:252
+#: src/component/lightbox.vue:644 src/page/settings/general.vue:252
 #: src/page/settings/general.vue:624
 msgid "Download"
 msgstr "Изтегляне"
@@ -1034,7 +1034,7 @@ msgstr "Изтеглете единични файлове и архиви zip."
 #: src/component/people/clipboard.vue:59 src/component/photo/clipboard.vue:217
 #: src/component/photo/edit/files.vue:122
 #: src/component/photo/view/cards.vue:163 src/component/photo/view/list.vue:133
-#: src/component/viewer.vue:1208 src/page/library/browse.vue:113
+#: src/component/lightbox.vue:1208 src/page/library/browse.vue:113
 msgid "Downloading…"
 msgstr "Изтегляне…"
 
@@ -1071,7 +1071,7 @@ msgid "E-Mail"
 msgstr "Електронна поща"
 
 #: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:82
-#: src/component/photo/clipboard.vue:90 src/component/viewer.vue:626
+#: src/component/photo/clipboard.vue:90 src/component/lightbox.vue:626
 #: src/page/settings/general.vue:324
 msgid "Edit"
 msgstr "Редактиране на"
@@ -1135,7 +1135,7 @@ msgstr "Въведете код за верификация"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Въведете паролата си, за да потвърдите действието и продължете:"
 
-#: src/page/connect.vue:49 src/component/viewer.vue:104 src/page/connect.vue:53
+#: src/page/connect.vue:49 src/component/lightbox.vue:104 src/page/connect.vue:53
 #: src/page/library/errors.vue:197
 msgid "Error"
 msgstr "Грешка"
@@ -1330,7 +1330,7 @@ msgstr "Рамки"
 msgid "Full Access"
 msgstr "Пълен достъп"
 
-#: src/component/viewer.vue:577
+#: src/component/lightbox.vue:577
 msgid "Fullscreen"
 msgstr "Пълен екран"
 
@@ -1656,7 +1656,7 @@ msgstr "Библиотека"
 msgid "License"
 msgstr "Лиценз"
 
-#: src/component/viewer.vue:594
+#: src/component/lightbox.vue:594
 msgid "Like"
 msgstr "Като"
 
@@ -1849,7 +1849,7 @@ msgstr "Преместване на файлове"
 msgid "Must have at least %{n} characters."
 msgstr "Най-малко 6 символа."
 
-#: src/component/viewer.vue:546
+#: src/component/lightbox.vue:546
 msgid "Mute"
 msgstr "Заглушаване на звука"
 
@@ -1895,7 +1895,7 @@ msgstr "Нова парола"
 msgid "Newest First"
 msgstr "Най-новият първи"
 
-#: src/component/viewer.vue:103 src/locales.js:112
+#: src/component/lightbox.vue:103 src/locales.js:112
 msgid "Next"
 msgstr "Следваща"
 
@@ -1942,7 +1942,7 @@ msgid "No people found"
 msgstr "Не са намерени хора"
 
 #: src/component/photo/view/cards.vue:112 src/component/photo/view/list.vue:82
-#: src/component/photo/view/mosaic.vue:71 src/component/viewer.vue:162
+#: src/component/photo/view/mosaic.vue:71 src/component/lightbox.vue:162
 #: src/page/album/photos.vue:438 src/page/library/browse.vue:125
 #: src/page/photos.vue:579 src/page/places.vue:448 src/page/places.vue:535
 msgid "No pictures found"
@@ -2288,7 +2288,7 @@ msgstr "Преглед"
 msgid "Preview Images"
 msgstr "Предварителни изображения"
 
-#: src/component/viewer.vue:102 src/locales.js:113
+#: src/component/lightbox.vue:102 src/locales.js:113
 msgid "Previous"
 msgstr "Предишна"
 
@@ -2540,7 +2540,7 @@ msgstr "Тайната"
 msgid "Security and Access"
 msgstr "Сигурност и достъп"
 
-#: src/component/viewer.vue:610
+#: src/component/lightbox.vue:610
 msgid "Select"
 msgstr "Изберете"
 
@@ -2666,7 +2666,7 @@ msgstr "Покажи повече"
 msgid "Show server logs in Library."
 msgstr "Показване на дневниците на сървъра в Библиотеката."
 
-#: src/component/viewer.vue:528
+#: src/component/lightbox.vue:528
 msgid "Show/Hide Sidebar"
 msgstr "Показване/скриване на страничната лента"
 
@@ -2750,7 +2750,7 @@ msgstr "Stacks"
 msgid "Start"
 msgstr "Начало"
 
-#: src/component/viewer.vue:561
+#: src/component/lightbox.vue:561
 msgid "Start/Stop Slideshow"
 msgstr "Стартиране/спиране на слайдшоу"
 
@@ -3301,7 +3301,7 @@ msgstr "Вашата постоянна подкрепа ни помага да 
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Библиотеката ви се анализира непрекъснато, за да се създават автоматично албуми със специални моменти, пътувания и места."
 
-#: src/component/viewer.vue:101
+#: src/component/lightbox.vue:101
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
 

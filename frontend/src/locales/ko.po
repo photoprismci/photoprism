@@ -689,7 +689,7 @@ msgstr "클라이언트 자격 증명"
 #: src/component/settings/passcode.vue:452
 #: src/component/settings/passcode.vue:493
 #: src/component/settings/webdav.vue:130 src/component/share/dialog.vue:228
-#: src/component/update.vue:53 src/component/viewer.vue:100 src/locales.js:22
+#: src/component/update.vue:53 src/component/lightbox.vue:100 src/locales.js:22
 #: src/page/library/errors.vue:267
 msgid "Close"
 msgstr "닫기"
@@ -1012,7 +1012,7 @@ msgstr "완료."
 #: src/component/album/clipboard.vue:72 src/component/album/toolbar.vue:120
 #: src/component/file/clipboard.vue:48 src/component/people/clipboard.vue:47
 #: src/component/photo/clipboard.vue:116 src/component/photo/edit/files.vue:166
-#: src/component/viewer.vue:644 src/page/settings/general.vue:252
+#: src/component/lightbox.vue:644 src/page/settings/general.vue:252
 #: src/page/settings/general.vue:624
 msgid "Download"
 msgstr "다운로드"
@@ -1034,7 +1034,7 @@ msgstr "단일 파일 및 ZIP 아카이브 다운로드하기."
 #: src/component/people/clipboard.vue:59 src/component/photo/clipboard.vue:217
 #: src/component/photo/edit/files.vue:122
 #: src/component/photo/view/cards.vue:163 src/component/photo/view/list.vue:133
-#: src/component/viewer.vue:1208 src/page/library/browse.vue:113
+#: src/component/lightbox.vue:1208 src/page/library/browse.vue:113
 msgid "Downloading…"
 msgstr "다운로드 중…"
 
@@ -1071,7 +1071,7 @@ msgid "E-Mail"
 msgstr "이메일"
 
 #: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:82
-#: src/component/photo/clipboard.vue:90 src/component/viewer.vue:626
+#: src/component/photo/clipboard.vue:90 src/component/lightbox.vue:626
 #: src/page/settings/general.vue:324
 msgid "Edit"
 msgstr "편집"
@@ -1135,7 +1135,7 @@ msgstr "인증코드를 입력하세요"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "작업을 확인하고 계속하려면 비밀번호를 입력하세요."
 
-#: src/page/connect.vue:49 src/component/viewer.vue:104 src/page/connect.vue:53
+#: src/page/connect.vue:49 src/component/lightbox.vue:104 src/page/connect.vue:53
 #: src/page/library/errors.vue:197
 msgid "Error"
 msgstr "오류"
@@ -1330,7 +1330,7 @@ msgstr "프레임"
 msgid "Full Access"
 msgstr "전체 권한"
 
-#: src/component/viewer.vue:577
+#: src/component/lightbox.vue:577
 msgid "Fullscreen"
 msgstr "전체 화면"
 
@@ -1656,7 +1656,7 @@ msgstr "라이브러리"
 msgid "License"
 msgstr "라이센스"
 
-#: src/component/viewer.vue:594
+#: src/component/lightbox.vue:594
 msgid "Like"
 msgstr "좋아요"
 
@@ -1849,7 +1849,7 @@ msgstr "파일 이동하기"
 msgid "Must have at least %{n} characters."
 msgstr "8자 이상이어야 합니다."
 
-#: src/component/viewer.vue:546
+#: src/component/lightbox.vue:546
 msgid "Mute"
 msgstr "음소거"
 
@@ -1895,7 +1895,7 @@ msgstr "새로운 비밀번호"
 msgid "Newest First"
 msgstr "최신 순"
 
-#: src/component/viewer.vue:103 src/locales.js:112
+#: src/component/lightbox.vue:103 src/locales.js:112
 msgid "Next"
 msgstr "다음"
 
@@ -1942,7 +1942,7 @@ msgid "No people found"
 msgstr "사람이 없습니다"
 
 #: src/component/photo/view/cards.vue:112 src/component/photo/view/list.vue:82
-#: src/component/photo/view/mosaic.vue:71 src/component/viewer.vue:162
+#: src/component/photo/view/mosaic.vue:71 src/component/lightbox.vue:162
 #: src/page/album/photos.vue:438 src/page/library/browse.vue:125
 #: src/page/photos.vue:579 src/page/places.vue:448 src/page/places.vue:535
 msgid "No pictures found"
@@ -2288,7 +2288,7 @@ msgstr "미리보기"
 msgid "Preview Images"
 msgstr "이미지 미리보기"
 
-#: src/component/viewer.vue:102 src/locales.js:113
+#: src/component/lightbox.vue:102 src/locales.js:113
 msgid "Previous"
 msgstr "이전 게시물"
 
@@ -2540,7 +2540,7 @@ msgstr "비밀"
 msgid "Security and Access"
 msgstr "보안 및 액세스"
 
-#: src/component/viewer.vue:610
+#: src/component/lightbox.vue:610
 msgid "Select"
 msgstr "선택"
 
@@ -2666,7 +2666,7 @@ msgstr "더 보여"
 msgid "Show server logs in Library."
 msgstr "라이브러리에 서버 로그를 표시합니다."
 
-#: src/component/viewer.vue:528
+#: src/component/lightbox.vue:528
 msgid "Show/Hide Sidebar"
 msgstr "사이드바 표시/숨기기"
 
@@ -2750,7 +2750,7 @@ msgstr "스택"
 msgid "Start"
 msgstr "시작"
 
-#: src/component/viewer.vue:561
+#: src/component/lightbox.vue:561
 msgid "Start/Stop Slideshow"
 msgstr "슬라이드쇼 시작/중지"
 
@@ -3301,7 +3301,7 @@ msgstr "귀하의 지속적인 지원은 정기적인 업데이트를 제공하�
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행 및 장소의 앨범을 자동으로 생성합니다."
 
-#: src/component/viewer.vue:101
+#: src/component/lightbox.vue:101
 msgid "Zoom in/out"
 msgstr "확대/축소"
 

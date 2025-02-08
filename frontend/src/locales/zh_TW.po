@@ -689,7 +689,7 @@ msgstr "个人"
 #: src/component/settings/passcode.vue:452
 #: src/component/settings/passcode.vue:493
 #: src/component/settings/webdav.vue:130 src/component/share/dialog.vue:228
-#: src/component/update.vue:53 src/component/viewer.vue:100 src/locales.js:22
+#: src/component/update.vue:53 src/component/lightbox.vue:100 src/locales.js:22
 #: src/page/library/errors.vue:267
 msgid "Close"
 msgstr "關閉"
@@ -1012,7 +1012,7 @@ msgstr "完成。"
 #: src/component/album/clipboard.vue:72 src/component/album/toolbar.vue:120
 #: src/component/file/clipboard.vue:48 src/component/people/clipboard.vue:47
 #: src/component/photo/clipboard.vue:116 src/component/photo/edit/files.vue:166
-#: src/component/viewer.vue:644 src/page/settings/general.vue:252
+#: src/component/lightbox.vue:644 src/page/settings/general.vue:252
 #: src/page/settings/general.vue:624
 msgid "Download"
 msgstr "下載"
@@ -1034,7 +1034,7 @@ msgstr "下載單一檔案以及 zip 壓縮檔。"
 #: src/component/people/clipboard.vue:59 src/component/photo/clipboard.vue:217
 #: src/component/photo/edit/files.vue:122
 #: src/component/photo/view/cards.vue:163 src/component/photo/view/list.vue:133
-#: src/component/viewer.vue:1208 src/page/library/browse.vue:113
+#: src/component/lightbox.vue:1208 src/page/library/browse.vue:113
 msgid "Downloading…"
 msgstr "下載中…"
 
@@ -1071,7 +1071,7 @@ msgid "E-Mail"
 msgstr "電子郵件"
 
 #: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:82
-#: src/component/photo/clipboard.vue:90 src/component/viewer.vue:626
+#: src/component/photo/clipboard.vue:90 src/component/lightbox.vue:626
 #: src/page/settings/general.vue:324
 msgid "Edit"
 msgstr "編輯"
@@ -1135,7 +1135,7 @@ msgstr "輸入驗證碼"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "輸入您的密碼以確認操作並繼續："
 
-#: src/page/connect.vue:49 src/component/viewer.vue:104 src/page/connect.vue:53
+#: src/page/connect.vue:49 src/component/lightbox.vue:104 src/page/connect.vue:53
 #: src/page/library/errors.vue:197
 msgid "Error"
 msgstr "錯誤"
@@ -1330,7 +1330,7 @@ msgstr "框架"
 msgid "Full Access"
 msgstr "完全存取權限"
 
-#: src/component/viewer.vue:577
+#: src/component/lightbox.vue:577
 msgid "Fullscreen"
 msgstr "全螢幕"
 
@@ -1656,7 +1656,7 @@ msgstr "收藏庫"
 msgid "License"
 msgstr "授權"
 
-#: src/component/viewer.vue:594
+#: src/component/lightbox.vue:594
 msgid "Like"
 msgstr "喜歡"
 
@@ -1849,7 +1849,7 @@ msgstr "移動檔案"
 msgid "Must have at least %{n} characters."
 msgstr "必須至少有 %{n} 個字元。"
 
-#: src/component/viewer.vue:546
+#: src/component/lightbox.vue:546
 msgid "Mute"
 msgstr "沉默的"
 
@@ -1895,7 +1895,7 @@ msgstr "新密碼"
 msgid "Newest First"
 msgstr "按最新優先"
 
-#: src/component/viewer.vue:103 src/locales.js:112
+#: src/component/lightbox.vue:103 src/locales.js:112
 msgid "Next"
 msgstr "下一個"
 
@@ -1942,7 +1942,7 @@ msgid "No people found"
 msgstr "找不到人"
 
 #: src/component/photo/view/cards.vue:112 src/component/photo/view/list.vue:82
-#: src/component/photo/view/mosaic.vue:71 src/component/viewer.vue:162
+#: src/component/photo/view/mosaic.vue:71 src/component/lightbox.vue:162
 #: src/page/album/photos.vue:438 src/page/library/browse.vue:125
 #: src/page/photos.vue:579 src/page/places.vue:448 src/page/places.vue:535
 msgid "No pictures found"
@@ -2288,7 +2288,7 @@ msgstr "預覽"
 msgid "Preview Images"
 msgstr "图片预览"
 
-#: src/component/viewer.vue:102 src/locales.js:113
+#: src/component/lightbox.vue:102 src/locales.js:113
 msgid "Previous"
 msgstr "以前的"
 
@@ -2540,7 +2540,7 @@ msgstr "秘密"
 msgid "Security and Access"
 msgstr "安全和存取"
 
-#: src/component/viewer.vue:610
+#: src/component/lightbox.vue:610
 msgid "Select"
 msgstr "選擇"
 
@@ -2666,7 +2666,7 @@ msgstr "顯示更多"
 msgid "Show server logs in Library."
 msgstr "在收藏庫中顯示伺服器日誌。"
 
-#: src/component/viewer.vue:528
+#: src/component/lightbox.vue:528
 msgid "Show/Hide Sidebar"
 msgstr "顯示/隱藏側邊欄"
 
@@ -2750,7 +2750,7 @@ msgstr "堆疊"
 msgid "Start"
 msgstr "開始"
 
-#: src/component/viewer.vue:561
+#: src/component/lightbox.vue:561
 msgid "Start/Stop Slideshow"
 msgstr "開始/停止 幻燈片"
 
@@ -3301,7 +3301,7 @@ msgstr "您的持續支持有助於我們提供定期更新並保持獨立，因
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻、旅行和地點的相簿。"
 
-#: src/component/viewer.vue:101
+#: src/component/lightbox.vue:101
 msgid "Zoom in/out"
 msgstr "縮放"
 

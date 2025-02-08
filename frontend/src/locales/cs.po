@@ -689,7 +689,7 @@ msgstr "Pověření klienta"
 #: src/component/settings/passcode.vue:452
 #: src/component/settings/passcode.vue:493
 #: src/component/settings/webdav.vue:130 src/component/share/dialog.vue:228
-#: src/component/update.vue:53 src/component/viewer.vue:100 src/locales.js:22
+#: src/component/update.vue:53 src/component/lightbox.vue:100 src/locales.js:22
 #: src/page/library/errors.vue:267
 msgid "Close"
 msgstr "Zavřít"
@@ -1012,7 +1012,7 @@ msgstr "Hotovo."
 #: src/component/album/clipboard.vue:72 src/component/album/toolbar.vue:120
 #: src/component/file/clipboard.vue:48 src/component/people/clipboard.vue:47
 #: src/component/photo/clipboard.vue:116 src/component/photo/edit/files.vue:166
-#: src/component/viewer.vue:644 src/page/settings/general.vue:252
+#: src/component/lightbox.vue:644 src/page/settings/general.vue:252
 #: src/page/settings/general.vue:624
 msgid "Download"
 msgstr "Stáhnout"
@@ -1034,7 +1034,7 @@ msgstr "Stáhnout jednotlivé soubory a archivy zip."
 #: src/component/people/clipboard.vue:59 src/component/photo/clipboard.vue:217
 #: src/component/photo/edit/files.vue:122
 #: src/component/photo/view/cards.vue:163 src/component/photo/view/list.vue:133
-#: src/component/viewer.vue:1208 src/page/library/browse.vue:113
+#: src/component/lightbox.vue:1208 src/page/library/browse.vue:113
 msgid "Downloading…"
 msgstr "Stahování…"
 
@@ -1071,7 +1071,7 @@ msgid "E-Mail"
 msgstr "E-Mail"
 
 #: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:82
-#: src/component/photo/clipboard.vue:90 src/component/viewer.vue:626
+#: src/component/photo/clipboard.vue:90 src/component/lightbox.vue:626
 #: src/page/settings/general.vue:324
 msgid "Edit"
 msgstr "Upravit"
@@ -1135,7 +1135,7 @@ msgstr "Vložte ověřovací kód"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Pro potvrzení zadejte své heslo a pokračujte:"
 
-#: src/page/connect.vue:49 src/component/viewer.vue:104 src/page/connect.vue:53
+#: src/page/connect.vue:49 src/component/lightbox.vue:104 src/page/connect.vue:53
 #: src/page/library/errors.vue:197
 msgid "Error"
 msgstr "Chyba"
@@ -1330,7 +1330,7 @@ msgstr "Frames"
 msgid "Full Access"
 msgstr "Volný přístup"
 
-#: src/component/viewer.vue:577
+#: src/component/lightbox.vue:577
 msgid "Fullscreen"
 msgstr "Celá obrazovka"
 
@@ -1656,7 +1656,7 @@ msgstr "Knihovna"
 msgid "License"
 msgstr "Licence"
 
-#: src/component/viewer.vue:594
+#: src/component/lightbox.vue:594
 msgid "Like"
 msgstr "Líbí se mi"
 
@@ -1849,7 +1849,7 @@ msgstr "Přesunout soubory"
 msgid "Must have at least %{n} characters."
 msgstr "Musí mít alespoň %{n} znaků."
 
-#: src/component/viewer.vue:546
+#: src/component/lightbox.vue:546
 msgid "Mute"
 msgstr "Ztlumit"
 
@@ -1895,7 +1895,7 @@ msgstr "Nové heslo"
 msgid "Newest First"
 msgstr "Od nejnovějších"
 
-#: src/component/viewer.vue:103 src/locales.js:112
+#: src/component/lightbox.vue:103 src/locales.js:112
 msgid "Next"
 msgstr "Další"
 
@@ -1942,7 +1942,7 @@ msgid "No people found"
 msgstr "Nenalezeny žádné osoby"
 
 #: src/component/photo/view/cards.vue:112 src/component/photo/view/list.vue:82
-#: src/component/photo/view/mosaic.vue:71 src/component/viewer.vue:162
+#: src/component/photo/view/mosaic.vue:71 src/component/lightbox.vue:162
 #: src/page/album/photos.vue:438 src/page/library/browse.vue:125
 #: src/page/photos.vue:579 src/page/places.vue:448 src/page/places.vue:535
 msgid "No pictures found"
@@ -2288,7 +2288,7 @@ msgstr "Náhled"
 msgid "Preview Images"
 msgstr "Náhled obrázků"
 
-#: src/component/viewer.vue:102 src/locales.js:113
+#: src/component/lightbox.vue:102 src/locales.js:113
 msgid "Previous"
 msgstr "Předchozí"
 
@@ -2540,7 +2540,7 @@ msgstr "Tajemství"
 msgid "Security and Access"
 msgstr "Zabezpečení a přístup"
 
-#: src/component/viewer.vue:610
+#: src/component/lightbox.vue:610
 msgid "Select"
 msgstr "Označit"
 
@@ -2666,7 +2666,7 @@ msgstr "Zobrazit více"
 msgid "Show server logs in Library."
 msgstr "Zobrazit logy serveru v Knihovně."
 
-#: src/component/viewer.vue:528
+#: src/component/lightbox.vue:528
 msgid "Show/Hide Sidebar"
 msgstr "Zobrazit/skrýt postranní panel"
 
@@ -2750,7 +2750,7 @@ msgstr "Stohy"
 msgid "Start"
 msgstr "Spustit"
 
-#: src/component/viewer.vue:561
+#: src/component/lightbox.vue:561
 msgid "Start/Stop Slideshow"
 msgstr "Spustit/Zastavit prezentaci"
 
@@ -3301,7 +3301,7 @@ msgstr "Vaše trvalá podpora nám pomáhá poskytovat pravidelné aktualizace a
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Vaše knihovna je průběžně analyzována a automaticky vytváří alba zvláštních okamžiků, výletů a míst."
 
-#: src/component/viewer.vue:101
+#: src/component/lightbox.vue:101
 msgid "Zoom in/out"
 msgstr "Přiblížit/Oddálit"
 

@@ -24,9 +24,9 @@ test.meta("testID", "components-002").meta({ type: "short", mode: "public" })(
 
     await photoviewer.openPhotoViewer("nth", 0);
 
-    if (await Selector("div.media-viewer-lightbox").visible) {
+    if (await Selector("div.p-lightbox__pswp").visible) {
       await t
-        .expect(Selector("div.media-viewer-lightbox").visible)
+        .expect(Selector("div.p-lightbox__pswp").visible)
         .ok()
         .expect(Selector("img.pswp__img").visible)
         .ok();
@@ -48,7 +48,7 @@ test.meta("testID", "components-003").meta({ type: "short", mode: "public" })(
       .ok()
       .expect(Selector("div.is-photo div.meta").exists)
       .notOk()
-      .expect(Selector("div.media-viewer-lightbox").visible)
+      .expect(Selector("div.p-lightbox__pswp").visible)
       .notOk();
   }
 );
@@ -74,7 +74,7 @@ test.meta("testID", "components-005").meta({ type: "short", mode: "public" })(
       .ok()
       .expect(Selector("div.is-photo div.meta").visible)
       .ok()
-      .expect(Selector("div.media-viewer-lightbox").visible)
+      .expect(Selector("div.p-lightbox__pswp").visible)
       .notOk();
   }
 );

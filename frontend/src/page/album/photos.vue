@@ -131,7 +131,7 @@ export default {
       routeName: routeName,
       collectionRoute: this.$route.meta?.collectionRoute ? this.$route.meta.collectionRoute : "albums",
       loading: true,
-      viewer: {
+      lightbox: {
         results: [],
         loading: false,
         complete: false,
@@ -190,13 +190,13 @@ export default {
     this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
 
     this.subscriptions.push(
-      this.$event.subscribe("viewer.opened", (ev, data) => {
-        this.viewer.open = true;
+      this.$event.subscribe("lightbox.opened", (ev, data) => {
+        this.lightbox.open = true;
       })
     );
     this.subscriptions.push(
-      this.$event.subscribe("viewer.closed", (ev, data) => {
-        this.viewer.open = false;
+      this.$event.subscribe("lightbox.closed", (ev, data) => {
+        this.lightbox.open = false;
       })
     );
 
@@ -280,7 +280,7 @@ export default {
       Event.publish("dialog.edit", { selection, album: this.album, index, tab });
     },
     openPhoto(index, showMerged = false, preferVideo = false) {
-      if (this.loading || !this.listen || this.viewer.loading || !this.results[index]) {
+      if (this.loading || !this.listen || this.lightbox.loading || !this.results[index]) {
         return false;
       }
 
@@ -306,9 +306,9 @@ export default {
        * preferVideo is true, when the user explicitly clicks the live-image-icon.
        */
       if (showMerged) {
-        this.$root.$refs.viewer.showThumbs(Thumb.fromFiles([selected]), 0);
+        this.$root.$refs.lightbox.showThumbs(Thumb.fromFiles([selected]), 0);
       } else {
-        this.$root.$refs.viewer.showContext(this, index);
+        this.$root.$refs.lightbox.showContext(this, index);
       }
 
       return true;
@@ -320,7 +320,7 @@ export default {
       this.listen = false;
 
       if (this.dirty) {
-        this.viewer.dirty = true;
+        this.lightbox.dirty = true;
       }
 
       const count = this.dirty ? (this.page + 2) * this.batchSize : this.batchSize;
@@ -501,8 +501,8 @@ export default {
 
           this.offset = this.batchSize;
           this.results = response.models;
-          this.viewer.results = [];
-          this.viewer.complete = false;
+          this.lightbox.results = [];
+          this.lightbox.complete = false;
           this.complete = response.count < this.batchSize;
           this.scrollDisabled = this.complete;
 
@@ -592,7 +592,7 @@ export default {
           }
         });
 
-      this.viewer.results
+      this.lightbox.results
         .filter((m) => m.UID === entity.UID)
         .forEach((m) => {
           for (let key in entity) {
@@ -641,7 +641,7 @@ export default {
             const uid = data.entities[i];
 
             this.removeResult(this.results, uid);
-            this.removeResult(this.viewer.results, uid);
+            this.removeResult(this.lightbox.results, uid);
             this.$clipboard.removeId(uid);
           }
 

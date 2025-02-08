@@ -7,19 +7,19 @@
     fullscreen
     scrim
     tiled
-    class="p-dialog p-viewer v-dialog--viewer"
+    class="p-dialog p-lightbox v-dialog--lightbox"
   >
-    <div class="p-viewer__underlay"></div>
+    <div class="p-lightbox__underlay"></div>
     <div
       ref="container"
-      class="p-viewer__container"
+      class="p-lightbox__container"
       @click.capture="onContainerClick"
       @pointerdown.capture="onContainerPointerDown"
     >
       <div
         ref="lightbox"
         tabindex="0"
-        class="p-viewer__lightbox"
+        class="p-lightbox__content"
         :class="{
           'sidebar-visible': sidebarVisible,
           'slideshow-active': slideshow.active,
@@ -31,7 +31,7 @@
         }"
         @keydown.space.prevent="onSpace"
       ></div>
-      <div v-if="sidebarVisible" ref="sidebar" class="p-viewer__sidebar">
+      <div v-if="sidebarVisible" ref="sidebar" class="p-lightbox__sidebar">
         <!-- TODO: Create a reusable sidebar component that allows users to view/edit metadata. -->
       </div>
     </div>
@@ -49,7 +49,7 @@ import { Photo } from "model/photo";
 import * as media from "common/media";
 
 export default {
-  name: "PViewer",
+  name: "PLightbox",
   data() {
     const debug = this.$config.get("debug");
     const trace = this.$config.get("trace");
@@ -58,11 +58,11 @@ export default {
       sidebarVisible: false,
       lightbox: null, // Current PhotoSwipe lightbox instance.
       captionPlugin: null, // Current PhotoSwipe caption plugin instance.
-      muted: window.sessionStorage.getItem("viewer.muted") === "true",
+      muted: window.sessionStorage.getItem("lightbox.muted") === "true",
       hasTouch: false,
       shortVideoDuration: 5, // Duration in seconds for videos that are short enough to automatically loop.
-      playControlHideDelay: 1000, // Hide the viewer controls after this time in ms when a video starts playing.
-      defaultControlHideDelay: 5000, // Automatically hide viewer controls this time in ms, TODO: add custom settings.
+      playControlHideDelay: 1000, // Hide the lightbox controls after this time in ms when a video starts playing.
+      defaultControlHideDelay: 5000, // Automatically hide lightbox controls this time in ms, TODO: add custom settings.
       idleTimer: false,
       controlsShown: -1, // -1 or a positive timestamp indicates that the controls are shown (0 means hidden).
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
@@ -100,10 +100,10 @@ export default {
     },
   },
   created() {
-    // this.subscriptions["viewer.change"] = this.$event.subscribe("viewer.change", this.onChange);
-    this.subscriptions["viewer.pause"] = this.$event.subscribe("viewer.pause", this.onPause);
-    // this.subscriptions["viewer.show"] = this.$event.subscribe("viewer.show", this.onShow);
-    this.subscriptions["viewer.close"] = this.$event.subscribe("viewer.close", this.onClose);
+    // this.subscriptions["lightbox.change"] = this.$event.subscribe("lightbox.change", this.onChange);
+    this.subscriptions["lightbox.pause"] = this.$event.subscribe("lightbox.pause", this.onPause);
+    // this.subscriptions["lightbox.show"] = this.$event.subscribe("lightbox.show", this.onShow);
+    this.subscriptions["lightbox.close"] = this.$event.subscribe("lightbox.close", this.onClose);
   },
   beforeUnmount() {
     this.onPause();
@@ -115,13 +115,13 @@ export default {
   },
   methods: {
     // Returns the PhotoSwipe container HTML element, if visible.
-    getLightbox() {
+    getElement() {
       return this.$refs?.lightbox;
     },
     // Returns the PhotoSwipe config options, see https://photoswipe.com/options/.
-    getLightboxOptions() {
+    getOptions() {
       return {
-        appendToEl: this.getLightbox(),
+        appendToEl: this.getElement(),
         pswpModule: PhotoSwipe,
         dataSource: this.models,
         index: this.index,
@@ -142,12 +142,12 @@ export default {
         bgOpacity: 1,
         preload: [1, 1],
         showHideAnimationType: "none",
-        mainClass: "media-viewer-lightbox",
+        mainClass: "p-lightbox__pswp",
         tapAction: (point, ev) => this.onContentTap(ev),
         imageClickAction: (point, ev) => this.onContentClick(ev),
         bgClickAction: (point, ev) => this.onBgClick(ev),
-        paddingFn: (viewport, data) => this.getLightboxPadding(viewport, data),
-        getViewportSizeFn: () => this.getLightboxViewport(),
+        paddingFn: (viewport, data) => this.getPadding(viewport, data),
+        getViewportSizeFn: () => this.getViewport(),
         closeTitle: this.$gettext("Close"),
         zoomTitle: this.$gettext("Zoom in/out"),
         arrowPrevTitle: this.$gettext("Previous"),
@@ -159,7 +159,7 @@ export default {
     showThumbs(models, index = 0) {
       // Check if at least one model was passed, as otherwise no content can be displayed.
       if (!Array.isArray(models) || models.length === 0 || index >= models.length) {
-        console.log("model list passed to viewer is empty:", models);
+        console.log("model list passed to lightbox is empty:", models);
         return;
       }
 
@@ -171,48 +171,48 @@ export default {
     },
     // Loads the pictures that belong to the page context and displays them in the lightbox.
     showContext(ctx, index) {
-      if (ctx.loading || !ctx.listen || ctx.viewer.loading || !ctx.results[index]) {
+      if (ctx.loading || !ctx.listen || ctx.lightbox.loading || !ctx.results[index]) {
         return false;
       }
 
       const selected = ctx.results[index];
 
-      if (!ctx.viewer.dirty && ctx.viewer.results && ctx.viewer.results.length > index) {
-        // Reuse existing viewer result if possible.
+      if (!ctx.lightbox.dirty && ctx.lightbox.results && ctx.lightbox.results.length > index) {
+        // Reuse existing lightbox result if possible.
         let i = -1;
 
-        if (ctx.viewer.results[index] && ctx.viewer.results[index].UID === selected.UID) {
+        if (ctx.lightbox.results[index] && ctx.lightbox.results[index].UID === selected.UID) {
           i = index;
         } else {
-          i = ctx.viewer.results.findIndex((p) => p.UID === selected.UID);
+          i = ctx.lightbox.results.findIndex((p) => p.UID === selected.UID);
         }
 
         if (
           i > -1 &&
-          (((ctx.viewer.complete || ctx.complete) && ctx.viewer.results.length >= ctx.results.length) ||
-            i + ctx.viewer.batchSize <= ctx.viewer.results.length)
+          (((ctx.lightbox.complete || ctx.complete) && ctx.lightbox.results.length >= ctx.results.length) ||
+            i + ctx.lightbox.batchSize <= ctx.lightbox.results.length)
         ) {
-          this.showThumbs(ctx.viewer.results, i);
+          this.showThumbs(ctx.lightbox.results, i);
           return;
         }
       }
 
       // Fetch photos from server API.
-      ctx.viewer.loading = true;
+      ctx.lightbox.loading = true;
 
       const params = ctx.searchParams();
-      params.count = params.offset + ctx.viewer.batchSize;
+      params.count = params.offset + ctx.lightbox.batchSize;
       params.offset = 0;
 
-      // Fetch viewer results from API.
+      // Fetch lightbox results from API.
       return $api
         .get("photos/view", { params })
         .then((response) => {
           const count = response && response.data ? response.data.length : 0;
           if (count === 0) {
             ctx.$notify.warn(ctx.$gettext("No pictures found"));
-            ctx.viewer.dirty = true;
-            ctx.viewer.complete = false;
+            ctx.lightbox.dirty = true;
+            ctx.lightbox.complete = false;
             return;
           }
 
@@ -220,9 +220,9 @@ export default {
           if (response.headers && response.headers["x-count"]) {
             const c = parseInt(response.headers["x-count"]);
             const l = parseInt(response.headers["x-limit"]);
-            ctx.viewer.complete = c < l;
+            ctx.lightbox.complete = c < l;
           } else {
-            ctx.viewer.complete = ctx.complete;
+            ctx.lightbox.complete = ctx.complete;
           }
 
           let i;
@@ -233,19 +233,19 @@ export default {
             i = response.data.findIndex((p) => p.UID === selected.UID);
           }
 
-          ctx.viewer.results = Thumb.wrap(response.data);
+          ctx.lightbox.results = Thumb.wrap(response.data);
 
           // Show pictures.
-          this.showThumbs(ctx.viewer.results, i);
-          ctx.viewer.dirty = false;
+          this.showThumbs(ctx.lightbox.results, i);
+          ctx.lightbox.dirty = false;
         })
         .catch(() => {
-          ctx.viewer.dirty = true;
-          ctx.viewer.complete = false;
+          ctx.lightbox.dirty = true;
+          ctx.lightbox.complete = false;
         })
         .finally(() => {
           // Unblock.
-          ctx.viewer.loading = false;
+          ctx.lightbox.loading = false;
         });
     },
     getItemData(el, i) {
@@ -289,7 +289,7 @@ export default {
         };
       }
 
-      // Return the image data so that PhotoSwipe can render it in the viewer,
+      // Return the image data so that PhotoSwipe can render it in the lightbox,
       // see https://photoswipe.com/data-sources/#dynamically-generated-data.
       return img;
     },
@@ -376,7 +376,7 @@ export default {
         }
       });
 
-      // Add an event listener to automatically hide the viewer controls
+      // Add an event listener to automatically hide the lightbox controls
       // after a video has started playing.
       video.addEventListener("playing", () => {
         if (!video.paused && !video.ended) {
@@ -384,7 +384,7 @@ export default {
         }
       });
 
-      // Add an event listener to automatically hide the viewer controls
+      // Add an event listener to automatically hide the lightbox controls
       // after a video has started playing.
       video.addEventListener("ended", () => {
         if (!this.slideshow.active) {
@@ -422,7 +422,7 @@ export default {
     renderLightbox(models, index = 0) {
       // Check if at least one model was passed, as otherwise no content can be displayed.
       if (!Array.isArray(models) || models.length === 0 || index >= models.length) {
-        console.log("model list passed to viewer is empty:", models);
+        console.log("model list passed to lightbox is empty:", models);
         return;
       }
 
@@ -432,10 +432,10 @@ export default {
       this.index = index;
 
       // Focus lightbox element.
-      this.getLightbox().focus();
+      this.getElement().focus();
 
       // Get PhotoSwipe lightbox config options, see https://photoswipe.com/options/.
-      const options = this.getLightboxOptions();
+      const options = this.getOptions();
 
       // Create PhotoSwipe instance.
       let lightbox = new Lightbox(options);
@@ -465,11 +465,11 @@ export default {
         },
       });
 
-      // Add a close event handler to destroy the viewer after use,
+      // Add a close event handler to destroy the lightbox after use,
       // see https://photoswipe.com/events/#closing-events.
       this.lightbox.on("close", () => {
-        this.$event.publish("viewer.pause");
-        this.$event.publish("viewer.close");
+        this.$event.publish("lightbox.pause");
+        this.$event.publish("lightbox.close");
       });
 
       // Add a custom pointer event handler to prevent the default
@@ -486,7 +486,7 @@ export default {
       // when image size changes
       this.lightbox.on("imageSizeChange", ({ content, width, height, slide }) => {
         if (slide === lightbox.pswp.currSlide) {
-          this.handleZoomLevelChange();
+          this.onZoomLevelChange();
         }
       });
 
@@ -560,7 +560,7 @@ export default {
       this.lightbox.loadAndOpen(index);
 
       // Publish event to be consumed by other components.
-      this.$event.publish("viewer.opened");
+      this.$event.publish("lightbox.opened");
     },
     // Adds PhotoSwipe lightbox controls, see https://photoswipe.com/adding-ui-elements/.
     addLightboxControls() {
@@ -575,7 +575,7 @@ export default {
         if (this.featDevelop && this.canEdit && window.innerWidth > this.mobileBreakpoint) {
           lightbox.pswp.ui.registerElement({
             name: "sidebar-button",
-            className: "pswp__button--sidebar-button pswp__button--mdi", // Sets the icon style/size in viewer.css.
+            className: "pswp__button--sidebar-button pswp__button--mdi", // Sets the icon style/size in lightbox.css.
             ariaLabel: this.$gettext("Show/Hide Sidebar"),
             order: 9,
             isButton: true,
@@ -593,7 +593,7 @@ export default {
         // Add sound mute/unmute control for videos.
         lightbox.pswp.ui.registerElement({
           name: "sound-toggle",
-          className: "pswp__button--sound-toggle pswp__button--mdi", // Sets the icon style/size in viewer.css.
+          className: "pswp__button--sound-toggle pswp__button--mdi", // Sets the icon style/size in lightbox.css.
           ariaLabel: this.$gettext("Mute"),
           order: 10,
           isButton: true,
@@ -608,7 +608,7 @@ export default {
         // Add slideshow play/pause toggle control.
         lightbox.pswp.ui.registerElement({
           name: "slideshow-toggle",
-          className: "pswp__button--slideshow-toggle pswp__button--mdi", // Sets the icon style/size in viewer.css.
+          className: "pswp__button--slideshow-toggle pswp__button--mdi", // Sets the icon style/size in lightbox.css.
           ariaLabel: this.$gettext("Start/Stop Slideshow"),
           order: 10,
           isButton: true,
@@ -624,7 +624,7 @@ export default {
         if (this.canFullscreen) {
           lightbox.pswp.ui.registerElement({
             name: "fullscreen-toggle",
-            className: "pswp__button--fullscreen-toggle pswp__button--mdi", // Sets the icon style/size in viewer.css.
+            className: "pswp__button--fullscreen-toggle pswp__button--mdi", // Sets the icon style/size in lightbox.css.
             ariaLabel: this.$gettext("Fullscreen"),
             order: 10,
             isButton: true,
@@ -641,7 +641,7 @@ export default {
         if (this.canLike) {
           lightbox.pswp.ui.registerElement({
             name: "favorite-toggle",
-            className: "pswp__button--favorite-toggle pswp__button--mdi hidden-shared-only", // Sets the icon style/size in viewer.css.
+            className: "pswp__button--favorite-toggle pswp__button--mdi hidden-shared-only", // Sets the icon style/size in lightbox.css.
             ariaLabel: this.$gettext("Like"),
             order: 10,
             isButton: true,
@@ -657,7 +657,7 @@ export default {
         // Add selection toggle control.
         lightbox.pswp.ui.registerElement({
           name: "select-toggle",
-          className: "pswp__button--select-toggle pswp__button--mdi", // Sets the icon style/size in viewer.css.
+          className: "pswp__button--select-toggle pswp__button--mdi", // Sets the icon style/size in lightbox.css.
           ariaLabel: this.$gettext("Select"),
           order: 10,
           isButton: true,
@@ -673,7 +673,7 @@ export default {
         if (this.canEdit) {
           lightbox.pswp.ui.registerElement({
             name: "edit-button",
-            className: "pswp__button--edit-button pswp__button--mdi hidden-shared-only", // Sets the icon style/size in viewer.css.
+            className: "pswp__button--edit-button pswp__button--mdi hidden-shared-only", // Sets the icon style/size in lightbox.css.
             ariaLabel: this.$gettext("Edit"),
             order: 10,
             isButton: true,
@@ -691,7 +691,7 @@ export default {
         if (this.canDownload) {
           lightbox.pswp.ui.registerElement({
             name: "download-button",
-            className: "pswp__button--download-button pswp__button--mdi", // Sets the icon style/size in viewer.css.
+            className: "pswp__button--download-button pswp__button--mdi", // Sets the icon style/size in lightbox.css.
             ariaLabel: this.$gettext("Download"),
             order: 10,
             isButton: true,
@@ -746,7 +746,7 @@ export default {
       this.visible = true;
 
       // Publish event to be consumed by other components.
-      this.$event.publish("viewer.show");
+      this.$event.publish("lightbox.show");
     },
     // Destroys the PhotoSwipe lightbox, resets the component state, and unhides the browser scrollbar.
     onClose() {
@@ -763,7 +763,7 @@ export default {
       this.hideViewer();
 
       // Publish event to be consumed by other components.
-      this.$event.publish("viewer.closed");
+      this.$event.publish("lightbox.closed");
     },
     // Pauses the lightbox slideshow and any videos that are playing.
     onPause() {
@@ -776,23 +776,23 @@ export default {
       this.resetControls();
       this.resetModels();
     },
-    // Resets the state of the viewer controls.
+    // Resets the state of the lightbox controls.
     resetControls() {
       this.hasTouch = false;
       this.controlsShown = -1;
     },
-    // Reset the viewer models and index.
+    // Reset the lightbox models and index.
     resetModels() {
       this.model = new Thumb();
       this.models = [];
       this.index = 0;
     },
-    // Hides the viewer and restores the scrollbar state.
+    // Hides the lightbox and restores the scrollbar state.
     hideViewer() {
       // Hide sidebar.
       this.hideSidebar();
 
-      // Remove lightbox focus and hide viewer.
+      // Remove lightbox focus and hide lightbox.
       if (this.visible) {
         this.$refs?.lightbox?.blur();
         this.visible = false;
@@ -1018,7 +1018,7 @@ export default {
     },
     // Returns the <video> elements in the lightbox container as an HTMLCollection.
     getVideos() {
-      const el = this.getLightbox();
+      const el = this.getElement();
 
       // Call https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByTagName to find videos.
       if (el) {
@@ -1148,7 +1148,7 @@ export default {
     toggleSound() {
       this.muted = !this.muted;
 
-      window.sessionStorage.setItem("viewer.muted", this.muted.toString());
+      window.sessionStorage.setItem("lightbox.muted", this.muted.toString());
 
       const { video } = this.getContent();
 
@@ -1241,12 +1241,12 @@ export default {
       this.pauseSlideshow();
 
       /*
-        TODO: Once all the viewer's core functionality has been restored, add a file size/type
+        TODO: Once all the lightbox's core functionality has been restored, add a file size/type
               selection dialog so the user can choose which format and quality to download.
        */
 
       if (!this.model || !this.model.DownloadUrl) {
-        console.warn("photo viewer: no download url");
+        console.warn("photo lightbox: no download url");
         return;
       }
 
@@ -1292,7 +1292,7 @@ export default {
         this.updateSize(true);
       });
     },
-    // Hides the viewer sidebar, if visible.
+    // Hides the lightbox sidebar, if visible.
     hideSidebar() {
       if (this.sidebarVisible) {
         this.$refs?.sidebar?.blur();
@@ -1377,7 +1377,7 @@ export default {
         this.startTimer();
       }
     },
-    // Resets the timer for hiding the viewer controls.
+    // Resets the timer for hiding the lightbox controls.
     resetTimer() {
       if (this.idleTimer) {
         window.clearTimeout(this.idleTimer);
@@ -1390,8 +1390,8 @@ export default {
         height: window.innerHeight * window.devicePixelRatio,
       };
     },
-    getLightboxViewport() {
-      const el = this.getLightbox();
+    getViewport() {
+      const el = this.getElement();
 
       if (el) {
         return {
@@ -1405,7 +1405,7 @@ export default {
         };
       }
     },
-    getLightboxPadding(viewport, data) {
+    getPadding(viewport, data) {
       let top = 0,
         bottom = 0,
         left = 0,
@@ -1444,8 +1444,8 @@ export default {
 
       return { top, bottom, left, right };
     },
-    // Handle zoom level changes and load higher quality thumbnails when needed
-    handleZoomLevelChange() {
+    // Called when the zoom level changes and higher quality thumbnails may be required.
+    onZoomLevelChange() {
       const pswp = this.pswp();
 
       if (!pswp || !pswp.currSlide) {

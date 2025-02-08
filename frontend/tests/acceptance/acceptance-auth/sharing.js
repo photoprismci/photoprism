@@ -152,7 +152,7 @@ test.meta("testID", "sharing-002").meta({ type: "short", mode: "auth" })("Common
   await photoviewer.checkPhotoViewerActionAvailability("edit-button", false);
 
   await photoviewer.triggerPhotoViewerAction("close");
-  await t.expect(Selector("div.media-viewer-lightbox").visible).notOk();
+  await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
 
   await photo.checkHoverActionAvailability("nth", 0, "favorite", false);
   await photo.checkHoverActionAvailability("nth", 0, "select", true);

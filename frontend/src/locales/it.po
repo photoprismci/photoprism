@@ -689,7 +689,7 @@ msgstr "Credenziali del cliente"
 #: src/component/settings/passcode.vue:452
 #: src/component/settings/passcode.vue:493
 #: src/component/settings/webdav.vue:130 src/component/share/dialog.vue:228
-#: src/component/update.vue:53 src/component/viewer.vue:100 src/locales.js:22
+#: src/component/update.vue:53 src/component/lightbox.vue:100 src/locales.js:22
 #: src/page/library/errors.vue:267
 msgid "Close"
 msgstr "Chiudi"
@@ -1012,7 +1012,7 @@ msgstr "Fatto."
 #: src/component/album/clipboard.vue:72 src/component/album/toolbar.vue:120
 #: src/component/file/clipboard.vue:48 src/component/people/clipboard.vue:47
 #: src/component/photo/clipboard.vue:116 src/component/photo/edit/files.vue:166
-#: src/component/viewer.vue:644 src/page/settings/general.vue:252
+#: src/component/lightbox.vue:644 src/page/settings/general.vue:252
 #: src/page/settings/general.vue:624
 msgid "Download"
 msgstr "Download"
@@ -1034,7 +1034,7 @@ msgstr "Scarica singoli file e archivi zip."
 #: src/component/people/clipboard.vue:59 src/component/photo/clipboard.vue:217
 #: src/component/photo/edit/files.vue:122
 #: src/component/photo/view/cards.vue:163 src/component/photo/view/list.vue:133
-#: src/component/viewer.vue:1208 src/page/library/browse.vue:113
+#: src/component/lightbox.vue:1208 src/page/library/browse.vue:113
 msgid "Downloading…"
 msgstr "Download in corso…"
 
@@ -1071,7 +1071,7 @@ msgid "E-Mail"
 msgstr "E-Mail"
 
 #: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:82
-#: src/component/photo/clipboard.vue:90 src/component/viewer.vue:626
+#: src/component/photo/clipboard.vue:90 src/component/lightbox.vue:626
 #: src/page/settings/general.vue:324
 msgid "Edit"
 msgstr "Modifica"
@@ -1135,7 +1135,7 @@ msgstr "Inserisci codice di verifica"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Inserisci la password per confermare l'azione e continuare:"
 
-#: src/page/connect.vue:49 src/component/viewer.vue:104 src/page/connect.vue:53
+#: src/page/connect.vue:49 src/component/lightbox.vue:104 src/page/connect.vue:53
 #: src/page/library/errors.vue:197
 msgid "Error"
 msgstr "Errore"
@@ -1330,7 +1330,7 @@ msgstr "Fotogrammi"
 msgid "Full Access"
 msgstr "Accesso Totale"
 
-#: src/component/viewer.vue:577
+#: src/component/lightbox.vue:577
 msgid "Fullscreen"
 msgstr "Schermo intero"
 
@@ -1656,7 +1656,7 @@ msgstr "Libreria"
 msgid "License"
 msgstr "Licenza"
 
-#: src/component/viewer.vue:594
+#: src/component/lightbox.vue:594
 msgid "Like"
 msgstr "Mi Piace"
 
@@ -1849,7 +1849,7 @@ msgstr "Sposta File"
 msgid "Must have at least %{n} characters."
 msgstr "Minimo %{n} caratteri obbligatori."
 
-#: src/component/viewer.vue:546
+#: src/component/lightbox.vue:546
 msgid "Mute"
 msgstr "Muto"
 
@@ -1895,7 +1895,7 @@ msgstr "Nuova Password"
 msgid "Newest First"
 msgstr "Prima più Recenti"
 
-#: src/component/viewer.vue:103 src/locales.js:112
+#: src/component/lightbox.vue:103 src/locales.js:112
 msgid "Next"
 msgstr "Avanti"
 
@@ -1942,7 +1942,7 @@ msgid "No people found"
 msgstr "Nessuna persona trovata"
 
 #: src/component/photo/view/cards.vue:112 src/component/photo/view/list.vue:82
-#: src/component/photo/view/mosaic.vue:71 src/component/viewer.vue:162
+#: src/component/photo/view/mosaic.vue:71 src/component/lightbox.vue:162
 #: src/page/album/photos.vue:438 src/page/library/browse.vue:125
 #: src/page/photos.vue:579 src/page/places.vue:448 src/page/places.vue:535
 msgid "No pictures found"
@@ -2288,7 +2288,7 @@ msgstr "Anteprima"
 msgid "Preview Images"
 msgstr "Immagini in anteprima"
 
-#: src/component/viewer.vue:102 src/locales.js:113
+#: src/component/lightbox.vue:102 src/locales.js:113
 msgid "Previous"
 msgstr "Precedente"
 
@@ -2540,7 +2540,7 @@ msgstr "Segreto"
 msgid "Security and Access"
 msgstr "Sicurezza e accesso"
 
-#: src/component/viewer.vue:610
+#: src/component/lightbox.vue:610
 msgid "Select"
 msgstr "Seleziona"
 
@@ -2666,7 +2666,7 @@ msgstr "Mostra più"
 msgid "Show server logs in Library."
 msgstr "Mostra i log server nella Libreria."
 
-#: src/component/viewer.vue:528
+#: src/component/lightbox.vue:528
 msgid "Show/Hide Sidebar"
 msgstr "Mostra/Nascondi barra laterale"
 
@@ -2750,7 +2750,7 @@ msgstr "Pile"
 msgid "Start"
 msgstr "Inizia"
 
-#: src/component/viewer.vue:561
+#: src/component/lightbox.vue:561
 msgid "Start/Stop Slideshow"
 msgstr "Inizia/Ferma Presentazione"
 
@@ -3301,7 +3301,7 @@ msgstr "Il tuo continuo supporto ci aiuta a fornire aggiornamenti regolari e a r
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "La tua libreria viene continuamente analizzata per creare automaticamente album di momenti speciali, viaggi e luoghi."
 
-#: src/component/viewer.vue:101
+#: src/component/lightbox.vue:101
 msgid "Zoom in/out"
 msgstr "Zoom avanti/indietro"
 

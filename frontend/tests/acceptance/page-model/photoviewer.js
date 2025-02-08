@@ -25,7 +25,7 @@ export default class Page {
         await t.click(Selector("div.is-photo").nth(uidOrNth));
       }
     }
-    await t.expect(Selector("div.media-viewer-lightbox").visible).ok();
+    await t.expect(Selector("div.p-lightbox__pswp").visible).ok();
   }
 
   async checkPhotoViewerActionAvailability(action, visible) {

@@ -460,7 +460,7 @@ export default {
       return Util.codecName(file.Codec);
     },
     openFile(file) {
-      this.$root.$refs.viewer.showThumbs([Thumb.fromFile(this.view.model, file)], 0);
+      this.$root.$refs.lightbox.showThumbs([Thumb.fromFile(this.view.model, file)], 0);
     },
     openFolder(file) {
       if (!file) {

@@ -689,7 +689,7 @@ msgstr "Klantgegevens"
 #: src/component/settings/passcode.vue:452
 #: src/component/settings/passcode.vue:493
 #: src/component/settings/webdav.vue:130 src/component/share/dialog.vue:228
-#: src/component/update.vue:53 src/component/viewer.vue:100 src/locales.js:22
+#: src/component/update.vue:53 src/component/lightbox.vue:100 src/locales.js:22
 #: src/page/library/errors.vue:267
 msgid "Close"
 msgstr "Sluiten"
@@ -1012,7 +1012,7 @@ msgstr "Klaar."
 #: src/component/album/clipboard.vue:72 src/component/album/toolbar.vue:120
 #: src/component/file/clipboard.vue:48 src/component/people/clipboard.vue:47
 #: src/component/photo/clipboard.vue:116 src/component/photo/edit/files.vue:166
-#: src/component/viewer.vue:644 src/page/settings/general.vue:252
+#: src/component/lightbox.vue:644 src/page/settings/general.vue:252
 #: src/page/settings/general.vue:624
 msgid "Download"
 msgstr "Download"
@@ -1034,7 +1034,7 @@ msgstr "Download enkele bestanden en zip-archieven."
 #: src/component/people/clipboard.vue:59 src/component/photo/clipboard.vue:217
 #: src/component/photo/edit/files.vue:122
 #: src/component/photo/view/cards.vue:163 src/component/photo/view/list.vue:133
-#: src/component/viewer.vue:1208 src/page/library/browse.vue:113
+#: src/component/lightbox.vue:1208 src/page/library/browse.vue:113
 msgid "Downloading…"
 msgstr "Downloaden…"
 
@@ -1071,7 +1071,7 @@ msgid "E-Mail"
 msgstr "E-mail"
 
 #: src/component/album/clipboard.vue:61 src/component/album/toolbar.vue:82
-#: src/component/photo/clipboard.vue:90 src/component/viewer.vue:626
+#: src/component/photo/clipboard.vue:90 src/component/lightbox.vue:626
 #: src/page/settings/general.vue:324
 msgid "Edit"
 msgstr "Bewerken"
@@ -1135,7 +1135,7 @@ msgstr "Verificatiecode invoeren"
 msgid "Enter your password to confirm the action and continue:"
 msgstr "Voer je wachtwoord in om de actie te bevestigen en door te gaan:"
 
-#: src/page/connect.vue:49 src/component/viewer.vue:104 src/page/connect.vue:53
+#: src/page/connect.vue:49 src/component/lightbox.vue:104 src/page/connect.vue:53
 #: src/page/library/errors.vue:197
 msgid "Error"
 msgstr "Fout"
@@ -1330,7 +1330,7 @@ msgstr "Frames"
 msgid "Full Access"
 msgstr "Volledige Toegang"
 
-#: src/component/viewer.vue:577
+#: src/component/lightbox.vue:577
 msgid "Fullscreen"
 msgstr "Volledig scherm"
 
@@ -1656,7 +1656,7 @@ msgstr "Bibliotheek"
 msgid "License"
 msgstr "Licentie"
 
-#: src/component/viewer.vue:594
+#: src/component/lightbox.vue:594
 msgid "Like"
 msgstr "Vind ik leuk"
 
@@ -1849,7 +1849,7 @@ msgstr "Bestanden verplaatsen"
 msgid "Must have at least %{n} characters."
 msgstr "Moet minstens %{n} tekens bevatten."
 
-#: src/component/viewer.vue:546
+#: src/component/lightbox.vue:546
 msgid "Mute"
 msgstr "Stomme"
 
@@ -1895,7 +1895,7 @@ msgstr "Nieuw wachtwoord"
 msgid "Newest First"
 msgstr "Nieuwste eerst"
 
-#: src/component/viewer.vue:103 src/locales.js:112
+#: src/component/lightbox.vue:103 src/locales.js:112
 msgid "Next"
 msgstr "Volgende"
 
@@ -1942,7 +1942,7 @@ msgid "No people found"
 msgstr "Geen mensen gevonden"
 
 #: src/component/photo/view/cards.vue:112 src/component/photo/view/list.vue:82
-#: src/component/photo/view/mosaic.vue:71 src/component/viewer.vue:162
+#: src/component/photo/view/mosaic.vue:71 src/component/lightbox.vue:162
 #: src/page/album/photos.vue:438 src/page/library/browse.vue:125
 #: src/page/photos.vue:579 src/page/places.vue:448 src/page/places.vue:535
 msgid "No pictures found"
@@ -2288,7 +2288,7 @@ msgstr "Voorbeeld"
 msgid "Preview Images"
 msgstr "Voorbeeldafbeeldingen"
 
-#: src/component/viewer.vue:102 src/locales.js:113
+#: src/component/lightbox.vue:102 src/locales.js:113
 msgid "Previous"
 msgstr "Vorige"
 
@@ -2540,7 +2540,7 @@ msgstr "Geheim"
 msgid "Security and Access"
 msgstr "Veiligheid en toegang"
 
-#: src/component/viewer.vue:610
+#: src/component/lightbox.vue:610
 msgid "Select"
 msgstr "Selecteer"
 
@@ -2666,7 +2666,7 @@ msgstr "Toon meer"
 msgid "Show server logs in Library."
 msgstr "Toon serverlogs in Bibliotheek."
 
-#: src/component/viewer.vue:528
+#: src/component/lightbox.vue:528
 msgid "Show/Hide Sidebar"
 msgstr "Zijbalk tonen/verbergen"
 
@@ -2750,7 +2750,7 @@ msgstr "Stapels"
 msgid "Start"
 msgstr "Start"
 
-#: src/component/viewer.vue:561
+#: src/component/lightbox.vue:561
 msgid "Start/Stop Slideshow"
 msgstr "Start/Stop Diavoorstelling"
 
@@ -3301,7 +3301,7 @@ msgstr "Uw blijvende steun helpt ons om regelmatig updates te geven en onafhanke
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Uw bibliotheek wordt voortdurend geanalyseerd om automatisch albums te maken van speciale momenten, reizen en plaatsen."
 
-#: src/component/viewer.vue:101
+#: src/component/lightbox.vue:101
 msgid "Zoom in/out"
 msgstr "In-/uitzoomen"
 

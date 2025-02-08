@@ -4,7 +4,7 @@ import PScroll from "component/scroll.vue";
 import PNavigation from "component/navigation.vue";
 import PUpdate from "component/update.vue";
 import PLoadingBar from "component/loading-bar.vue";
-import PViewer from "component/viewer.vue";
+import PLightbox from "component/lightbox.vue";
 
 // Icons.
 import IconLivePhoto from "component/icon/live-photo.vue";
@@ -75,7 +75,7 @@ export function install(app) {
   app.component("PScroll", PScroll);
   app.component("PNavigation", PNavigation);
   app.component("PLoadingBar", PLoadingBar);
-  app.component("PViewer", PViewer);
+  app.component("PLightbox", PLightbox);
   app.component("PUpdate", PUpdate);
 
   app.component("IconLivePhoto", IconLivePhoto);

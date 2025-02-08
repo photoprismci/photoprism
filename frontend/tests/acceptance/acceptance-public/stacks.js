@@ -30,7 +30,7 @@ test.meta("testID", "stacks-001").meta({ type: "short", mode: "public" })(
       await photoviewer.triggerPhotoViewerAction("arrow--next");
       await photoviewer.triggerPhotoViewerAction("arrow--prev");
       await photoviewer.triggerPhotoViewerAction("close");
-      await t.expect(Selector("div.media-viewer-lightbox").visible).notOk();
+      await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
     }
     await photo.checkHoverActionAvailability("uid", SequentialPhotoUid, "open", true);
   }

@@ -28,7 +28,7 @@ Additional information can be found in our Developer Guide:
 @import url("splash.css");
 @import url("body.css");
 @import url("text.css");
-@import url("viewer.css");
+@import url("lightbox.css");
 @import url("controls.css");
 @import url("wallpapers.css");
 @import url("themes.css");

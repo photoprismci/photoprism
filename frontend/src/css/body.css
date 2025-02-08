@@ -18,16 +18,12 @@
 }
 
 body.nojs::-webkit-scrollbar,
-body.viewer::-webkit-scrollbar,
-body.player::-webkit-scrollbar,
 body.hide-scrollbar::-webkit-scrollbar {
     width: 0;
     background: transparent;
 }
 
 body.nojs,
-body.viewer,
-body.player,
 body.hide-scrollbar {
     scrollbar-width: none;
     -ms-overflow-style: none;

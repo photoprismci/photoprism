@@ -38,11 +38,11 @@ export default {
   },
   methods: {
     openPhoto() {
-      if (!this.$viewer || !this.view.model) {
+      if (!this.$lightbox || !this.view.model) {
         return;
       }
 
-      this.$root.$refs.viewer.showThumbs(Thumb.fromFiles([this.view.model]), 0);
+      this.$root.$refs.lightbox.showThumbs(Thumb.fromFiles([this.view.model]), 0);
     },
   },
 };

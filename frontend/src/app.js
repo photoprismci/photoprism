@@ -217,7 +217,7 @@ $config.update().finally(() => {
 
   router.beforeEach((to) => {
     if ($view.preventNavigation) {
-      // Disable navigation when a fullscreen dialog or viewer is open.
+      // Disable navigation when a fullscreen dialog or lightbox is open.
       return false;
     } else if (to.matched.some((record) => record.meta.settings) && $config.values.disable.settings) {
       return { name: "home" };

@@ -343,7 +343,7 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
   await photoviewer.checkPhotoViewerActionAvailability("download-button", true);
 
   await photoviewer.triggerPhotoViewerAction("close");
-  await t.expect(Selector("div.media-viewer-lightbox").visible).notOk();
+  await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
 
   await menu.openPage("settings");
 
@@ -426,7 +426,7 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
   await photoviewer.checkPhotoViewerActionAvailability("download-button", false);
   await photoviewer.checkPhotoViewerActionAvailability("edit-button", false);
   await photoviewer.triggerPhotoViewerAction("close");
-  await t.expect(Selector("div.media-viewer-lightbox").visible).notOk();
+  await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();
 
   await menu.openPage("settings");
   await t.click(settings.uploadCheckbox).click(settings.downloadCheckbox).click(settings.editCheckbox).click(settings.shareCheckbox);

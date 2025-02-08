@@ -12,7 +12,7 @@
       </v-main>
     </v-app>
 
-    <p-viewer ref="viewer"></p-viewer>
+    <p-lightbox ref="lightbox"></p-lightbox>
   </div>
 </template>
 
@@ -21,7 +21,7 @@ import Event from "pubsub-js";
 import PLoadingBar from "component/loading-bar.vue";
 import PNotify from "component/notify.vue";
 import PNavigation from "component/navigation.vue";
-import PViewer from "component/viewer.vue";
+import PLightbox from "component/lightbox.vue";
 
 export default {
   name: "App",
@@ -29,7 +29,7 @@ export default {
     PLoadingBar,
     PNotify,
     PNavigation,
-    PViewer,
+    PLightbox,
   },
   data() {
     return {
@@ -79,7 +79,7 @@ export default {
         return;
       }
 
-      // Don't fire event when a dialog or the photo/video viewer is open.
+      // Don't fire event when a dialog or the photo/video lightbox is open.
       if (document.querySelector(".v-overlay--active, .pswp--open") !== null) {
         return;
       }

@@ -1,6 +1,6 @@
 /* Media Viewer Styles */
 
-.p-viewer {
+.p-lightbox {
     position: fixed;
     top: 0;
     left: 0;
@@ -10,7 +10,7 @@
     border-radius: 0;
 }
 
-.p-viewer__container {
+.p-lightbox__container {
     position: absolute;
     top: 0;
     left: 0;
@@ -26,7 +26,7 @@
     z-index: 1;
 }
 
-.p-viewer__underlay {
+.p-lightbox__underlay {
     pointer-events: auto;
     touch-action: none;
     position: absolute;
@@ -44,7 +44,7 @@
     position: absolute;
 }
 
-.p-viewer__container > .p-viewer__lightbox {
+.p-lightbox__container > .p-lightbox__content {
     position: relative;
     display: block;
     overflow: hidden;
@@ -53,7 +53,7 @@
     height: 100%;
 }
 
-.p-viewer__container > .p-viewer__sidebar {
+.p-lightbox__container > .p-lightbox__sidebar {
     position: relative;
     display: block;
     overflow: auto;
@@ -102,15 +102,15 @@
     color: #f3f3f3;
 }
 
-.p-viewer__container > .p-viewer__lightbox.slideshow-active .pswp__dynamic-caption {
+.p-lightbox__container > .p-lightbox__content.slideshow-active .pswp__dynamic-caption {
     opacity: 1 !important;
 }
 
-.p-viewer__container > .p-viewer__lightbox.sidebar-visible .pswp__dynamic-caption {
+.p-lightbox__container > .p-lightbox__content.sidebar-visible .pswp__dynamic-caption {
     display: none !important;
 }
 
-.p-viewer__container > .p-viewer__lightbox:not(.slideshow-active) .pswp__dynamic-caption--faded {
+.p-lightbox__container > .p-lightbox__content:not(.slideshow-active) .pswp__dynamic-caption--faded {
     opacity: 0 !important;
 }
 
@@ -141,7 +141,7 @@
     bottom: 0;
 }
 
-.p-viewer__container > .is-playable .pswp__dynamic-caption--mobile {
+.p-lightbox__container > .is-playable .pswp__dynamic-caption--mobile {
     background: transparent;
     padding: 0;
     width: auto;
@@ -242,66 +242,66 @@
 
 /* Zoom Toggle */
 
-.p-viewer__container > .is-playable .pswp__button.pswp__button--zoom,
-.p-viewer__container > .p-viewer__lightbox.slideshow-active .pswp__button.pswp__button--zoom {
+.p-lightbox__container > .is-playable .pswp__button.pswp__button--zoom,
+.p-lightbox__container > .p-lightbox__content.slideshow-active .pswp__button.pswp__button--zoom {
     display: none;
 }
 
 /* Slideshow Toggle and Animation */
 
-.p-viewer__container > .p-viewer__lightbox.slideshow-active .pswp__button--slideshow-toggle .pswp__icn-slideshow-off {
+.p-lightbox__container > .p-lightbox__content.slideshow-active .pswp__button--slideshow-toggle .pswp__icn-slideshow-off {
     display: none;
 }
 
-.p-viewer__container > .p-viewer__lightbox:not(.slideshow-active) .pswp__button--slideshow-toggle .pswp__icn-slideshow-on {
+.p-lightbox__container > .p-lightbox__content:not(.slideshow-active) .pswp__button--slideshow-toggle .pswp__icn-slideshow-on {
     display: none;
 }
 
-.p-viewer__container > .slideshow-active .pswp__container {
+.p-lightbox__container > .slideshow-active .pswp__container {
     transition: transform .8s ease-in-out;
 }
 
 /* Fullscreen Toggle */
 
-.p-viewer__container > .p-viewer__lightbox.is-fullscreen .pswp__button--fullscreen-toggle .pswp__icn-fullscreen-off {
+.p-lightbox__container > .p-lightbox__content.is-fullscreen .pswp__button--fullscreen-toggle .pswp__icn-fullscreen-off {
     display: none;
 }
 
-.p-viewer__container > .p-viewer__lightbox:not(.is-fullscreen) .pswp__button--fullscreen-toggle .pswp__icn-fullscreen-on {
+.p-lightbox__container > .p-lightbox__content:not(.is-fullscreen) .pswp__button--fullscreen-toggle .pswp__icn-fullscreen-on {
     display: none;
 }
 
 /* Favorite/Dislike Toggle */
 
-.p-viewer__container > .p-viewer__lightbox.is-favorite .pswp__button--favorite-toggle .pswp__icn-favorite-off {
+.p-lightbox__container > .p-lightbox__content.is-favorite .pswp__button--favorite-toggle .pswp__icn-favorite-off {
     display: none;
 }
 
-.p-viewer__container > .p-viewer__lightbox:not(.is-favorite) .pswp__button--favorite-toggle .pswp__icn-favorite-on {
+.p-lightbox__container > .p-lightbox__content:not(.is-favorite) .pswp__button--favorite-toggle .pswp__icn-favorite-on {
     display: none;
 }
 
 /* Sound Mute/Unmute Toggle */
 
-.p-viewer__container > .p-viewer__lightbox:not(.is-playable) .pswp__button--sound-toggle {
+.p-lightbox__container > .p-lightbox__content:not(.is-playable) .pswp__button--sound-toggle {
     display: none;
 }
 
-.p-viewer__container > .p-viewer__lightbox.is-muted .pswp__button--sound-toggle .pswp__icn-sound-on {
+.p-lightbox__container > .p-lightbox__content.is-muted .pswp__button--sound-toggle .pswp__icn-sound-on {
     display: none;
 }
 
-.p-viewer__container > .p-viewer__lightbox:not(.is-muted) .pswp__button--sound-toggle .pswp__icn-sound-off {
+.p-lightbox__container > .p-lightbox__content:not(.is-muted) .pswp__button--sound-toggle .pswp__icn-sound-off {
     display: none;
 }
 
 /* Selection Toggle */
 
-.p-viewer__container > .p-viewer__lightbox.is-selected .pswp__button--select-toggle .pswp__icn-select-off {
+.p-lightbox__container > .p-lightbox__content.is-selected .pswp__button--select-toggle .pswp__icn-select-off {
     display: none;
 }
 
-.p-viewer__container > .p-viewer__lightbox:not(.is-selected) .pswp__button--select-toggle .pswp__icn-select-on {
+.p-lightbox__container > .p-lightbox__content:not(.is-selected) .pswp__button--select-toggle .pswp__icn-select-on {
     display: none;
 }
 
@@ -324,11 +324,11 @@
 
 /* Allow navigation buttons on touch devices to be used without being visible. */
 
-.p-viewer__container > .p-viewer__lightbox > .pswp--touch .pswp__button--arrow {
+.p-lightbox__container > .p-lightbox__content > .pswp--touch .pswp__button--arrow {
     visibility: visible;
 }
 
-.p-viewer__container > .p-viewer__lightbox > .pswp--touch .pswp__button--arrow .pswp__icn {
+.p-lightbox__container > .p-lightbox__content > .pswp--touch .pswp__button--arrow .pswp__icn {
     display: none;
 }
 
