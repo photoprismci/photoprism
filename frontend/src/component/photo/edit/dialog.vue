@@ -100,12 +100,13 @@
 </template>
 <script>
 import Photo from "model/photo";
+import Event from "pubsub-js";
+
 import PhotoDetails from "component/photo/edit/details.vue";
 import PhotoLabels from "component/photo/edit/labels.vue";
 import PhotoPeople from "component/photo/edit/people.vue";
 import PhotoFiles from "component/photo/edit/files.vue";
 import PhotoInfo from "component/photo/edit/info.vue";
-import Event from "pubsub-js";
 
 export default {
   name: "PPhotoEditDialog",

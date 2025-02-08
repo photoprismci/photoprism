@@ -437,7 +437,6 @@
 <script>
 import countries from "options/countries.json";
 import Thumb from "model/thumb";
-import Photo from "model/photo";
 import * as options from "options/options";
 import { rules } from "common/form";
 
