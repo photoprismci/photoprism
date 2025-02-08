@@ -37,8 +37,8 @@ export function isMediaElement(el) {
 export function preventNavigationTouchEvent(ev) {
   if (ev instanceof TouchEvent && ev.cancelable) {
     // console.log(`${ev.type} @ ${ev.touches[0].clientX.toString()} x ${ev.touches[0].clientY.toString()}`, ev.target);
-    if (ev.type === TouchStartEvent && (isMediaElement(ev.target) || ev.touches[0].clientX <= 16)) {
-      if (window.innerHeight - ev.touches[0].clientY > 128 || ev.touches[0].clientX <= 16) {
+    if (ev.type === TouchStartEvent && (isMediaElement(ev.target) || ev.touches[0].clientX <= 30)) {
+      if (window.innerHeight - ev.touches[0].clientY > 128 || ev.touches[0].clientX <= 30) {
         ev.preventDefault();
         // console.log(`prevented ${ev.type} @ ${ev.touches[0].clientX.toString()} x ${ev.touches[0].clientY.toString()}`);
       }
