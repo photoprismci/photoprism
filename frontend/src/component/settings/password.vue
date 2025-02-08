@@ -127,6 +127,15 @@ export default {
       return !sessionUser.SuperAdmin || this.model.getId() === sessionUser.getId();
     },
   },
+  watch: {
+    show: function (visible) {
+      if (visible) {
+        this.$view.enter(this);
+      } else {
+        this.$view.leave(this);
+      }
+    },
+  },
   created() {
     if (this.isPublic && !this.isDemo) {
       this.$emit("close");
