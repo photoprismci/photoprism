@@ -112,20 +112,18 @@ export default {
   name: "PTabPhotoPeople",
   components: { PConfirmAction },
   props: {
-    model: {
-      type: Object,
-      default: () => {},
-    },
     uid: {
       type: String,
       default: "",
     },
   },
   data() {
+    const view = this.$view.data();
     return {
+      view,
       busy: false,
-      markers: this.model.getMarkers(true),
-      imageUrl: this.model.thumbnailUrl("fit_720"),
+      markers: view.model.getMarkers(true),
+      imageUrl: view.model.thumbnailUrl("fit_720"),
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
@@ -151,14 +149,14 @@ export default {
     };
   },
   watch: {
-    model: function () {
+    uid: function () {
       this.refresh();
     },
   },
   methods: {
     refresh() {
-      this.markers = this.model.getMarkers(true);
-      this.imageUrl = this.model.thumbnailUrl("fit_720");
+      this.markers = this.view.model.getMarkers(true);
+      this.imageUrl = this.view.model.thumbnailUrl("fit_720");
     },
     onReject(model) {
       if (this.busy || !model) return;

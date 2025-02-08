@@ -167,6 +167,18 @@ export class View {
     return this.scopes.length;
   }
 
+  get() {
+    if (this.scopes.length) {
+      return this.scopes[this.scopes.length - 1];
+    } else {
+      return { $data: {} };
+    }
+  }
+
+  data() {
+    return this.get().$data;
+  }
+
   isHidden(c) {
     return !this.isVisible(c);
   }
