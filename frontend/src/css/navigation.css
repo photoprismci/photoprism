@@ -2,6 +2,7 @@
 
 #p-navigation {
     z-index: 10;
+    user-select: none;
 }
 
 nav .v-list__item__title.title {
