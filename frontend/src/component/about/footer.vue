@@ -7,9 +7,9 @@
       <span class="body-link text-selectable">
         <span class="cursor-text" @click.stop.prevent="$util.copyText(about, version)">Build</span>
         <a
+          v-tooltip="version"
           href="https://docs.photoprism.app/release-notes/"
           target="_blank"
-          :title="version"
           class="body-link text-truncate"
           >{{ build }}</a
         >
