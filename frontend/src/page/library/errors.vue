@@ -105,7 +105,7 @@
       @close="dialog.delete = false"
       @confirm="onConfirmDelete"
     ></p-confirm-action>
-    <v-dialog v-model="details.show" max-width="550" class="p-dialog">
+    <v-dialog :model-value="details.show" max-width="550" class="p-dialog">
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon v-if="details.err.Level === 'error'" icon="mdi-alert-circle-outline" color="error"></v-icon>
