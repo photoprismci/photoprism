@@ -172,11 +172,10 @@ export default {
     show: function (visible) {
       if (visible) {
         this.$view.enter(this);
-        this.find(this.index).then(() => {
-          if (this.tab) {
-            this.active = this.tab;
-          }
-        });
+        if (this.tab) {
+          this.active = this.tab;
+        }
+        this.find(this.index);
       } else {
         this.$view.leave(this);
       }
