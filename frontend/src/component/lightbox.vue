@@ -794,7 +794,6 @@ export default {
 
       // Remove lightbox focus and hide lightbox.
       if (this.visible) {
-        this.$refs?.lightbox?.blur();
         this.visible = false;
       }
     },
@@ -1252,7 +1251,6 @@ export default {
     onEdit() {
       this.onPause();
 
-      const pswp = this.pswp();
       let index = 0;
 
       // remove duplicates
@@ -1270,9 +1268,9 @@ export default {
 
       let album = null;
 
-      pswp.close();
-
-      this.$event.publish("dialog.edit", { selection, album, index }); // Open Edit Dialog
+      // Close lightbox and open edit dialog.
+      this.$event.publish("lightbox.close");
+      this.$event.publish("dialog.edit", { selection, album, index });
     },
     resize(force) {
       this.$nextTick(() => {
