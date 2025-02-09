@@ -74,8 +74,20 @@ body.dark-theme {
 
 /* Dialogs & Overlays */
 
+.v-overlay-container {
+    transition: none !important;
+}
+
 .v-overlay {
     border-radius: 8px;
+}
+
+.v-dialog,
+.v-dialog > *,
+.v-overlay,
+.v-overlay > *,
+.v-overlay .v-overlay__scrim {
+    transition: none !important;
 }
 
 .v-overlay.v-dialog.v-dialog--sidepanel:not(.v-dialog--fullscreen) {
