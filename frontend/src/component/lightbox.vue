@@ -87,6 +87,7 @@ export default {
         waitAfterVideo: 2500,
         next: -1,
       },
+      afterLeave: null,
       debug,
       trace,
     };
@@ -108,10 +109,16 @@ export default {
   methods: {
     onEnter() {
       this.$view.enter(this);
+      if (this.afterLeave) {
+        this.afterLeave = null;
+      }
       this.resize(true);
     },
     onLeave() {
       this.$view.leave(this);
+      if (this.afterLeave) {
+        this.afterLeave();
+      }
     },
     // Returns the PhotoSwipe container HTML element, if visible.
     getElement() {
@@ -1268,9 +1275,11 @@ export default {
 
       let album = null;
 
-      // Close lightbox and open edit dialog.
-      this.$event.publish("lightbox.close");
-      this.$event.publish("dialog.edit", { selection, album, index });
+      // Close lightbox and open edit dialog when closed.
+      this.onClose();
+      this.afterLeave = () => {
+        this.$event.publish("dialog.edit", { selection, album, index });
+      };
     },
     resize(force) {
       this.$nextTick(() => {
