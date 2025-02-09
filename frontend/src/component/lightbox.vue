@@ -993,28 +993,27 @@ export default {
     },
     // Returns the active HTMLMediaElement element in the lightbox, if any.
     getContent() {
+      const result = { content: null, data: null, video: null };
       const pswp = this.pswp();
 
       if (!pswp) {
-        return null;
+        return result;
       }
 
-      const content = pswp?.currSlide?.content;
+      result.content = pswp?.currSlide?.content;
 
-      if (!content) {
-        return null;
+      if (!result.content) {
+        return result;
       }
 
-      const data = typeof content?.data === "object" ? content?.data : {};
-
-      let video;
+      result.data = typeof result.content.data === "object" ? result.content.data : {};
 
       // Get <video> element, if any.
-      if (content?.element && content?.element instanceof HTMLMediaElement) {
-        video = content?.element;
+      if (result.content.element && result.content.element instanceof HTMLMediaElement) {
+        result.video = result.content.element;
       }
 
-      return { content, data, video };
+      return result;
     },
     // Returns the <video> elements in the lightbox container as an HTMLCollection.
     getVideos() {

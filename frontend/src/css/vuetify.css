@@ -3,6 +3,11 @@
 .v-overlay__scrim {
     background: rgb(var(--v-overlay-color, #121212));
     opacity: var(--v-overlay-opacity, .32);
+    touch-action: none;
+}
+
+html.v-overlay-scroll-blocked {
+    overflow-y: hidden !important;
 }
 
 /* Tabs */

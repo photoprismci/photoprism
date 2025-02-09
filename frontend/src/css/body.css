@@ -6,27 +6,8 @@
     background: transparent;
 }
 
-[data-color-mode=light][data-light-theme*=dark],
-[data-color-mode=dark][data-dark-theme*=dark] {
-    color-scheme: dark;
-}
-
-:root,
-[data-color-mode=light][data-light-theme*=light],
-[data-color-mode=dark][data-dark-theme*=light] {
-    color-scheme: light;
-}
-
-body.nojs::-webkit-scrollbar,
-body.hide-scrollbar::-webkit-scrollbar {
-    width: 0;
-    background: transparent;
-}
-
-body.nojs,
-body.hide-scrollbar {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+body.disable-navigation-gestures {
+    touch-action: none;
 }
 
 body.dark-theme {
