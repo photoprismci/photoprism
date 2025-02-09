@@ -118,12 +118,9 @@ export default {
     },
   },
   data() {
-    const view = this.$view.data();
     return {
-      view,
+      view: this.$view.data(),
       busy: false,
-      markers: view.model.getMarkers(true),
-      imageUrl: view.model.thumbnailUrl("fit_720"),
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
@@ -148,16 +145,22 @@ export default {
       },
     };
   },
+  computed: {
+    markers() {
+      if (!this.view?.model?.getMarkers) {
+        return [];
+      }
+
+      return this.view.model.getMarkers(true);
+    },
+  },
   watch: {
     uid: function () {
       this.refresh();
     },
   },
   methods: {
-    refresh() {
-      this.markers = this.view.model.getMarkers(true);
-      this.imageUrl = this.view.model.thumbnailUrl("fit_720");
-    },
+    refresh() {},
     onReject(model) {
       if (this.busy || !model) return;
 

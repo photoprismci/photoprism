@@ -6,27 +6,27 @@ const TouchMoveEvent = "touchmove";
 // If true, logging is enabled.
 const log = window.__CONFIG__?.develop && typeof console?.log == "function";
 
-// getHtmlElement returns the <html> element.
+// Returns the <html> element.
 export function getHtmlElement() {
   return document.getElementsByTagName("html")[0];
 }
 
-// initHtmlElement initializes the <html> element by removing the "class" attribute.
+// Initializes the <html> element by removing the "class" attribute.
 export function initHtmlElement() {
-  const el = document.getElementsByTagName("html")[0];
+  const htmlElement = document.getElementsByTagName("html")[0];
 
-  if (el && el.hasAttribute("class")) {
+  if (htmlElement && htmlElement.hasAttribute("class")) {
     if (log) {
-      console.log(`html: removed class="${el.getAttribute("class")}"`);
+      console.log(`html: removed class="${htmlElement.getAttribute("class")}"`);
     }
 
     // Remove the class="loading" attribute from <html> when the application has loaded.
-    el.removeAttribute("class");
+    htmlElement.removeAttribute("class");
+    htmlElement.setAttribute("style", "");
 
     // If requested, hide the scrollbar permanently by adding class="hide-scrollbar" to <html>.
     if (document.body.classList.contains("hide-scrollbar")) {
-      document.body.classList.remove("hide-scrollbar");
-      el.setAttribute("class", "hide-scrollbar");
+      htmlElement.setAttribute("class", "hide-scrollbar");
 
       if (log) {
         console.log('html: added class="hide-scrollbar" to permanently hide the scrollbar');
@@ -34,13 +34,31 @@ export function initHtmlElement() {
     }
   }
 }
+// Set a :root style variable, or removes it if the value is empty.
+export function setHtmlStyle(key, value) {
+  if (!key) {
+    return false;
+  }
 
-// getBodyElement returns the <body>> element.
+  const htmlElement = getHtmlElement();
+
+  if (!htmlElement) {
+    return false;
+  } else if (value) {
+    htmlElement.style.setProperty(key, value);
+  } else {
+    htmlElement.style.removeProperty(key);
+  }
+
+  return true;
+}
+
+// Returns the <body>> element.
 export function getBodyElement() {
   return document.body;
 }
 
-// isInputElement checks if the element is a button.
+// Checks if the element is a button.
 export function isInputElement(el) {
   if (!el) {
     return false;
@@ -49,7 +67,7 @@ export function isInputElement(el) {
   return el instanceof HTMLButtonElement;
 }
 
-// isMediaElement checks if the element is an image, video, or canvas.
+// Checks if the element is an image, video, or canvas.
 export function isMediaElement(el) {
   if (!el) {
     return false;
@@ -58,7 +76,7 @@ export function isMediaElement(el) {
   return el instanceof HTMLImageElement || el instanceof HTMLVideoElement || el instanceof HTMLCanvasElement;
 }
 
-// preventNavigationTouchEvent prevents the default navigation touch gestures.
+// Prevents the default navigation touch gestures.
 export function preventNavigationTouchEvent(ev) {
   if (ev instanceof TouchEvent && ev.cancelable) {
     // console.log(`${ev.type} @ ${ev.touches[0].clientX.toString()} x ${ev.touches[0].clientY.toString()}`, ev.target);
@@ -74,7 +92,7 @@ export function preventNavigationTouchEvent(ev) {
   }
 }
 
-// generateRandomId returns a random string that can be used as an identifier.
+// Returns a random string that can be used as an identifier.
 export function generateRandomId() {
   return Date.now().toString(36) + Math.random().toString(36).substring(2, 18);
 }
@@ -116,11 +134,9 @@ export class View {
 
     if (c) {
       const i = this.scopes.findLastIndex((s) => s === c);
-      if (i >= 0) {
-        this.scopes.splice(i);
+      if (i > 0) {
+        this.scopes.splice(i, 1);
       }
-    } else {
-      this.scopes.pop();
     }
 
     if (this.scopes.length) {
@@ -161,26 +177,31 @@ export class View {
 
     const name = c?.$options?.name ? c.$options.name : "";
 
-    // let hideOverflow = false;
     let hideScrollbar = false;
-    let preventNavigation = uid > 0 && !name.startsWith("PPage");
+    let disableScrolling = false;
     let disableNavigationGestures = false;
+    let preventNavigation = uid > 0 && !name.startsWith("PPage");
 
     switch (name) {
       case "PPageLogin":
-        // hideOverflow = window.$isMobile;
+        hideScrollbar = true;
+        preventNavigation = true;
         break;
       case "PPhotoEditDialog":
+        hideScrollbar = window.innerWidth < 960;
+        disableScrolling = true;
+        preventNavigation = true;
+        break;
       case "PPhotoUploadDialog":
-        // hideOverflow = true;
-        hideScrollbar = true;
+        hideScrollbar = window.innerWidth < 1280;
+        disableScrolling = true;
         preventNavigation = true;
         break;
       case "PLightbox":
-        // hideOverflow = true;
         hideScrollbar = true;
-        preventNavigation = true;
+        disableScrolling = true;
         disableNavigationGestures = true;
+        preventNavigation = true;
         break;
     }
 
@@ -188,22 +209,36 @@ export class View {
 
     if (log && name && uid) {
       const scope = this.scopes.map((s) => `${s?.$options?.name} #${s?.$?.uid.toString()}`).join(" › ");
-      console.log(`view: ${scope}`, toRaw(c.$data));
+      console.log(`view: ${scope}`);
     }
 
     if (hideScrollbar) {
       if (!bodyEl.classList.contains("hide-scrollbar")) {
         bodyEl.classList.add("hide-scrollbar");
+        setHtmlStyle("scrollbar-width", "none");
         if (log) {
-          console.log(`body: added class="hide-scrollbar"`);
+          console.log(`html: added style="scrollbar-width: none"`);
         }
       }
-    } else {
-      if (bodyEl.classList.contains("hide-scrollbar")) {
-        bodyEl.classList.remove("hide-scrollbar");
+    } else if (bodyEl.classList.contains("hide-scrollbar")) {
+      bodyEl.classList.remove("hide-scrollbar");
+      setHtmlStyle("scrollbar-width");
+      if (log) {
+        console.log(`html: removed style="scrollbar-width: none"`);
+      }
+    }
+
+    if (disableScrolling) {
+      if (!bodyEl.classList.contains("disable-scrolling")) {
+        bodyEl.classList.add("disable-scrolling");
         if (log) {
-          console.log(`body: removed class="hide-scrollbar"`);
+          console.log(`body: added class="disable-scrolling"`);
         }
+      }
+    } else if (bodyEl.classList.contains("disable-scrolling")) {
+      bodyEl.classList.remove("disable-scrolling");
+      if (log) {
+        console.log(`body: removed class="disable-scrolling"`);
       }
     }
 
@@ -237,10 +272,12 @@ export class View {
 
   // Returns the currently active view data or an empty reactive object otherwise.
   data() {
-    if (this.scopes.length) {
-      return this.scopes[this.scopes.length - 1]?.$data;
+    const c = this.current();
+
+    if (c && c.$data) {
+      return c.$data;
     } else {
-      return reactive({});
+      return {};
     }
   }
 

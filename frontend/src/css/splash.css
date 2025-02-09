@@ -2,10 +2,11 @@
 
 html.loading {
     overflow-y: hidden !important;
+    scrollbar-width: none;
 }
 
 html.hide-scrollbar {
-    overflow-y: visible !important;
+    scrollbar-width: none;
 }
 
 [data-color-mode=light][data-light-theme*=dark],
@@ -52,12 +53,12 @@ body.hide-scrollbar::-webkit-scrollbar,
 html.hide-scrollbar ::-webkit-scrollbar {
     width: 0;
     background: transparent;
+    z-index: -1000;
 }
 
 body.nojs,
 body.hide-scrollbar,
-html.no-scrollbar body {
-    scrollbar-width: none;
+html.hide-scrollbar body {
     -ms-overflow-style: none;
 }
 

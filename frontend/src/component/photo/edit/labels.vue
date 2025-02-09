@@ -13,8 +13,8 @@
             <v-col cols="0" sm="2" class="form-thumb">
               <div>
                 <img
-                  :alt="view.model.Title"
-                  :src="view.model.thumbnailUrl('tile_500')"
+                  :alt="view?.model.Title"
+                  :src="view?.model.thumbnailUrl('tile_500')"
                   class="clickable"
                   @click.stop.prevent.exact="openPhoto()"
                 />
@@ -68,7 +68,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="label in view.model.Labels" :key="label.LabelID" class="label result">
+                      <tr v-for="label in labels" :key="label.LabelID" class="label result">
                         <td class="text-start">
                           {{ label.Label.Name }}
                           <!--                  TODO: add this dialog later-->
@@ -213,7 +213,15 @@ export default {
       nameRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
     };
   },
-  computed: {},
+  computed: {
+    labels() {
+      if (!this.view?.model?.Labels) {
+        return [];
+      }
+
+      return this.view.model.Labels;
+    },
+  },
   methods: {
     refresh() {},
     sourceName(s) {
@@ -235,7 +243,7 @@ export default {
       }
     },
     removeLabel(label) {
-      if (!label) {
+      if (!label || !this.view?.model) {
         return;
       }
 
@@ -246,7 +254,7 @@ export default {
       });
     },
     addLabel() {
-      if (!this.newLabel) {
+      if (!this.newLabel || !this.view?.model) {
         return;
       }
 
@@ -257,7 +265,7 @@ export default {
       });
     },
     activateLabel(label) {
-      if (!label) {
+      if (!label || !this.view?.model) {
         return;
       }
 
@@ -276,6 +284,10 @@ export default {
       this.$emit("close");
     },
     openPhoto() {
+      if (!this.view?.model) {
+        return;
+      }
+
       this.$root.$refs.lightbox.showThumbs(Thumb.fromFiles([this.view.model]), 0);
     },
   },

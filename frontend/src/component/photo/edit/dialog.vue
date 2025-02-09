@@ -172,10 +172,11 @@ export default {
     show: function (visible) {
       if (visible) {
         this.$view.enter(this);
-        if (this.tab) {
-          this.active = this.tab;
-        }
-        this.find(this.index);
+        this.find(this.index).then(() => {
+          if (this.tab) {
+            this.active = this.tab;
+          }
+        });
       } else {
         this.$view.leave(this);
       }
@@ -242,19 +243,19 @@ export default {
     },
     find(index) {
       if (this.loading) {
-        return;
+        return Promise.reject();
       }
 
       if (!this.selection || !this.selection[index]) {
         this.$notify.error(this.$gettext("Invalid photo selected"));
-        return;
+        return Promise.reject();
       }
 
       this.loading = true;
       this.selected = index;
       this.selectedId = this.selection[index];
 
-      this.model
+      return this.model
         .find(this.selectedId)
         .then((model) => {
           model.refreshFileAttr();

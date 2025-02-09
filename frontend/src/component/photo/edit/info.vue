@@ -347,7 +347,7 @@ export default {
   },
   computed: {
     albums() {
-      if (!this.view.model || !this.view.model.Albums || this.view.model.Albums.length < 1) {
+      if (!this.view?.model || !this.view.model.Albums || this.view.model.Albums.length < 1) {
         return [];
       }
 

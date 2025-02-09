@@ -8,6 +8,8 @@
     scrim
     tiled
     class="p-dialog p-lightbox v-dialog--lightbox"
+    @after-enter="onEnter"
+    @after-leave="onLeave"
   >
     <div class="p-lightbox__underlay"></div>
     <div
@@ -90,15 +92,6 @@ export default {
       trace,
     };
   },
-  watch: {
-    visible: function (value) {
-      if (value) {
-        this.$view.enter(this);
-      } else {
-        this.$view.leave(this);
-      }
-    },
-  },
   created() {
     // this.subscriptions["lightbox.change"] = this.$event.subscribe("lightbox.change", this.onChange);
     this.subscriptions["lightbox.pause"] = this.$event.subscribe("lightbox.pause", this.onPause);
@@ -114,6 +107,13 @@ export default {
     }
   },
   methods: {
+    onEnter() {
+      this.$view.enter(this);
+      this.resize(true);
+    },
+    onLeave() {
+      this.$view.leave(this);
+    },
     // Returns the PhotoSwipe container HTML element, if visible.
     getElement() {
       return this.$refs?.lightbox;
@@ -969,17 +969,13 @@ export default {
           .exitFullscreen()
           .then(() => {
             this.isFullscreen = false;
-            this.$nextTick(() => {
-              this.updateSize(true);
-            });
+            this.resize(true);
           })
           .catch((err) => console.error(err));
       } else {
         document.documentElement.requestFullscreen({ navigationUI: "hide" }).then(() => {
           this.isFullscreen = true;
-          this.$nextTick(() => {
-            this.updateSize(true);
-          });
+          this.resize(true);
         });
       }
     },
@@ -1278,18 +1274,17 @@ export default {
 
       this.$event.publish("dialog.edit", { selection, album, index }); // Open Edit Dialog
     },
-    updateSize(force) {
-      const pswp = this.pswp();
-      if (typeof pswp?.updateSize === "function") {
-        pswp.updateSize(force);
-      }
+    resize(force) {
+      this.$nextTick(() => {
+        const pswp = this.pswp();
+        if (pswp && pswp?.updateSize) {
+          pswp.updateSize(force);
+        }
+      });
     },
     toggleSidebar() {
       this.sidebarVisible = !this.sidebarVisible;
-
-      this.$nextTick(() => {
-        this.updateSize(true);
-      });
+      this.resize(true);
     },
     // Hides the lightbox sidebar, if visible.
     hideSidebar() {

@@ -6,10 +6,6 @@
     touch-action: none;
 }
 
-html.v-overlay-scroll-blocked {
-    overflow-y: hidden !important;
-}
-
 /* Tabs */
 
 .v-tabs button.v-tab:not(.v-tab-item--selected) {

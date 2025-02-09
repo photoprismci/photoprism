@@ -528,7 +528,7 @@ export default {
       }
     },
     syncTime() {
-      if (!this.view.model.hasId()) {
+      if (!this.view?.model.hasId()) {
         return;
       }
 
@@ -536,7 +536,7 @@ export default {
       this.time = taken.toFormat("HH:mm:ss");
     },
     pastePosition(event) {
-      // Auto-fills the lat and lng fields if the text in the clipboard contains two float values.
+      // Autofill the lat and lng fields if the text in the clipboard contains two float values.
       const clipboard = event.clipboardData ? event.clipboardData : window.clipboardData;
 
       if (!clipboard) {
@@ -566,7 +566,7 @@ export default {
       }
     },
     updateModel() {
-      if (!this.view.model.hasId()) {
+      if (!this.view?.model.hasId()) {
         return;
       }
 
