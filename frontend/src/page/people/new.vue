@@ -64,13 +64,7 @@
         <div class="v-row search-results face-results cards-view" :class="{ 'select-results': selection.length > 0 }">
           <div v-for="m in results" :key="m.ID" class="v-col-12 v-col-sm-6 v-col-md-4 v-col-lg-3 v-col-xl-2">
             <div :data-id="m.ID" :class="m.classes()" class="result flex-grow-1 not-selectable">
-              <v-img
-                :src="m.thumbnailUrl('tile_320')"
-                :transition="false"
-                aspect-ratio="1"
-                class="preview"
-                @click.stop.prevent="onView(m)"
-              >
+              <v-img :src="m.thumbnailUrl('tile_320')" aspect-ratio="1" class="preview" @click.stop.prevent="onView(m)">
                 <v-btn
                   :ripple="false"
                   class="input-hidden"

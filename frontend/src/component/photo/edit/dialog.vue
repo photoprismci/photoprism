@@ -3,7 +3,6 @@
     ref="dialog"
     :model-value="show"
     :fullscreen="$vuetify.display.smAndDown"
-    :transition="false"
     persistent
     scrim
     scrollable

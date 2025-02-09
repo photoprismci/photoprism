@@ -2,7 +2,6 @@
   <v-dialog
     ref="dialog"
     :model-value="visible"
-    :transition="false"
     :scrollable="false"
     fullscreen
     scrim

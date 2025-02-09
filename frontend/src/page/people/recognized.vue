@@ -112,7 +112,6 @@
             <v-img
               :src="m.thumbnailUrl('tile_320')"
               :alt="m.Name"
-              :transition="false"
               aspect-ratio="1"
               class="preview not-selectable"
               @touchstart.passive="input.touchStart($event, index)"
