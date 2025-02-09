@@ -431,6 +431,7 @@ export default {
       this.index = index;
 
       // Focus lightbox element.
+      // TODO: Move to common/view.js
       this.getElement().focus();
 
       // Get PhotoSwipe lightbox config options, see https://photoswipe.com/options/.

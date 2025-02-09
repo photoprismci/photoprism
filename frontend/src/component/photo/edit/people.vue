@@ -78,7 +78,6 @@
                 hide-details
                 single-line
                 open-on-clear
-                focused
                 append-icon=""
                 prepend-inner-icon="mdi-account-plus"
                 density="comfortable"

@@ -145,7 +145,6 @@
                             flat
                             variant="plain"
                             hide-details
-                            autofocus
                             class="input-label ma-0 pa-0"
                             @keyup.enter="addLabel"
                           ></v-text-field>
