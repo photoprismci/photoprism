@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     ref="dialog"
-    :model-value="visible"
+    v-model="visible"
     :scrollable="false"
     fullscreen
     scrim
