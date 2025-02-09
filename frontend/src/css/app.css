@@ -91,7 +91,7 @@ main {
     top: 16px;
     left: 50%;
     transform: translate(-50%, 0);
-    padding: .4rem .8rem;
+    padding: .5rem 1rem;
     margin: auto;
     opacity: 0.87;
     color: rgb(var(--v-theme-on-button, #333333));
