@@ -68,7 +68,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="label in labels" :key="label.LabelID" class="label result">
+                      <tr v-for="label in view.model.Labels" :key="label.LabelID" class="label result">
                         <td class="text-start">
                           {{ label.Label.Name }}
                           <!--                  TODO: add this dialog later-->
@@ -212,15 +212,6 @@ export default {
       ],
       nameRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
     };
-  },
-  computed: {
-    labels() {
-      if (!this.view?.model?.Labels) {
-        return [];
-      }
-
-      return this.view.model.Labels;
-    },
   },
   methods: {
     refresh() {},

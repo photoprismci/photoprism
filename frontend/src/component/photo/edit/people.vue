@@ -118,8 +118,10 @@ export default {
     },
   },
   data() {
+    const view = this.$view.data();
     return {
-      view: this.$view.data(),
+      view,
+      markers: view.model.getMarkers(true),
       busy: false,
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
@@ -160,7 +162,11 @@ export default {
     },
   },
   methods: {
-    refresh() {},
+    refresh() {
+      if (this.view.model) {
+        this.markers = this.view.model.getMarkers(true);
+      }
+    },
     onReject(model) {
       if (this.busy || !model) return;
 

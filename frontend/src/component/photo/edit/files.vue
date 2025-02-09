@@ -1,7 +1,7 @@
 <template>
   <div class="p-tab p-tab-photo-files">
     <v-expansion-panels v-model="expanded" class="pa-0 elevation-0" variant="accordion" multiple>
-      <v-expansion-panel v-for="file in files" :key="file.UID" class="pa-0 elevation-0" style="margin-top: 1px">
+      <v-expansion-panel v-for="file in view.model.fileModels().filter((f) => !f.Missing)" :key="file.UID" class="pa-0 elevation-0" style="margin-top: 1px">
         <v-expansion-panel-title>
           <div class="text-caption font-weight-bold filename">
             {{ file.baseName(70) }}
@@ -424,15 +424,6 @@ export default {
         { title: this.$gettext("Status"), key: "", sortable: false, align: "left" },
       ],
     };
-  },
-  computed: {
-    files() {
-      if (!this.view?.model) {
-        return [];
-      }
-
-      return this.view.model.fileModels().filter((f) => !f.Missing);
-    },
   },
   methods: {
     orientationClass(file) {
