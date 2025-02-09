@@ -147,15 +147,6 @@ export default {
       },
     };
   },
-  computed: {
-    markers() {
-      if (!this.view?.model?.getMarkers) {
-        return [];
-      }
-
-      return this.view.model.getMarkers(true);
-    },
-  },
   watch: {
     uid: function () {
       this.refresh();
