@@ -33,9 +33,9 @@ export default class Page {
     this.month = Selector(".input-month input", { timeout: 15000 });
     this.year = Selector(".input-year input", { timeout: 15000 });
     this.timezone = Selector(".input-timezone input", { timeout: 15000 });
-    this.dayValue = Selector("div.input-day .v-autocomplete__selection", { timeout: 15000 });
-    this.monthValue = Selector(".input-month .v-autocomplete__selection", { timeout: 15000 });
-    this.yearValue = Selector(".input-year .v-autocomplete__selection", { timeout: 15000 });
+    this.dayValue = Selector(".input-day .v-combobox__selection", { timeout: 15000 });
+    this.monthValue = Selector(".input-month .v-combobox__selection", { timeout: 15000 });
+    this.yearValue = Selector(".input-year .v-combobox__selection", { timeout: 15000 });
     this.timezoneValue = Selector(".input-timezone .v-autocomplete__selection", { timeout: 15000 });
     this.altitude = Selector(".input-altitude input", { timeout: 15000 });
     this.countryValue = Selector(".input-country .v-autocomplete__selection", { timeout: 15000 });
