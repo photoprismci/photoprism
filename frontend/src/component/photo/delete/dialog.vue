@@ -1,5 +1,11 @@
 <template>
-  <v-dialog :model-value="show" persistent max-width="360" class="p-dialog p-photo-delete-dialog" @keydown.esc="close">
+  <v-dialog
+    :model-value="visible"
+    persistent
+    max-width="360"
+    class="p-dialog p-photo-delete-dialog"
+    @keydown.esc="close"
+  >
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
         <v-icon size="54" color="primary">mdi-delete-outline</v-icon>
@@ -26,7 +32,7 @@
 export default {
   name: "PPhotoDeleteDialog",
   props: {
-    show: Boolean,
+    visible: Boolean,
     text: {
       type: String,
       default: "",

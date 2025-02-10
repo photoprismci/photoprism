@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    :model-value="show"
+    :model-value="visible"
     persistent
     max-width="610"
     class="p-dialog modal-dialog p-settings-apps"
@@ -234,7 +234,7 @@
       </v-card>
     </v-form>
     <p-confirm-action
-      :show="revoke.dialog"
+      :visible="revoke.dialog"
       icon="mdi-delete-outline"
       @close="revoke.dialog = false"
       @confirm="onRevoked"
@@ -255,7 +255,7 @@ export default {
     PConfirmAction,
   },
   props: {
-    show: Boolean,
+    visible: Boolean,
     model: {
       type: Object,
       default: () => new User(null),
@@ -324,8 +324,8 @@ export default {
     };
   },
   watch: {
-    show: function (visible) {
-      if (visible) {
+    visible: function (show) {
+      if (show) {
         this.$view.enter(this);
         this.reset();
         this.find();

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="show" persistent max-width="350" class="p-dialog p-album-delete-dialog" @keydown.esc="close">
+  <v-dialog :model-value="visible" persistent max-width="350" class="p-dialog p-album-delete-dialog" @keydown.esc="close">
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
         <v-icon icon="mdi-delete-outline" size="54" color="primary"></v-icon>
@@ -20,7 +20,7 @@
 export default {
   name: "PAlbumDeleteDialog",
   props: {
-    show: Boolean,
+    visible: Boolean,
   },
   data() {
     return {};

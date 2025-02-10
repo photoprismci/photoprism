@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="show" persistent max-width="540" class="p-dialog p-share-dialog" @keydown.esc="close">
+  <v-dialog :model-value="visible" persistent max-width="540" class="p-dialog p-share-dialog" @keydown.esc="close">
     <v-card>
       <v-card-title class="d-flex justify-space-between align-center ga-3">
         <h6 class="text-h6">{{ $gettext(`Share %{s}`, { s: model.modelName() }) }}</h6>
@@ -135,7 +135,7 @@ import * as options from "options/options";
 export default {
   name: "PShareDialog",
   props: {
-    show: Boolean,
+    visible: Boolean,
     model: {
       type: Object,
       default: () => {},
@@ -161,8 +161,8 @@ export default {
     };
   },
   watch: {
-    show: function (visible) {
-      if (visible) {
+    visible: function (show) {
+      if (show) {
         this.$view.enter(this);
         this.links = [];
         this.loading = true;

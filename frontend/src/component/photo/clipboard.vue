@@ -158,22 +158,22 @@
       </v-speed-dial>
     </div>
     <p-photo-archive-dialog
-      :show="dialog.archive"
+      :visible="dialog.archive"
       @close="dialog.archive = false"
       @confirm="batchArchive"
     ></p-photo-archive-dialog>
     <p-photo-delete-dialog
-      :show="dialog.delete"
+      :visible="dialog.delete"
       @close="dialog.delete = false"
       @confirm="batchDelete"
     ></p-photo-delete-dialog>
     <p-photo-album-dialog
-      :show="dialog.album"
+      :visible="dialog.album"
       @close="dialog.album = false"
       @confirm="addToAlbum"
     ></p-photo-album-dialog>
     <p-service-upload
-      :show="dialog.share"
+      :visible="dialog.share"
       :items="{ photos: selection }"
       :model="album"
       @close="dialog.share = false"

@@ -93,7 +93,7 @@
       </div>
     </div>
     <p-confirm-action
-      :show="confirm.show"
+      :visible="confirm.visible"
       icon="mdi-account-plus"
       :icon-size="42"
       :text="confirm?.model?.Name ? $gettext('Add %{s}?', { s: confirm.model.Name }) : $gettext('Add person?')"
@@ -126,7 +126,7 @@ export default {
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
       confirm: {
-        show: false,
+        visible: false,
         model: new Marker(),
         text: this.$gettext("Add person?"),
       },
@@ -223,7 +223,7 @@ export default {
 
       model.Name = name;
       model.SubjUID = "";
-      this.confirm.show = true;
+      this.confirm.visible = true;
     },
     onConfirmSetName() {
       if (!this.confirm?.model?.Name) {
@@ -233,7 +233,7 @@ export default {
       this.setName(this.confirm.model);
     },
     onCancelSetName() {
-      this.confirm.show = false;
+      this.confirm.visible = false;
     },
     setName(model) {
       if (this.busy || !model) {
@@ -247,7 +247,7 @@ export default {
         this.$notify.unblockUI();
         this.busy = false;
         this.confirm.model = null;
-        this.confirm.show = false;
+        this.confirm.visible = false;
       });
     },
   },

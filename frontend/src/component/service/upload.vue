@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="show" persistent max-width="400" class="p-dialog p-service-upload" @keydown.esc="close">
+  <v-dialog :model-value="visible" persistent max-width="400" class="p-dialog p-service-upload" @keydown.esc="close">
     <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" @submit.prevent>
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
@@ -78,7 +78,7 @@ import Selection from "common/selection";
 export default {
   name: "PServiceUpload",
   props: {
-    show: Boolean,
+    visible: Boolean,
     items: {
       type: Object,
       default: null,
@@ -120,8 +120,8 @@ export default {
         this.pathItems = this.paths.concat([{ abs: q }]);
       }
     },
-    show: function (visible) {
-      if (visible) {
+    visible: function (show) {
+      if (show) {
         this.$view.enter(this);
         this.loading = false;
         this.load();

@@ -12,7 +12,7 @@
       </v-main>
     </v-app>
 
-    <p-lightbox ref="lightbox"></p-lightbox>
+    <p-dialogs></p-dialogs>
   </div>
 </template>
 
@@ -21,7 +21,7 @@ import Event from "pubsub-js";
 import PLoadingBar from "component/loading-bar.vue";
 import PNotify from "component/notify.vue";
 import PNavigation from "component/navigation.vue";
-import PLightbox from "component/lightbox.vue";
+import PDialogs from "component/dialogs.vue";
 
 export default {
   name: "App",
@@ -29,7 +29,7 @@ export default {
     PLoadingBar,
     PNotify,
     PNavigation,
-    PLightbox,
+    PDialogs,
   },
   data() {
     return {

@@ -401,9 +401,6 @@ export default {
     close() {
       this.$emit("close");
     },
-    openPhoto() {
-      this.$root.$refs.lightbox.showThumbs(Thumb.fromFiles([this.view.model]), 0);
-    },
     albumUrl(m) {
       if (!m) {
         return "#";

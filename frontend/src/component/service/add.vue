@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="show" persistent max-width="500" class="p-dialog p-service-add" @keydown.esc="close">
+  <v-dialog :model-value="visible" persistent max-width="500" class="p-dialog p-service-add" @keydown.esc="close">
     <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" @submit.prevent>
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
@@ -76,7 +76,7 @@ import * as options from "options/options";
 export default {
   name: "PServiceAdd",
   props: {
-    show: Boolean,
+    visible: Boolean,
   },
   data() {
     return {
@@ -91,8 +91,8 @@ export default {
     };
   },
   watch: {
-    show: function (visible) {
-      if (visible) {
+    visible: function (show) {
+      if (show) {
         this.$view.enter(this);
         this.loading = false;
         this.showPassword = false;

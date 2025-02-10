@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    :model-value="show"
+    :model-value="visible"
     :fullscreen="$vuetify.display.mdAndDown"
     scrim
     scrollable
@@ -133,7 +133,7 @@ import { Duration } from "luxon";
 export default {
   name: "PPhotoUploadDialog",
   props: {
-    show: Boolean,
+    visible: Boolean,
     data: {
       type: Object,
       default: () => {},
@@ -173,8 +173,8 @@ export default {
     },
   },
   watch: {
-    show: function (visible) {
-      if (visible) {
+    visible: function (show) {
+      if (show) {
         this.$view.enter(this);
         this.reset();
         this.isDemo = this.$config.get("demo");

@@ -173,7 +173,7 @@ export default class Config {
     }
 
     if (values.jsUri && this.values.jsUri !== values.jsUri) {
-      $event.publish("dialog.reload", { values });
+      $event.publish("dialog.update", { values });
     }
 
     for (let key in values) {

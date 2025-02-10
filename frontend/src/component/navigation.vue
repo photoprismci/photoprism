@@ -917,38 +917,14 @@
         </div>
       </div>
     </div>
-    <p-update :show="reload.dialog" @close="reload.dialog = false"></p-update>
-    <p-photo-upload-dialog
-      :show="upload.dialog"
-      :data="upload.data"
-      @close="upload.dialog = false"
-      @confirm="upload.dialog = false"
-    ></p-photo-upload-dialog>
-    <p-photo-edit-dialog
-      :show="edit.dialog"
-      :selection="edit.selection"
-      :index="edit.index"
-      :album="edit.album"
-      :tab="edit.tab"
-      @close="edit.dialog = false"
-    ></p-photo-edit-dialog>
   </div>
 </template>
 
 <script>
 import Event from "pubsub-js";
-import Album from "model/album";
-import PUpdate from "component/update.vue";
-import PPhotoEditDialog from "component/photo/edit/dialog.vue";
-import PPhotoUploadDialog from "component/photo/upload/dialog.vue";
 
 export default {
   name: "PNavigation",
-  components: {
-    PUpdate,
-    PPhotoEditDialog,
-    PPhotoUploadDialog,
-  },
   data() {
     const appName = this.$config.getName();
 
@@ -998,20 +974,6 @@ export default {
       config: this.$config.values,
       page: this.$config.page,
       user: this.$session.getUser(),
-      reload: {
-        dialog: false,
-      },
-      upload: {
-        dialog: false,
-        data: {},
-      },
-      edit: {
-        dialog: false,
-        album: null,
-        selection: [],
-        index: 0,
-        tab: "",
-      },
       speedDial: false,
       rtl: this.$rtl,
       subscriptions: [],
@@ -1047,28 +1009,6 @@ export default {
   created() {
     this.subscriptions.push(Event.subscribe("index", this.onIndex));
     this.subscriptions.push(Event.subscribe("import", this.onIndex));
-    this.subscriptions.push(Event.subscribe("dialog.reload", () => (this.reload.dialog = true)));
-    this.subscriptions.push(
-      Event.subscribe("dialog.upload", (ev, data) => {
-        if (data) {
-          this.upload.data = data;
-        } else {
-          this.upload.data = {};
-        }
-        this.upload.dialog = true;
-      })
-    );
-    this.subscriptions.push(
-      Event.subscribe("dialog.edit", (ev, data) => {
-        if (!this.edit.dialog) {
-          this.edit.dialog = true;
-          this.edit.index = data.index;
-          this.edit.selection = data.selection;
-          this.edit.album = data.album;
-          this.edit.tab = data?.tab ? data.tab : "";
-        }
-      })
-    );
   },
   unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
@@ -1089,25 +1029,7 @@ export default {
       setTimeout(() => window.location.reload(), 100);
     },
     openUpload() {
-      if (this.auth && !this.isReadOnly && this.$config.feature("upload")) {
-        if (this.$route.name === "album" && this.$route.params?.album) {
-          return new Album()
-            .find(this.$route.params?.album)
-            .then((m) => {
-              this.upload.dialog = true;
-              this.upload.data = { albums: [m] };
-            })
-            .catch(() => {
-              this.upload.dialog = true;
-              this.upload.data = { albums: [] };
-            });
-        } else {
-          this.upload.dialog = true;
-          this.upload.data = { albums: [] };
-        }
-      } else {
-        this.goHome();
-      }
+      this.$event.publish("dialog.upload");
     },
     goHome() {
       if (this.$route.name !== "home") {

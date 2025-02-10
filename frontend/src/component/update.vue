@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="show" max-width="400" class="p-dialog p-update">
+  <v-dialog :model-value="visible" persistent max-width="400" class="p-dialog p-update" @keydown.esc="close">
     <v-card>
       <v-card-title class="d-flex justify-start align-center flex-nowrap ga-3">
         <v-icon icon="mdi-alert-decagram-outline" size="28" color="primary"></v-icon>
@@ -27,23 +27,17 @@
 export default {
   name: "PUpdate",
   props: {
-    show: {
+    visible: {
       type: Boolean,
       default: false,
     },
   },
-  data() {
-    return {
-      visible: this.show,
-    };
-  },
   watch: {
-    show(val) {
-      this.visible = val;
-    },
-    visible(val) {
-      if (!val) {
-        this.close();
+    visible: function (show) {
+      if (show) {
+        this.$view.enter(this);
+      } else {
+        this.$view.leave(this);
       }
     },
   },

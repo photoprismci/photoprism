@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    :model-value="show"
+    :model-value="visible"
     persistent
     max-width="575"
     class="p-dialog modal-dialog sponsor-dialog"
@@ -49,7 +49,7 @@
 export default {
   name: "PDialogSponsor",
   props: {
-    show: Boolean,
+    visible: Boolean,
   },
   data() {
     return {

@@ -609,7 +609,7 @@ export default {
       this.$emit("prev");
     },
     openPhoto() {
-      this.$root.$refs.lightbox.showThumbs(Thumb.fromFiles([this.view.model]), 0);
+      this.$lightbox.openModels(Thumb.fromFiles([this.view.model]), 0);
     },
     save(close) {
       if (this.invalidDate) {

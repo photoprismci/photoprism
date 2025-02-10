@@ -128,8 +128,11 @@ class PhotoSwipeDynamicCaption {
       if (slide.captionFadeTimeout) {
         clearTimeout(slide.captionFadeTimeout);
       }
+
       slide.captionFadeTimeout = setTimeout(() => {
-        captionElement.style.visibility = "hidden";
+        if (captionElement) {
+          captionElement.style.visibility = "hidden";
+        }
         delete slide.captionFadeTimeout;
       }, 400);
     }
@@ -150,9 +153,14 @@ class PhotoSwipeDynamicCaption {
       slide.dynamicCaption.hidden = false;
       captionElement.style.visibility = "visible";
 
-      clearTimeout(slide.captionFadeTimeout);
+      if (slide.captionFadeTimeout) {
+        clearTimeout(slide.captionFadeTimeout);
+      }
+
       slide.captionFadeTimeout = setTimeout(() => {
-        captionElement.classList.remove("pswp__dynamic-caption--faded");
+        if (captionElement) {
+          captionElement.classList.remove("pswp__dynamic-caption--faded");
+        }
         delete slide.captionFadeTimeout;
       }, 50);
     }

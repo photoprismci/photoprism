@@ -1,5 +1,11 @@
 <template>
-  <v-dialog :model-value="show" persistent max-width="390" class="p-dialog p-photo-album-dialog" @keydown.esc="close">
+  <v-dialog
+    :model-value="visible"
+    persistent
+    max-width="390"
+    class="p-dialog p-photo-album-dialog"
+    @keydown.esc="close"
+  >
     <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" @submit.prevent="confirm">
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
@@ -52,7 +58,7 @@ const MaxResults = 10000;
 export default {
   name: "PPhotoAlbumDialog",
   props: {
-    show: Boolean,
+    visible: Boolean,
   },
   data() {
     return {
@@ -68,8 +74,8 @@ export default {
     };
   },
   watch: {
-    show: function (visible) {
-      if (visible) {
+    visible: function (show) {
+      if (show) {
         this.$view.enter(this);
         this.reset();
         this.load("");

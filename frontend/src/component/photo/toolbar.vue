@@ -309,7 +309,7 @@
       </v-expand-transition>
     </div>
     <p-photo-delete-dialog
-      :show="dialog.delete"
+      :visible="dialog.delete"
       :text="$gettext('Are you sure you want to delete all archived pictures?')"
       :action="$gettext('Delete All')"
       @close="dialog.delete = false"

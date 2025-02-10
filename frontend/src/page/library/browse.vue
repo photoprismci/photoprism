@@ -28,18 +28,37 @@
       <p-scroll :loading="loading"></p-scroll>
 
       <div class="p-files p-files-cards">
-        <v-alert v-if="results.length === 0" color="primary" icon="mdi-lightbulb-outline" class="ma-3 no-results opacity-60" variant="outlined">
+        <v-alert
+          v-if="results.length === 0"
+          color="primary"
+          icon="mdi-lightbulb-outline"
+          class="ma-3 no-results opacity-60"
+          variant="outlined"
+        >
           <div class="font-weight-bold">
             {{ $gettext(`No pictures found`) }}
           </div>
           <div class="mt-2">
             {{ $gettext(`Duplicates will be skipped and only appear once.`) }}
-            {{ $gettext(`In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.`) }}
+            {{
+              $gettext(
+                `In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.`
+              )
+            }}
           </div>
         </v-alert>
-        <div v-else class="v-row search-results file-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+        <div
+          v-else
+          class="v-row search-results file-results cards-view"
+          :class="{ 'select-results': selection.length > 0 }"
+        >
           <div v-for="(m, index) in results" :key="m.UID" ref="items" class="v-col-6 v-col-sm-4 v-col-md-3 v-col-xl-2">
-            <div :data-uid="m.UID" class="result" :class="m.classes(selection.includes(m.UID))" @contextmenu.stop="onContextMenu($event, index)">
+            <div
+              :data-uid="m.UID"
+              class="result"
+              :class="m.classes(selection.includes(m.UID))"
+              @contextmenu.stop="onContextMenu($event, index)"
+            >
               <div
                 :title="m.Name"
                 :style="`background-image: url(${m.thumbnailUrl('tile_500')})`"
@@ -51,7 +70,13 @@
               >
                 <div class="preview__overlay"></div>
 
-                <button class="input-select" @touchstart.stop="input.touchStart($event, index)" @touchend.stop="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                <button
+                  class="input-select"
+                  @touchstart.stop="input.touchStart($event, index)"
+                  @touchend.stop="onSelect($event, index)"
+                  @touchmove.stop.prevent
+                  @click.stop.prevent="onSelect($event, index)"
+                >
                   <i class="mdi mdi-check-circle select-on" />
                   <i class="mdi mdi-circle-outline select-off" />
                 </button>
@@ -82,7 +107,6 @@
 </template>
 
 <script>
-import Event from "pubsub-js";
 import RestModel from "model/rest";
 import { Folder } from "model/folder";
 import $notify from "common/notify";
@@ -154,13 +178,17 @@ export default {
 
     this.search();
 
-    this.subscriptions.push(Event.subscribe("folders", (ev, data) => this.onUpdate(ev, data)));
-    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
+    this.subscriptions.push(this.$event.subscribe("folders", (ev, data) => this.onUpdate(ev, data)));
+    this.subscriptions.push(this.$event.subscribe("touchmove.top", () => this.refresh()));
+  },
+  mounted() {
+    this.$view.enter(this);
   },
   unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
+      this.$event.unsubscribe(this.subscriptions[i]);
     }
+    this.$view.leave(this);
   },
   methods: {
     getBreadcrumbs() {
@@ -185,7 +213,7 @@ export default {
 
       if (model.isFile()) {
         // Open Edit Dialog
-        Event.publish("dialog.edit", { selection: [model.PhotoUID], album: null, index: 0 });
+        this.$event.publish("dialog.edit", { selection: [model.PhotoUID], album: null, index: 0 });
       } else {
         // "#" chars in path names must be explicitly escaped,
         // see https://github.com/photoprism/photoprism/issues/3695
@@ -408,9 +436,13 @@ export default {
           } else if (response.files === 0 && response.folders > 1) {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} folders found"), { n: response.folders }));
           } else if (response.files < this.files.limit) {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("Folder contains %{n} files"), { n: response.files }));
+            this.$notify.info(
+              this.$gettextInterpolate(this.$gettext("Folder contains %{n} files"), { n: response.files })
+            );
           } else {
-            this.$notify.warn(this.$gettextInterpolate(this.$gettext("Limit reached, showing first %{n} files"), { n: response.files }));
+            this.$notify.warn(
+              this.$gettextInterpolate(this.$gettext("Limit reached, showing first %{n} files"), { n: response.files })
+            );
           }
         })
         .finally(() => {

@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     ref="dialog"
-    :model-value="show"
+    :model-value="visible"
     :fullscreen="$vuetify.display.smAndDown"
     persistent
     scrim
@@ -117,11 +117,11 @@ export default {
     "p-tab-photo-info": PhotoInfo,
   },
   props: {
+    visible: Boolean,
     index: {
       type: Number,
       default: 0,
     },
-    show: Boolean,
     selection: {
       type: Array,
       default: () => [],
@@ -168,8 +168,8 @@ export default {
     },
   },
   watch: {
-    show: function (visible) {
-      if (visible) {
+    visible: function (show) {
+      if (show) {
         this.$view.enter(this);
         if (this.tab) {
           this.active = this.tab;

@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     ref="dialog"
-    v-model="visible"
+    :model-value="visible"
     :scrollable="false"
     fullscreen
     scrim
@@ -18,7 +18,7 @@
       @pointerdown.capture="onContainerPointerDown"
     >
       <div
-        ref="lightbox"
+        ref="content"
         tabindex="0"
         class="p-lightbox__content"
         :class="{
@@ -30,7 +30,8 @@
           'is-muted': muted,
           'is-selected': $clipboard.has(model),
         }"
-        @keydown.space.prevent="onSpace"
+        @keydown.space="onKeyDown"
+        @keydown.esc="onKeyDown"
       ></div>
       <div v-if="sidebarVisible" ref="sidebar" class="p-lightbox__sidebar">
         <!-- TODO: Create a reusable sidebar component that allows users to view/edit metadata. -->
@@ -83,7 +84,8 @@ export default {
       model: new Thumb(), // Current slide.
       index: 0, // Current slide index in models.
       subscriptions: [], // Event subscriptions.
-      afterLeave: null, // Called after the lightbox has closed..
+      afterLeave: null, // Called after the dialog has closed.
+      afterEnter: null, // Called after the dialog has opened.
       // Slideshow properties.
       slideshow: {
         active: false,
@@ -96,8 +98,8 @@ export default {
   },
   created() {
     // this.subscriptions["lightbox.change"] = this.$event.subscribe("lightbox.change", this.onChange);
+    this.subscriptions["lightbox.open"] = this.$event.subscribe("lightbox.open", this.onOpen);
     this.subscriptions["lightbox.pause"] = this.$event.subscribe("lightbox.pause", this.onPause);
-    // this.subscriptions["lightbox.show"] = this.$event.subscribe("lightbox.show", this.onShow);
     this.subscriptions["lightbox.close"] = this.$event.subscribe("lightbox.close", this.onClose);
   },
   beforeUnmount() {
@@ -118,25 +120,43 @@ export default {
       return false;
     },
     onEnter() {
-      if (this.afterLeave) {
-        this.afterLeave = null;
+      if (this.afterEnter) {
+        this.afterEnter();
+        this.afterEnter = null;
       }
-      this.resize(true);
+
+      this.afterLeave = null;
     },
     onLeave() {
       if (this.afterLeave) {
         this.afterLeave();
         this.afterLeave = null;
       }
+
+      this.afterEnter = null;
     },
-    // Returns the PhotoSwipe container HTML element, if visible.
-    getElement() {
-      return this.$refs?.lightbox;
+    // Returns the PhotoSwipe content element.
+    getContentElement() {
+      if (!this.$refs.content) {
+        console.log("lightbox: content element is not visible");
+        return null;
+      }
+
+      return this.$refs.content;
+    },
+    // Returns the metadata sidebar element.
+    getSidebarElement() {
+      if (!this.$refs.sidebar) {
+        console.log("lightbox: sidebar element is not visible");
+        return null;
+      }
+
+      return this.$refs.sidebar;
     },
     // Returns the PhotoSwipe config options, see https://photoswipe.com/options/.
     getOptions() {
       return {
-        appendToEl: this.getElement(),
+        appendToEl: this.getContentElement(),
         pswpModule: PhotoSwipe,
         dataSource: this.models,
         index: this.index,
@@ -170,65 +190,69 @@ export default {
         errorMsg: this.$gettext("Error"),
       };
     },
-    // Displays the thumbnail images and/or videos that belong to the specified models in the lightbox.
-    showThumbs(models, index = 0) {
-      if (this.isBusy("show thumbs")) {
-        return Promise.reject();
+    onOpen(ev, options) {
+      if (!options) {
+        return;
       }
 
+      if (options.view) {
+        this.showView(options.view, options.index);
+      } else {
+        this.showThumbs(options.models, options.index);
+      }
+    },
+    // Displays the thumbnail images and/or videos that belong to the specified models in the lightbox.
+    showThumbs(models, index = 0) {
       // Check if at least one model was passed, as otherwise no content can be displayed.
       if (!Array.isArray(models) || models.length === 0 || index >= models.length) {
         console.log("model list passed to lightbox is empty:", models);
         return Promise.reject();
       }
 
-      this.busy = true;
+      this.afterEnter = () => {
+        this.renderLightbox(models, index);
+      };
 
       this.onShow();
 
-      return new Promise((resolve) => {
-        this.$nextTick(() => {
-          this.busy = false;
-          resolve(this.renderLightbox(models, index));
-        });
-      });
+      return Promise.resolve();
     },
-    // Loads the pictures that belong to the page context and displays them in the lightbox.
-    showContext(ctx, index) {
+    // Loads the pictures that belong to a component and displays them in the lightbox.
+    showView(view, index) {
       if (this.isBusy("show context")) {
         return Promise.reject();
       }
 
-      if (ctx.loading || !ctx.listen || ctx.lightbox.loading || !ctx.results[index]) {
+      if (view.loading || !view.listen || view.lightbox.loading || !view.results[index]) {
         return Promise.reject();
       }
 
-      const selected = ctx.results[index];
+      const selected = view.results[index];
 
-      if (!ctx.lightbox.dirty && ctx.lightbox.results && ctx.lightbox.results.length > index) {
+      if (!view.lightbox.dirty && view.lightbox.results && view.lightbox.results.length > index) {
         // Reuse existing lightbox result if possible.
         let i = -1;
 
-        if (ctx.lightbox.results[index] && ctx.lightbox.results[index].UID === selected.UID) {
+        if (view.lightbox.results[index] && view.lightbox.results[index].UID === selected.UID) {
           i = index;
         } else {
-          i = ctx.lightbox.results.findIndex((p) => p.UID === selected.UID);
+          i = view.lightbox.results.findIndex((p) => p.UID === selected.UID);
         }
 
         if (
           i > -1 &&
-          (((ctx.lightbox.complete || ctx.complete) && ctx.lightbox.results.length >= ctx.results.length) ||
-            i + ctx.lightbox.batchSize <= ctx.lightbox.results.length)
+          (((view.lightbox.complete || view.complete) && view.lightbox.results.length >= view.results.length) ||
+            i + view.lightbox.batchSize <= view.lightbox.results.length)
         ) {
-          return this.showThumbs(ctx.lightbox.results, i);
+          return this.showThumbs(view.lightbox.results, i);
         }
       }
 
       // Fetch photos from server API.
-      ctx.lightbox.loading = true;
+      view.lightbox.loading = true;
 
-      const params = ctx.searchParams();
-      params.count = params.offset + ctx.lightbox.batchSize;
+      const params = view.searchParams();
+      params.count = params.offset + view.lightbox.batchSize;
       params.offset = 0;
 
       // Fetch lightbox results from API.
@@ -237,9 +261,9 @@ export default {
         .then((response) => {
           const count = response && response.data ? response.data.length : 0;
           if (count === 0) {
-            ctx.$notify.warn(ctx.$gettext("No pictures found"));
-            ctx.lightbox.dirty = true;
-            ctx.lightbox.complete = false;
+            view.$notify.warn(view.$gettext("No pictures found"));
+            view.lightbox.dirty = true;
+            view.lightbox.complete = false;
             return;
           }
 
@@ -247,9 +271,9 @@ export default {
           if (response.headers && response.headers["x-count"]) {
             const c = parseInt(response.headers["x-count"]);
             const l = parseInt(response.headers["x-limit"]);
-            ctx.lightbox.complete = c < l;
+            view.lightbox.complete = c < l;
           } else {
-            ctx.lightbox.complete = ctx.complete;
+            view.lightbox.complete = view.complete;
           }
 
           let i;
@@ -260,19 +284,19 @@ export default {
             i = response.data.findIndex((p) => p.UID === selected.UID);
           }
 
-          ctx.lightbox.results = Thumb.wrap(response.data);
+          view.lightbox.results = Thumb.wrap(response.data);
 
           // Show pictures.
-          this.showThumbs(ctx.lightbox.results, i);
-          ctx.lightbox.dirty = false;
+          this.showThumbs(view.lightbox.results, i);
+          view.lightbox.dirty = false;
         })
         .catch(() => {
-          ctx.lightbox.dirty = true;
-          ctx.lightbox.complete = false;
+          view.lightbox.dirty = true;
+          view.lightbox.complete = false;
         })
         .finally(() => {
           // Unblock.
-          ctx.lightbox.loading = false;
+          view.lightbox.loading = false;
         });
     },
     getItemData(el, i) {
@@ -449,7 +473,7 @@ export default {
     renderLightbox(models, index = 0) {
       // Check if at least one model was passed, as otherwise no content can be displayed.
       if (!Array.isArray(models) || models.length === 0 || index >= models.length) {
-        console.log("model list passed to lightbox is empty:", models);
+        console.log("lightbox: model list is empty", models);
         return Promise.reject();
       }
 
@@ -458,12 +482,17 @@ export default {
       this.models = models;
       this.index = index;
 
-      // Focus lightbox element.
-      // TODO: Move to common/view.js
-      this.getElement().focus();
-
       // Get PhotoSwipe lightbox config options, see https://photoswipe.com/options/.
       const options = this.getOptions();
+
+      if (!options.appendToEl) {
+        console.log("lightbox: content element not found", options);
+        return Promise.reject();
+      }
+
+      // Focus lightbox element.
+      // TODO: Move to common/view.js
+      this.getContentElement().focus();
 
       // Create PhotoSwipe instance.
       let lightbox = new Lightbox(options);
@@ -522,6 +551,25 @@ export default {
       // see https://photoswipe.com/events/#initialization-events.
       this.lightbox.on("change", () => {
         this.onChange();
+      });
+
+      this.lightbox.on("afterInit", () => {
+        // Attach touch and mouse event handlers to automatically hide controls.
+        document.addEventListener(
+          "touchstart",
+          () => {
+            this.resetTimer();
+            this.hasTouch = true;
+          },
+          { once: true }
+        );
+        document.addEventListener(
+          "mousemove",
+          () => {
+            this.startTimer();
+          },
+          { once: true }
+        );
       });
 
       // Processes model data for rendering slides with PhotoSwipe,
@@ -772,13 +820,13 @@ export default {
       return Util.sanitizeHtml(caption);
     },
     onShow() {
-      this.$view.enter(this);
-
       // Render the component template.
       this.visible = true;
 
+      this.$view.enter(this);
+
       // Publish event to be consumed by other components.
-      this.$event.publish("lightbox.show");
+      this.$event.publish("lightbox.opened");
     },
     // Destroys the PhotoSwipe lightbox, resets the component state, and unhides the browser scrollbar.
     onClose() {
@@ -787,7 +835,6 @@ export default {
       }
 
       this.busy = true;
-
       this.$view.leave(this);
 
       // Pause slideshow and any videos that are playing.
@@ -801,11 +848,10 @@ export default {
 
       // Hide lightbox and sidebar.
       this.hideViewer();
+      this.busy = false;
 
       // Publish event to be consumed by other components.
       this.$event.publish("lightbox.closed");
-
-      this.busy = false;
 
       return Promise.resolve();
     },
@@ -855,23 +901,6 @@ export default {
       if (!pswp) {
         return;
       }
-
-      // Attach touch and mouse event handlers to automatically hide controls.
-      document.addEventListener(
-        "touchstart",
-        () => {
-          this.resetTimer();
-          this.hasTouch = true;
-        },
-        { once: true }
-      );
-      document.addEventListener(
-        "mousemove",
-        () => {
-          this.startTimer();
-        },
-        { once: true }
-      );
 
       // Set current slide (model) list index.
       if (typeof pswp.currIndex === "number") {
@@ -949,7 +978,7 @@ export default {
           ev.preventDefault();
           this.resetTimer();
           this.showLightboxControls();
-          this.hideControlsWithDelay();
+          this.hideControlsWithDelay(this.defaultControlHideDelay);
         }
       } else if (ev.target instanceof HTMLMediaElement) {
         // Stop event default and propagation when user clicks/touches the player controls at the bottom of the screen.
@@ -981,7 +1010,7 @@ export default {
           // Toggle video playback.
           this.toggleVideo();
         } else {
-          this.revealControls();
+          this.showControls();
         }
       }
     },
@@ -1113,19 +1142,31 @@ export default {
         }
       }
     },
-    // Handles the space keyboard press event.
-    onSpace() {
-      if (!this.visible || this.sidebarVisible) {
+    // Handles keyboard events.
+    onKeyDown(ev) {
+      if (!ev || !ev.code || !this.visible || this.sidebarVisible) {
         return;
       }
 
-      // Get active video element, if any.
-      const { video } = this.getContent();
+      switch (ev.code) {
+        case "Space":
+          ev.preventDefault();
+          ev.stopPropagation();
 
-      if (video) {
-        this.toggleVideo();
-      } else {
-        this.toggleControls();
+          // Get active video element, if any.
+          const { video } = this.getContent();
+
+          if (video) {
+            this.toggleVideo();
+          } else {
+            this.toggleControls();
+          }
+          break;
+        case "Escape":
+          ev.preventDefault();
+          ev.stopPropagation();
+          this.onClose();
+          break;
       }
     },
     // Toggles video playback on the current video element, if any.
@@ -1315,7 +1356,7 @@ export default {
     },
     resize(force) {
       this.$nextTick(() => {
-        if (this.visible && this.getElement()) {
+        if (this.visible && this.getContentElement()) {
           const pswp = this.pswp();
           if (pswp && pswp?.updateSize) {
             pswp.updateSize(force);
@@ -1324,17 +1365,49 @@ export default {
       });
     },
     toggleSidebar() {
-      this.sidebarVisible = !this.sidebarVisible;
-      this.resize(true);
+      if (!this.visible) {
+        return;
+      }
+
+      if (this.sidebarVisible) {
+        this.hideSidebar();
+      } else {
+        this.showSidebar();
+      }
+    },
+    // Shows the lightbox sidebar, if hidden.
+    showSidebar() {
+      if (!this.visible || this.sidebarVisible) {
+        return;
+      }
+
+      this.sidebarVisible = true;
+
+      // Set focus to sidebar and resize the content element.
+      this.$nextTick(() => {
+        this.getSidebarElement().focus();
+        this.resize(true);
+      });
     },
     // Hides the lightbox sidebar, if visible.
     hideSidebar() {
-      if (this.sidebarVisible) {
-        this.sidebarVisible = false;
-        this.getElement().focus();
+      if (!this.visible || !this.sidebarVisible) {
+        return;
       }
+
+      this.sidebarVisible = false;
+
+      // Return focus and resize the content element.
+      this.$nextTick(() => {
+        this.getContentElement().focus();
+        this.resize(true);
+      });
     },
     toggleControls() {
+      if (!this.visible) {
+        return;
+      }
+
       if (this.pswp() && this.pswp().element) {
         const el = this.pswp().element;
         if (el.classList.contains("pswp--ui-visible")) {
@@ -1345,8 +1418,13 @@ export default {
       }
     },
     showControls() {
+      if (!this.visible) {
+        return;
+      }
+
       this.showLightboxControls();
       this.showVideoControls();
+      this.startTimer();
     },
     showLightboxControls() {
       this.controlsShown = Date.now();
@@ -1359,6 +1437,10 @@ export default {
       }
     },
     hideControls() {
+      if (!this.visible) {
+        return;
+      }
+
       this.hideLightboxControls();
       this.hideVideoControls();
     },
@@ -1373,8 +1455,8 @@ export default {
       }
     },
     hideControlsWithDelay(delay) {
-      if (!delay) {
-        delay = this.defaultControlHideDelay;
+      if (!delay || delay < 1) {
+        return;
       }
 
       this.resetTimer();
@@ -1384,22 +1466,6 @@ export default {
     },
     controlsVisible() {
       return this.controlsShown !== 0;
-
-      // TODO: Remove the code below if it is no longer needed (e.g. since the transition has been disabled).
-      /* if (this.controlsShown === 0) {
-        return false;
-      } else if (this.controlsShown < 0) {
-        return true;
-      }
-
-      if (this.pswp() && this.pswp().element) {
-        const el = this.pswp().element;
-        if (el.classList.contains("pswp--ui-visible") && Date.now() - this.controlsShown > 120) {
-          return true;
-        }
-      }
-
-      return false; */
     },
     startTimer() {
       if (this.hasTouch || this.$isMobile) {
@@ -1411,17 +1477,10 @@ export default {
       document.addEventListener(
         "mousemove",
         (ev) => {
-          this.revealControls(ev);
+          this.showControls(ev);
         },
         { once: true }
       );
-    },
-    revealControls() {
-      this.resetTimer();
-      if (this.lightbox) {
-        this.showControls();
-        this.startTimer();
-      }
     },
     // Resets the timer for hiding the lightbox controls.
     resetTimer() {
@@ -1437,7 +1496,7 @@ export default {
       };
     },
     getViewport() {
-      const el = this.getElement();
+      const el = this.getContentElement();
 
       if (el) {
         return {

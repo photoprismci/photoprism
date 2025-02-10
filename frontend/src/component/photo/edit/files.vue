@@ -1,7 +1,12 @@
 <template>
   <div class="p-tab p-tab-photo-files">
     <v-expansion-panels v-model="expanded" class="pa-0 elevation-0" variant="accordion" multiple>
-      <v-expansion-panel v-for="file in view.model.fileModels().filter((f) => !f.Missing)" :key="file.UID" class="pa-0 elevation-0" style="margin-top: 1px">
+      <v-expansion-panel
+        v-for="file in view.model.fileModels().filter((f) => !f.Missing)"
+        :key="file.UID"
+        class="pa-0 elevation-0"
+        style="margin-top: 1px"
+      >
         <v-expansion-panel-title>
           <div class="text-caption font-weight-bold filename">
             {{ file.baseName(70) }}
@@ -356,7 +361,7 @@
       </v-expansion-panel>
     </v-expansion-panels>
     <p-file-delete-dialog
-      :show="deleteFile.dialog"
+      :visible="deleteFile.dialog"
       @close="closeDeleteDialog"
       @confirm="confirmDeleteFile"
     ></p-file-delete-dialog>
@@ -454,7 +459,7 @@ export default {
       return Util.codecName(file.Codec);
     },
     openFile(file) {
-      this.$root.$refs.lightbox.showThumbs([Thumb.fromFile(this.view.model, file)], 0);
+      this.$lightbox.openModels([Thumb.fromFile(this.view.model, file)], 0);
     },
     openFolder(file) {
       if (!file) {

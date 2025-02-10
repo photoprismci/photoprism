@@ -124,22 +124,22 @@
       </v-form>
     </div>
 
-    <p-service-add :show="dialog.add" @close="close('add')" @confirm="onAdded"></p-service-add>
+    <p-service-add :visible="dialog.add" @close="close('add')" @confirm="onAdded"></p-service-add>
     <p-service-remove
-      :show="dialog.remove"
+      :visible="dialog.remove"
       :model="model"
       @close="close('remove')"
       @confirm="onRemoved"
     ></p-service-remove>
     <p-service-edit
-      :show="dialog.edit"
+      :visible="dialog.edit"
       :model="model"
       :scope="editScope"
       @remove="remove(model)"
       @close="close('edit')"
       @confirm="onEdited"
     ></p-service-edit>
-    <p-settings-webdav :show="dialog.webdav" @close="dialog.webdav = false"></p-settings-webdav>
+    <p-settings-webdav :visible="dialog.webdav" @close="dialog.webdav = false"></p-settings-webdav>
   </div>
 </template>
 

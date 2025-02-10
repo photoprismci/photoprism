@@ -128,7 +128,7 @@
       </div>
     </div>
     <p-confirm-action
-      :show="confirm.show"
+      :visible="confirm.visible"
       icon="mdi-account-plus"
       :icon-size="42"
       :text="confirm?.model?.Name ? $gettext('Add %{s}?', { s: confirm.model.Name }) : $gettext('Add person?')"
@@ -140,7 +140,6 @@
 
 <script>
 import Face from "model/face";
-import Event from "pubsub-js";
 import RestModel from "model/rest";
 import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
@@ -192,7 +191,7 @@ export default {
       input: new Input(),
       lastId: "",
       confirm: {
-        show: false,
+        visible: false,
         model: new Face(),
         text: this.$gettext("Add person?"),
       },
@@ -238,12 +237,12 @@ export default {
   created() {
     this.search();
 
-    this.subscriptions.push(Event.subscribe("faces", (ev, data) => this.onUpdate(ev, data)));
-    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
+    this.subscriptions.push(this.$event.subscribe("faces", (ev, data) => this.onUpdate(ev, data)));
+    this.subscriptions.push(this.$event.subscribe("touchmove.top", () => this.refresh()));
   },
   unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
+      this.$event.unsubscribe(this.subscriptions[i]);
     }
   },
   methods: {
@@ -657,7 +656,7 @@ export default {
       model.SubjUID = "";
 
       if (confirm && model.wasChanged()) {
-        this.confirm.show = true;
+        this.confirm.visible = true;
       } else {
         this.onConfirmRename();
       }
@@ -671,11 +670,11 @@ export default {
         this.setName(this.confirm.model, this.confirm?.model?.Name);
       } else {
         this.confirm.model = null;
-        this.confirm.show = false;
+        this.confirm.visible = false;
       }
     },
     onCancelRename() {
-      this.confirm.show = false;
+      this.confirm.visible = false;
     },
     setName(model, newName) {
       if (this.busy || !model || !newName || newName.trim() === "") {
@@ -690,7 +689,7 @@ export default {
         this.$notify.unblockUI();
         this.busy = false;
         this.confirm.model = null;
-        this.confirm.show = false;
+        this.confirm.visible = false;
         this.changeFaceCount(-1);
       });
     },

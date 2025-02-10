@@ -1,6 +1,6 @@
 <template>
   <transition id="p-loading-bar" :css="false" @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter">
-    <div v-if="show" class="top-progress" :style="barStyle">
+    <div v-if="visible" class="top-progress" :style="barStyle">
       <div class="peg" :style="pegStyle"></div>
     </div>
   </transition>
@@ -92,8 +92,8 @@ export default {
   },
   data() {
     return {
+      visible: false,
       error: false,
-      show: false,
       progress: 0,
       opacity: 1,
       status: null,
@@ -202,10 +202,10 @@ export default {
     start() {
       this.isPaused = false;
 
-      if (this.show) {
+      if (this.visible) {
         this._runStart();
       } else {
-        this.show = true;
+        this.visible = true;
       }
     },
 
@@ -227,7 +227,7 @@ export default {
           setTimeout(() => {
             this.opacity = 0;
             setTimeout(() => {
-              this.show = false;
+              this.visible = false;
               this.error = false;
               next();
             }, this.speed);

@@ -308,8 +308,8 @@
 /* Navigation Arrow Buttons */
 
 .pswp__button--arrow {
-    height: 40vh;
-    margin-top: -20vh;
+    height: 50vh;
+    margin-top: -25vh;
     width: 150px;
     max-width: 16vw;
 }

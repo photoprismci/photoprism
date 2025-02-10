@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    :model-value="show"
+    :model-value="visible"
     persistent
     max-width="500"
     class="dialog-person-edit"
@@ -73,7 +73,7 @@ import Subject from "model/subject";
 export default {
   name: "PPeopleEditDialog",
   props: {
-    show: Boolean,
+    visible: Boolean,
     person: {
       type: Object,
       default: () => {},
@@ -87,8 +87,8 @@ export default {
     };
   },
   watch: {
-    show: function (visible) {
-      if (visible) {
+    visible: function (show) {
+      if (show) {
         this.$view.enter(this);
         this.model = this.person.clone();
       } else {

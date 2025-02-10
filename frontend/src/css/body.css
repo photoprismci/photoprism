@@ -6,10 +6,6 @@
     background: transparent;
 }
 
-body.disable-navigation-gestures {
-    touch-action: none;
-}
-
 body.dark-theme {
     color-scheme: dark !important;
 }

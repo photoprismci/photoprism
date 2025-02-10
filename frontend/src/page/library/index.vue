@@ -96,7 +96,6 @@
 import $api from "common/api";
 import Axios from "axios";
 import $notify from "common/notify";
-import Event from "pubsub-js";
 import Settings from "model/settings";
 import Util from "common/util";
 import { Folder, RootOriginals } from "model/folder";
@@ -127,11 +126,11 @@ export default {
     };
   },
   created() {
-    this.subscriptionId = Event.subscribe("index", this.handleEvent);
+    this.subscriptionId = this.$event.subscribe("index", this.handleEvent);
     this.load();
   },
   unmounted() {
-    Event.unsubscribe(this.subscriptionId);
+    this.$event.unsubscribe(this.subscriptionId);
   },
   methods: {
     load() {

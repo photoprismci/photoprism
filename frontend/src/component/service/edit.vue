@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="show" persistent max-width="500" class="p-dialog p-service-edit" @keydown.esc="close">
+  <v-dialog :model-value="visible" persistent max-width="500" class="p-dialog p-service-edit" @keydown.esc="close">
     <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" @submit.prevent>
       <v-card>
         <v-card-title v-if="scope === 'sharing'" class="d-flex justify-space-between align-center ga-3">
@@ -247,7 +247,7 @@ import * as options from "options/options";
 export default {
   name: "PServiceEdit",
   props: {
-    show: Boolean,
+    visible: Boolean,
     scope: {
       type: String,
       default: "",
@@ -285,8 +285,8 @@ export default {
         this.pathItems = this.paths.concat([{ abs: q }]);
       }
     },
-    show: function (visible) {
-      if (visible) {
+    visible: function (show) {
+      if (show) {
         this.$view.enter(this);
         this.loading = false;
         this.showPassword = false;

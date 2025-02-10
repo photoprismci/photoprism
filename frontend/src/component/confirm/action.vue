@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="show" persistent max-width="350" class="p-dialog p-confirm-action" @keydown.esc="close">
+  <v-dialog :model-value="visible" persistent max-width="350" class="p-dialog p-confirm-action" @keydown.esc="close">
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
         <v-icon :icon="icon" :size="iconSize" color="primary"></v-icon>
@@ -20,7 +20,7 @@
 export default {
   name: "PConfirmAction",
   props: {
-    show: {
+    visible: {
       type: Boolean,
       default: false,
     },

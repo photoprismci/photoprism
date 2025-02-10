@@ -69,7 +69,6 @@
 <script>
 import { Photo } from "model/photo";
 import Thumb from "model/thumb";
-import Event from "pubsub-js";
 import PPhotoToolbar from "component/photo/toolbar.vue";
 import PPhotoClipboard from "component/photo/clipboard.vue";
 import PPhotoViewCards from "component/photo/view/cards.vue";
@@ -238,8 +237,8 @@ export default {
   created() {
     this.search();
 
-    this.subscriptions.push(Event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data)));
-    this.subscriptions.push(Event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
+    this.subscriptions.push(this.$event.subscribe("import.completed", (ev, data) => this.onImportCompleted(ev, data)));
+    this.subscriptions.push(this.$event.subscribe("photos", (ev, data) => this.onUpdate(ev, data)));
 
     this.subscriptions.push(
       this.$event.subscribe("lightbox.opened", (ev, data) => {
@@ -252,15 +251,15 @@ export default {
       })
     );
 
-    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
+    this.subscriptions.push(this.$event.subscribe("touchmove.top", () => this.refresh()));
+    this.subscriptions.push(this.$event.subscribe("touchmove.bottom", () => this.loadMore()));
   },
   mounted() {
     this.$view.enter(this);
   },
   unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
+      this.$event.unsubscribe(this.subscriptions[i]);
     }
     this.$view.leave(this);
   },
@@ -407,7 +406,7 @@ export default {
       });
 
       // Open Edit Dialog
-      Event.publish("dialog.edit", { selection, album: null, index, tab });
+      this.$event.publish("dialog.edit", { selection, album: null, index, tab });
     },
     openPhoto(index, showMerged = false, preferVideo = false) {
       if (this.loading || !this.listen || this.lightbox.loading || !this.results[index]) {
@@ -436,9 +435,9 @@ export default {
        * preferVideo is true, when the user explicitly clicks the live-image-icon.
        */
       if (showMerged) {
-        this.$root.$refs.lightbox.showThumbs(Thumb.fromFiles([selected]), 0);
+        this.$lightbox.openModels(Thumb.fromFiles([selected]), 0);
       } else {
-        this.$root.$refs.lightbox.showContext(this, index);
+        this.$lightbox.openView(this, index);
       }
 
       return true;

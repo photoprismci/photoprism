@@ -332,15 +332,15 @@
         </v-card>
       </v-form>
     </div>
-    <p-settings-apps :show="dialog.apps" :model="user" @close="dialog.apps = false"></p-settings-apps>
+    <p-settings-apps :visible="dialog.apps" :model="user" @close="dialog.apps = false"></p-settings-apps>
     <p-settings-passcode
-      :show="dialog.passcode"
+      :visible="dialog.passcode"
       :model="user"
       @close="dialog.passcode = false"
       @updateUser="updateUser()"
     ></p-settings-passcode>
-    <p-settings-password :show="dialog.password" :model="user" @close="dialog.password = false"></p-settings-password>
-    <p-settings-webdav :show="dialog.webdav" @close="dialog.webdav = false"></p-settings-webdav>
+    <p-settings-password :visible="dialog.password" :model="user" @close="dialog.password = false"></p-settings-password>
+    <p-settings-webdav :visible="dialog.webdav" @close="dialog.webdav = false"></p-settings-webdav>
   </div>
 </template>
 

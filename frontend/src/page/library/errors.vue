@@ -100,12 +100,12 @@
       </v-alert>
     </div>
     <p-confirm-action
-      :show="dialog.delete"
+      :visible="dialog.delete"
       icon="mdi-delete-outline"
       @close="dialog.delete = false"
       @confirm="onConfirmDelete"
     ></p-confirm-action>
-    <v-dialog :model-value="details.show" max-width="550" class="p-dialog">
+    <v-dialog :model-value="details.visible" max-width="550" class="p-dialog">
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon v-if="details.err.Level === 'error'" icon="mdi-alert-circle-outline" color="error"></v-icon>
@@ -122,7 +122,7 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn color="button" variant="flat" class="action-close" @click="details.show = false">
+          <v-btn color="button" variant="flat" class="action-close" @click="details.visible = false">
             {{ $gettext(`Close`) }}
           </v-btn>
         </v-card-actions>
@@ -160,7 +160,7 @@ export default {
         delete: false,
       },
       details: {
-        show: false,
+        visible: false,
         err: { Level: "", Message: "", Time: "" },
       },
     };
@@ -184,6 +184,12 @@ export default {
     }
 
     this.loadMore();
+  },
+  mounted() {
+    this.$view.enter(this);
+  },
+  unmounted() {
+    this.$view.leave(this);
   },
   methods: {
     updateFilter(props) {
@@ -227,7 +233,7 @@ export default {
     },
     showDetails(err) {
       this.details.err = err;
-      this.details.show = true;
+      this.details.visible = true;
     },
     onDelete() {
       if (this.loading) {

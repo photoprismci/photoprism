@@ -404,7 +404,7 @@
       </v-card>
     </v-form>
     <p-about-footer></p-about-footer>
-    <p-confirm-sponsor :show="dialog.sponsor" @close="dialog.sponsor = false"></p-confirm-sponsor>
+    <p-confirm-sponsor :visible="dialog.sponsor" @close="dialog.sponsor = false"></p-confirm-sponsor>
   </div>
 </template>
 
@@ -412,7 +412,6 @@
 import Settings from "model/settings";
 import * as options from "options/options";
 import * as themes from "options/themes";
-import Event from "pubsub-js";
 import PAboutFooter from "component/about/footer.vue";
 import PConfirmSponsor from "component/confirm/sponsor.vue";
 
@@ -445,12 +444,12 @@ export default {
   created() {
     this.load();
     this.subscriptions.push(
-      Event.subscribe("config.updated", (ev, data) => this.settings.setValues(data.config.settings))
+      this.$event.subscribe("config.updated", (ev, data) => this.settings.setValues(data.config.settings))
     );
   },
   unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
+      this.$event.unsubscribe(this.subscriptions[i]);
     }
   },
   methods: {

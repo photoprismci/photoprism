@@ -58,12 +58,12 @@
       </v-speed-dial>
     </div>
     <p-photo-album-dialog
-      :show="dialog.album"
+      :visible="dialog.album"
       @close="dialog.album = false"
       @confirm="addToAlbum"
     ></p-photo-album-dialog>
     <p-label-delete-dialog
-      :show="dialog.delete"
+      :visible="dialog.delete"
       @close="dialog.delete = false"
       @confirm="batchDelete"
     ></p-label-delete-dialog>

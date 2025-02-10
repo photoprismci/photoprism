@@ -154,13 +154,12 @@
       </div>
     </div>
 
-    <p-label-edit-dialog :show="dialog.edit" :label="model" @close="dialog.edit = false"></p-label-edit-dialog>
+    <p-label-edit-dialog :visible="dialog.edit" :label="model" @close="dialog.edit = false"></p-label-edit-dialog>
   </div>
 </template>
 
 <script>
 import Label from "model/label";
-import Event from "pubsub-js";
 import RestModel from "model/rest";
 import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
@@ -233,15 +232,19 @@ export default {
   created() {
     this.search();
 
-    this.subscriptions.push(Event.subscribe("labels", (ev, data) => this.onUpdate(ev, data)));
+    this.subscriptions.push(this.$event.subscribe("labels", (ev, data) => this.onUpdate(ev, data)));
 
-    this.subscriptions.push(Event.subscribe("touchmove.top", () => this.refresh()));
-    this.subscriptions.push(Event.subscribe("touchmove.bottom", () => this.loadMore()));
+    this.subscriptions.push(this.$event.subscribe("touchmove.top", () => this.refresh()));
+    this.subscriptions.push(this.$event.subscribe("touchmove.bottom", () => this.loadMore()));
+  },
+  mounted() {
+    this.$view.enter(this);
   },
   unmounted() {
     for (let i = 0; i < this.subscriptions.length; i++) {
-      Event.unsubscribe(this.subscriptions[i]);
+      this.$event.unsubscribe(this.subscriptions[i]);
     }
+    this.$view.leave(this);
   },
   methods: {
     edit(label) {

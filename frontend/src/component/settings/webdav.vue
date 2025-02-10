@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="show" max-width="580" class="p-dialog p-settings-webdav">
+  <v-dialog :model-value="visible" persistent max-width="580" class="p-dialog p-settings-webdav" @keydown.esc="close">
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
         <v-icon size="28" color="primary">mdi-swap-horizontal</v-icon>
@@ -80,17 +80,16 @@
 export default {
   name: "PSettingsWebdav",
   props: {
-    show: Boolean,
+    visible: Boolean,
   },
   data() {
     return {
-      visible: false,
       user: this.$session.getUser(),
     };
   },
   watch: {
-    show(visible) {
-      if (visible) {
+    visible: function (show) {
+      if (show) {
         this.$view.enter(this);
       } else {
         this.$view.leave(this);

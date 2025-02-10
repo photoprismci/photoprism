@@ -1,12 +1,12 @@
 <template>
-  <v-dialog :model-value="show" persistent max-width="350" class="p-dialog p-people-merge-dialog" @keydown.esc="cancel">
+  <v-dialog :model-value="visible" persistent max-width="350" class="p-dialog p-people-merge-dialog" @keydown.esc="close">
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
         <v-icon size="54" color="primary">mdi-account-multiple</v-icon>
         <p class="text-subtitle-1">{{ prompt }}</p>
       </v-card-title>
       <v-card-actions class="dialog-merge action-buttons">
-        <v-btn variant="flat" color="button" class="action-cancel" @click.stop="cancel">
+        <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
           {{ $gettext(`No`) }}
         </v-btn>
         <v-btn color="highlight" variant="flat" class="action-confirm" @click.stop="confirm">
@@ -22,7 +22,7 @@ import Subject from "model/subject";
 export default {
   name: "PPeopleMergeDialog",
   props: {
-    show: Boolean,
+    visible: Boolean,
     subj1: {
       type: Object,
       default: new Subject(),
@@ -48,7 +48,7 @@ export default {
     },
   },
   methods: {
-    cancel() {
+    close() {
       this.$emit("close");
     },
     confirm() {

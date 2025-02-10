@@ -4,7 +4,7 @@ const TouchStartEvent = "touchstart";
 const TouchMoveEvent = "touchmove";
 
 // If true, logging is enabled.
-const log = window.__CONFIG__?.debug && typeof console.log == "function";
+const debug = window.__CONFIG__?.debug;
 
 // Returns the <html> element.
 export function getHtmlElement() {
@@ -16,7 +16,7 @@ export function initHtmlElement() {
   const htmlElement = document.documentElement;
 
   if (htmlElement && htmlElement.hasAttribute("class")) {
-    if (log) {
+    if (debug) {
       console.log(`html: removed class="${htmlElement.getAttribute("class")}"`);
     }
 
@@ -28,7 +28,7 @@ export function initHtmlElement() {
     if (document.body.classList.contains("hide-scrollbar")) {
       htmlElement.setAttribute("class", "hide-scrollbar");
 
-      if (log) {
+      if (debug) {
         console.log('html: added class="hide-scrollbar" to permanently hide the scrollbar');
       }
     }
@@ -210,7 +210,7 @@ export class View {
 
     this.preventNavigation = preventNavigation;
 
-    if (log && name && uid) {
+    if (debug && name && uid) {
       const scope = this.scopes.map((s) => `${s?.$options?.name} #${s?.$?.uid.toString()}`).join(" › ");
       console.log(`view: ${scope}`, toRaw(c?.$data));
     }
@@ -220,7 +220,7 @@ export class View {
         bodyEl.classList.add("hide-scrollbar");
         setHtmlStyle("scrollbar-width", "none");
         setHtmlStyle("overflow-y", "hidden");
-        if (log) {
+        if (debug) {
           console.log(`html: added style="scrollbar-width: none; overflow-y: hidden;"`);
         }
       }
@@ -228,7 +228,7 @@ export class View {
       bodyEl.classList.remove("hide-scrollbar");
       setHtmlStyle("scrollbar-width");
       setHtmlStyle("overflow-y");
-      if (log) {
+      if (debug) {
         console.log(`html: removed style="scrollbar-width: none; overflow-y: hidden;"`);
       }
     }
@@ -236,13 +236,13 @@ export class View {
     if (disableScrolling) {
       if (!bodyEl.classList.contains("disable-scrolling")) {
         bodyEl.classList.add("disable-scrolling");
-        if (log) {
+        if (debug) {
           console.log(`body: added class="disable-scrolling"`);
         }
       }
     } else if (bodyEl.classList.contains("disable-scrolling")) {
       bodyEl.classList.remove("disable-scrolling");
-      if (log) {
+      if (debug) {
         console.log(`body: removed class="disable-scrolling"`);
       }
     }
@@ -250,17 +250,17 @@ export class View {
     if (disableNavigationGestures) {
       if (!bodyEl.classList.contains("disable-navigation-gestures")) {
         bodyEl.classList.add("disable-navigation-gestures");
-        document.addEventListener(TouchStartEvent, preventNavigationTouchEvent, { passive: false });
-        document.addEventListener(TouchMoveEvent, preventNavigationTouchEvent, { passive: false });
-        if (log) {
+        window.addEventListener(TouchStartEvent, preventNavigationTouchEvent, { passive: false });
+        window.addEventListener(TouchMoveEvent, preventNavigationTouchEvent, { passive: false });
+        if (debug) {
           console.log(`view: disabled touch navigation gestures`);
         }
       }
     } else if (bodyEl.classList.contains("disable-navigation-gestures")) {
       bodyEl.classList.remove("disable-navigation-gestures");
-      document.removeEventListener(TouchStartEvent, preventNavigationTouchEvent, false);
-      document.removeEventListener(TouchMoveEvent, preventNavigationTouchEvent, false);
-      if (log) {
+      window.removeEventListener(TouchStartEvent, preventNavigationTouchEvent, false);
+      window.removeEventListener(TouchMoveEvent, preventNavigationTouchEvent, false);
+      if (debug) {
         console.log(`view: re-enabled touch navigation gestures`);
       }
     }
