@@ -539,10 +539,8 @@ export default class Config {
       return;
     }
 
-    const tags = document.getElementsByTagName("html");
-
-    if (tags && tags.length > 0) {
-      tags[0].setAttribute("data-color-mode", value);
+    if (document.documentElement) {
+      document.documentElement.setAttribute("data-color-mode", value);
     }
 
     if (value === "dark") {

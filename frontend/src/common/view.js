@@ -1,4 +1,4 @@
-import { toRaw, reactive } from "vue";
+import { toRaw } from "vue";
 
 const TouchStartEvent = "touchstart";
 const TouchMoveEvent = "touchmove";
@@ -8,12 +8,12 @@ const log = window.__CONFIG__?.develop && typeof console?.log == "function";
 
 // Returns the <html> element.
 export function getHtmlElement() {
-  return document.getElementsByTagName("html")[0];
+  return document.documentElement;
 }
 
 // Initializes the <html> element by removing the "class" attribute.
 export function initHtmlElement() {
-  const htmlElement = document.getElementsByTagName("html")[0];
+  const htmlElement = document.documentElement;
 
   if (htmlElement && htmlElement.hasAttribute("class")) {
     if (log) {
@@ -183,6 +183,9 @@ export class View {
     let preventNavigation = uid > 0 && !name.startsWith("PPage");
 
     switch (name) {
+      case "PPagePlaces":
+        hideScrollbar = true;
+        break;
       case "PPageLogin":
         hideScrollbar = true;
         preventNavigation = true;
@@ -209,22 +212,24 @@ export class View {
 
     if (log && name && uid) {
       const scope = this.scopes.map((s) => `${s?.$options?.name} #${s?.$?.uid.toString()}`).join(" › ");
-      console.log(`view: ${scope}`);
+      console.log(`view: ${scope}`, toRaw(c?.$data));
     }
 
     if (hideScrollbar) {
       if (!bodyEl.classList.contains("hide-scrollbar")) {
         bodyEl.classList.add("hide-scrollbar");
         setHtmlStyle("scrollbar-width", "none");
+        setHtmlStyle("overflow-y", "hidden");
         if (log) {
-          console.log(`html: added style="scrollbar-width: none"`);
+          console.log(`html: added style="scrollbar-width: none; overflow-y: hidden;"`);
         }
       }
     } else if (bodyEl.classList.contains("hide-scrollbar")) {
       bodyEl.classList.remove("hide-scrollbar");
       setHtmlStyle("scrollbar-width");
+      setHtmlStyle("overflow-y");
       if (log) {
-        console.log(`html: removed style="scrollbar-width: none"`);
+        console.log(`html: removed style="scrollbar-width: none; overflow-y: hidden;"`);
       }
     }
 

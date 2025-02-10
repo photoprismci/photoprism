@@ -55,7 +55,10 @@ export default {
     const debug = this.$config.get("debug");
     const trace = this.$config.get("trace");
     return {
+      debug,
+      trace,
       visible: false,
+      busy: false,
       sidebarVisible: false,
       lightbox: null, // Current PhotoSwipe lightbox instance.
       captionPlugin: null, // Current PhotoSwipe caption plugin instance.
@@ -76,10 +79,12 @@ export default {
       featDevelop: this.$config.featDevelop(), // Enables new features that are still under development.
       selection: this.$clipboard.selection,
       config: this.$config.values,
+      models: [], // Slide models.
       model: new Thumb(), // Current slide.
-      models: [],
-      index: 0,
+      index: 0, // Current slide index in models.
       subscriptions: [], // Event subscriptions.
+      afterLeave: null, // Called after the lightbox has closed..
+      // Slideshow properties.
       slideshow: {
         active: false,
         interval: false,
@@ -87,9 +92,6 @@ export default {
         waitAfterVideo: 2500,
         next: -1,
       },
-      afterLeave: null,
-      debug,
-      trace,
     };
   },
   created() {
@@ -107,17 +109,24 @@ export default {
     }
   },
   methods: {
+    isBusy(action) {
+      if (this.busy) {
+        console?.warn(`lightbox: still busy, cannot ${action ? action : "do this"}`);
+        return true;
+      }
+
+      return false;
+    },
     onEnter() {
-      this.$view.enter(this);
       if (this.afterLeave) {
         this.afterLeave = null;
       }
       this.resize(true);
     },
     onLeave() {
-      this.$view.leave(this);
       if (this.afterLeave) {
         this.afterLeave();
+        this.afterLeave = null;
       }
     },
     // Returns the PhotoSwipe container HTML element, if visible.
@@ -163,22 +172,35 @@ export default {
     },
     // Displays the thumbnail images and/or videos that belong to the specified models in the lightbox.
     showThumbs(models, index = 0) {
+      if (this.isBusy("show thumbs")) {
+        return Promise.reject();
+      }
+
       // Check if at least one model was passed, as otherwise no content can be displayed.
       if (!Array.isArray(models) || models.length === 0 || index >= models.length) {
         console.log("model list passed to lightbox is empty:", models);
-        return;
+        return Promise.reject();
       }
+
+      this.busy = true;
 
       this.onShow();
 
-      this.$nextTick(() => {
-        this.renderLightbox(models, index);
+      return new Promise((resolve) => {
+        this.$nextTick(() => {
+          this.busy = false;
+          resolve(this.renderLightbox(models, index));
+        });
       });
     },
     // Loads the pictures that belong to the page context and displays them in the lightbox.
     showContext(ctx, index) {
+      if (this.isBusy("show context")) {
+        return Promise.reject();
+      }
+
       if (ctx.loading || !ctx.listen || ctx.lightbox.loading || !ctx.results[index]) {
-        return false;
+        return Promise.reject();
       }
 
       const selected = ctx.results[index];
@@ -198,8 +220,7 @@ export default {
           (((ctx.lightbox.complete || ctx.complete) && ctx.lightbox.results.length >= ctx.results.length) ||
             i + ctx.lightbox.batchSize <= ctx.lightbox.results.length)
         ) {
-          this.showThumbs(ctx.lightbox.results, i);
-          return;
+          return this.showThumbs(ctx.lightbox.results, i);
         }
       }
 
@@ -429,7 +450,7 @@ export default {
       // Check if at least one model was passed, as otherwise no content can be displayed.
       if (!Array.isArray(models) || models.length === 0 || index >= models.length) {
         console.log("model list passed to lightbox is empty:", models);
-        return;
+        return Promise.reject();
       }
 
       // Set the initial model list and start index.
@@ -568,6 +589,8 @@ export default {
 
       // Publish event to be consumed by other components.
       this.$event.publish("lightbox.opened");
+
+      return Promise.resolve();
     },
     // Adds PhotoSwipe lightbox controls, see https://photoswipe.com/adding-ui-elements/.
     addLightboxControls() {
@@ -749,6 +772,8 @@ export default {
       return Util.sanitizeHtml(caption);
     },
     onShow() {
+      this.$view.enter(this);
+
       // Render the component template.
       this.visible = true;
 
@@ -757,6 +782,14 @@ export default {
     },
     // Destroys the PhotoSwipe lightbox, resets the component state, and unhides the browser scrollbar.
     onClose() {
+      if (this.isBusy("close")) {
+        return Promise.reject();
+      }
+
+      this.busy = true;
+
+      this.$view.leave(this);
+
       // Pause slideshow and any videos that are playing.
       this.onPause();
 
@@ -771,10 +804,14 @@ export default {
 
       // Publish event to be consumed by other components.
       this.$event.publish("lightbox.closed");
+
+      this.busy = false;
+
+      return Promise.resolve();
     },
     // Pauses the lightbox slideshow and any videos that are playing.
     onPause() {
-      this.pauseVideos();
+      this.pausePlaying();
       this.pauseSlideshow();
     },
     // Resets the component state after closing the lightbox.
@@ -858,10 +895,10 @@ export default {
         return;
       }
 
-      if (this.controlsShown === 0) {
-        this.showControls();
-      } else {
+      if (this.controlsVisible()) {
         this.onClose();
+      } else {
+        this.showControls();
       }
     },
     // Called when the lightbox receives a pointer move, down or up event.
@@ -887,9 +924,18 @@ export default {
         ev.preventDefault();
       }
 
-      if (typeof action === "function" && this.controlsShown !== 0) {
-        action();
+      if (typeof action === "function") {
+        if (this.isBusy(action.name)) {
+          return false;
+        } else if (this.controlsVisible()) {
+          action();
+          return true;
+        } else {
+          console?.warn(`lightbox: controls not visible, will not call ${action.name}`);
+        }
       }
+
+      return false;
     },
     onContainerClick(ev) {
       if (!ev) {
@@ -898,7 +944,7 @@ export default {
 
       if (ev.y <= 128) {
         // Reveal controls when user clicks/touches the top of the screen.
-        if (this.controlsShown === 0) {
+        if (!this.controlsVisible()) {
           ev.stopPropagation();
           ev.preventDefault();
           this.resetTimer();
@@ -1017,36 +1063,22 @@ export default {
 
       return result;
     },
-    // Returns the <video> elements in the lightbox container as an HTMLCollection.
-    getVideos() {
-      const el = this.getElement();
+    // Finds and pauses an actively playing video, e.g. before closing the lightbox.
+    pausePlaying() {
+      // Get active video element, if any.
+      const { video } = this.getContent();
 
-      // Call https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByTagName to find videos.
-      if (el) {
-        return el.getElementsByTagName("video");
+      if (!video) {
+        return;
       }
 
-      return [];
-    },
-    // Finds and pauses all videos currently playing in the lightbox.
-    pauseVideos() {
-      const videos = this.getVideos();
-
-      if (!videos || !videos.length) {
-        return false;
-      }
-
-      for (let video of videos) {
-        if (typeof video.pause === "function") {
-          try {
-            // Calling pause() before a play promise has been resolved may result in an error,
-            // see https://github.com/flutter/flutter/issues/136309 (we'll ignore this for now).
-            if (!video.paused && !video.ended) {
-              video.pause();
-            }
-          } catch (e) {
-            console.log(e);
-          }
+      // Calling pause() before a play promise has been resolved may result in an error,
+      // see https://github.com/flutter/flutter/issues/136309 (we'll ignore this for now).
+      if (!video.paused) {
+        try {
+          video.pause();
+        } catch (e) {
+          console.log(e);
         }
       }
     },
@@ -1136,7 +1168,7 @@ export default {
     },
     // Stops playback on the specified video element, if any.
     pauseVideo(el) {
-      if (el && typeof el.pause === "function" && !el.paused && !el.ended) {
+      if (el && typeof el.pause === "function" && !el.paused) {
         try {
           el.pause();
           this.showControls();
@@ -1214,7 +1246,7 @@ export default {
 
       const { video } = this.getContent();
 
-      if (video && !video.paused && !video.ended) {
+      if (video && !video.paused) {
         // Do nothing if a video is still playing.
       } else if (this.models.length > this.index + 1) {
         // Show the next slide.
@@ -1283,9 +1315,11 @@ export default {
     },
     resize(force) {
       this.$nextTick(() => {
-        const pswp = this.pswp();
-        if (pswp && pswp?.updateSize) {
-          pswp.updateSize(force);
+        if (this.visible && this.getElement()) {
+          const pswp = this.pswp();
+          if (pswp && pswp?.updateSize) {
+            pswp.updateSize(force);
+          }
         }
       });
     },
@@ -1296,8 +1330,8 @@ export default {
     // Hides the lightbox sidebar, if visible.
     hideSidebar() {
       if (this.sidebarVisible) {
-        this.$refs?.sidebar?.blur();
         this.sidebarVisible = false;
+        this.getElement().focus();
       }
     },
     toggleControls() {
@@ -1315,9 +1349,13 @@ export default {
       this.showVideoControls();
     },
     showLightboxControls() {
-      if (this.pswp() && this.pswp().element) {
-        this.controlsShown = Date.now();
-        this.pswp().element.classList.add("pswp--ui-visible");
+      this.controlsShown = Date.now();
+      this.showPswpControls();
+    },
+    showPswpControls() {
+      const pswp = this.pswp();
+      if (pswp && pswp.element?.classList?.add) {
+        pswp.element.classList.add("pswp--ui-visible");
       }
     },
     hideControls() {
@@ -1325,9 +1363,13 @@ export default {
       this.hideVideoControls();
     },
     hideLightboxControls() {
-      if (this.pswp() && this.pswp().element) {
-        this.controlsShown = 0;
-        this.pswp().element.classList.remove("pswp--ui-visible");
+      this.controlsShown = 0;
+      this.hidePswpControls();
+    },
+    hidePswpControls() {
+      const pswp = this.pswp();
+      if (pswp && pswp.element?.classList?.remove) {
+        pswp.element.classList.remove("pswp--ui-visible");
       }
     },
     hideControlsWithDelay(delay) {
@@ -1341,7 +1383,10 @@ export default {
       }, delay);
     },
     controlsVisible() {
-      if (this.controlsShown === 0) {
+      return this.controlsShown !== 0;
+
+      // TODO: Remove the code below if it is no longer needed (e.g. since the transition has been disabled).
+      /* if (this.controlsShown === 0) {
         return false;
       } else if (this.controlsShown < 0) {
         return true;
@@ -1354,7 +1399,7 @@ export default {
         }
       }
 
-      return false;
+      return false; */
     },
     startTimer() {
       if (this.hasTouch || this.$isMobile) {
