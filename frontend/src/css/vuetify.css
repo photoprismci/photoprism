@@ -124,8 +124,6 @@ div.v-dialog.v-dialog--fullscreen > div.v-card {
 
 .v-overlay.v-dialog.v-dialog--sidepanel:not(.v-dialog--fullscreen) > .v-overlay__content > .v-card {
     border-radius: 8px 0 0 8px;
-    /* border-radius: 8px 0 0 8px; */
-    /* border-radius: 0; */
     border-color: rgba(var(--v-border-color), var(--v-border-opacity));
     border-left-style: solid;
     border-left-width: thin;
