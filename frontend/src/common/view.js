@@ -4,7 +4,7 @@ const TouchStartEvent = "touchstart";
 const TouchMoveEvent = "touchmove";
 
 // If true, logging is enabled.
-const log = window.__CONFIG__?.develop && typeof console?.log == "function";
+const log = window.__CONFIG__?.debug && typeof console.log == "function";
 
 // Returns the <html> element.
 export function getHtmlElement() {
@@ -149,21 +149,21 @@ export class View {
   // Updates the window and the <html> body elements based on the specified component.
   apply(c) {
     if (!c || typeof c !== "object" || !Number.isInteger(c?.$?.uid)) {
-      console?.warn(`view: invalid component passed to apply (#${this.uid.toString()})`, c);
+      console.log(`view: invalid component passed to apply (#${this.uid.toString()})`, c);
       return;
     }
 
     const htmlEl = getHtmlElement();
 
     if (!htmlEl) {
-      console?.warn(`view: failed to get HTML element (#${this.uid.toString()})`, c);
+      console.log(`view: failed to get HTML element (#${this.uid.toString()})`, c);
       return;
     }
 
     const bodyEl = getBodyElement();
 
     if (!bodyEl) {
-      console?.warn(`view: failed to get BODY element (#${this.uid.toString()})`, c);
+      console.log(`view: failed to get BODY element (#${this.uid.toString()})`, c);
       return;
     }
 

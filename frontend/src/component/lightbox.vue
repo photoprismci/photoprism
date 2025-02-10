@@ -111,7 +111,7 @@ export default {
   methods: {
     isBusy(action) {
       if (this.busy) {
-        console?.warn(`lightbox: still busy, cannot ${action ? action : "do this"}`);
+        console.log(`lightbox: still busy, cannot ${action ? action : "do this"}`);
         return true;
       }
 
@@ -931,7 +931,7 @@ export default {
           action();
           return true;
         } else {
-          console?.warn(`lightbox: controls not visible, will not call ${action.name}`);
+          console.log(`lightbox: controls not visible, will not call ${action.name}`);
         }
       }
 
