@@ -1,5 +1,5 @@
 <template>
-  <div class="p-page p-page-people" :class="$config.aclClasses('people')" tabindex="1">
+  <div class="p-page p-page-people" :class="$config.aclClasses('people')" tabindex="1" @keydown.ctrl="onCtrl">
     <v-tabs
       v-model="active"
       elevation="0"
@@ -111,6 +111,21 @@ export default {
     this.$view.leave(this);
   },
   methods: {
+    onCtrl(ev) {
+      if (!ev || !ev.code || !ev.ctrlKey || !this.$view.hasFocus(this)) {
+        return;
+      }
+
+      switch (ev.code) {
+        case "KeyF":
+          const el = this.$el.querySelector(".input-search .v-field__field input");
+          if (el) {
+            ev.preventDefault();
+            el.focus();
+          }
+          break;
+      }
+    },
     openTab() {
       const activeTab = this.tabs.findIndex((t) => t.name === this.$route.name);
 

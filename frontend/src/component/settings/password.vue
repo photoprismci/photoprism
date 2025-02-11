@@ -6,7 +6,7 @@
     class="p-dialog modal-dialog p-settings-password"
     @keydown.esc="close"
   >
-    <v-form ref="form" class="form-password" accept-charset="UTF-8" @submit.prevent>
+    <v-form ref="form" class="form-password" accept-charset="UTF-8" tabindex="1" @submit.prevent>
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon size="28" color="primary">mdi-lock</v-icon>

@@ -1,5 +1,5 @@
 <template>
-  <div class="p-page p-page-album-photos" tabindex="1">
+  <div :class="$config.aclClasses('photos')" class="p-page p-page-album-photos" tabindex="1" @keydown.ctrl="onCtrl">
     <p-album-toolbar
       ref="toolbar"
       :filter="filter"
@@ -212,6 +212,18 @@ export default {
     this.$view.leave(this);
   },
   methods: {
+    onCtrl(ev) {
+      if (!ev || !ev.code || !ev.ctrlKey || !this.$view.hasFocus(this)) {
+        return;
+      }
+
+      switch (ev.code) {
+        case "KeyR":
+          ev.preventDefault();
+          this.refresh();
+          break;
+      }
+    },
     hideExpansionPanel() {
       return this.$refs?.toolbar?.hideExpansionPanel();
     },

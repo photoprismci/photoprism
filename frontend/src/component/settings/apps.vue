@@ -6,7 +6,14 @@
     class="p-dialog modal-dialog p-settings-apps"
     @keydown.esc="close"
   >
-    <v-form ref="form" validate-on="invalid-input" class="form-password" accept-charset="UTF-8" @submit.prevent>
+    <v-form
+      ref="form"
+      validate-on="invalid-input"
+      class="form-password"
+      accept-charset="UTF-8"
+      tabindex="1"
+      @submit.prevent
+    >
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon v-if="action === 'add'" size="28" color="primary">mdi-plus</v-icon>

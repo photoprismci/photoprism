@@ -13,7 +13,14 @@
         ></v-btn>
       </v-card-title>
       <v-card-text>
-        <v-expansion-panels v-model="expanded" variant="accordion" density="compact" rounded="6" class="elevation-0">
+        <v-expansion-panels
+          v-model="expanded"
+          variant="accordion"
+          density="compact"
+          rounded="6"
+          tabindex="1"
+          class="elevation-0"
+        >
           <v-expansion-panel v-for="(link, index) in links" :key="link.UID" color="secondary" class="pa-0 elevation-0">
             <v-expansion-panel-title class="d-flex justify-start align-center ga-3 text-body-2 px-4">
               <v-icon icon="mdi-link"></v-icon>

@@ -5,6 +5,7 @@
       class="p-form p-form--table p-form-photo-labels"
       validate-on="invalid-input"
       accept-charset="UTF-8"
+      tabindex="1"
       @submit.prevent
     >
       <div class="form-body">
@@ -141,6 +142,7 @@
                             :rules="[nameRule]"
                             color="surface-variant"
                             autocomplete="off"
+                            autofocus
                             single-line
                             flat
                             variant="plain"

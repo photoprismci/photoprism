@@ -8,7 +8,7 @@
     class="p-photo-upload-dialog v-dialog--upload"
     @keydown.esc="close"
   >
-    <v-form ref="form" class="p-photo-upload" validate-on="invalid-input" @submit.prevent="submit">
+    <v-form ref="form" class="p-photo-upload" validate-on="invalid-input" tabindex="1" @submit.prevent="submit">
       <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()" />
       <v-card :tile="$vuetify.display.mdAndDown">
         <v-toolbar

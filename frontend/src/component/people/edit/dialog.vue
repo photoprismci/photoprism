@@ -12,6 +12,7 @@
       validate-on="invalid-input"
       class="form-person-edit"
       accept-charset="UTF-8"
+      tabindex="1"
       @submit.prevent="confirm"
     >
       <v-card>

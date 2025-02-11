@@ -337,11 +337,11 @@ export class View {
 
   // Returns true if the specified view component is currently inactive, e.g. hidden in the background.
   isHidden(c) {
-    return !this.isVisible(c);
+    return !this.hasFocus(c);
   }
 
   // Returns true if the specified view component is currently active, e.g. visible in the foreground.
-  isVisible(c) {
+  hasFocus(c) {
     if (!c || this.isApp()) {
       return true;
     }

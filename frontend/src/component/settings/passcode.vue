@@ -6,7 +6,14 @@
     class="p-dialog modal-dialog p-settings-passcode"
     @keydown.esc="close"
   >
-    <v-form ref="form" validate-on="invalid-input" accept-charset="UTF-8" class="form-password" @submit.prevent>
+    <v-form
+      ref="form"
+      validate-on="invalid-input"
+      accept-charset="UTF-8"
+      class="form-password"
+      tabindex="1"
+      @submit.prevent
+    >
       <v-card>
         <v-card-title class="d-flex justify-start align-center ga-3">
           <v-icon v-if="page === 'setup'" size="28" color="primary">mdi-shield-alert</v-icon>
