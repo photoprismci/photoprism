@@ -61,7 +61,8 @@ export function restart(uri) {
   $notify.wait();
   $notify.ajaxStart();
 
-  return $api.post("server/stop")
+  return $api
+    .post("server/stop")
     .then(() => {
       return poll(1000, 180)
         .then(() => {

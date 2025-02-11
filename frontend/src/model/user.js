@@ -174,9 +174,9 @@ export class User extends RestModel {
   }
 
   getRegisterForm() {
-    return $api.options(this.getEntityResource() + "/register").then((response) =>
-      Promise.resolve(new Form(response.data))
-    );
+    return $api
+      .options(this.getEntityResource() + "/register")
+      .then((response) => Promise.resolve(new Form(response.data)));
   }
 
   getAvatarURL(size, config) {
@@ -208,15 +208,15 @@ export class User extends RestModel {
 
     formData.append("files", file);
 
-    return $api.post(this.getEntityResource() + `/avatar`, formData, formConf).then((response) =>
-      Promise.resolve(this.setValues(response.data))
-    );
+    return $api
+      .post(this.getEntityResource() + `/avatar`, formData, formConf)
+      .then((response) => Promise.resolve(this.setValues(response.data)));
   }
 
   getProfileForm() {
-    return $api.options(this.getEntityResource() + "/profile").then((response) =>
-      Promise.resolve(new Form(response.data))
-    );
+    return $api
+      .options(this.getEntityResource() + "/profile")
+      .then((response) => Promise.resolve(new Form(response.data)));
   }
 
   isRemote() {
@@ -266,37 +266,47 @@ export class User extends RestModel {
   }
 
   changePassword(oldPassword, newPassword) {
-    return $api.put(this.getEntityResource() + "/password", {
-      old: oldPassword,
-      new: newPassword,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .put(this.getEntityResource() + "/password", {
+        old: oldPassword,
+        new: newPassword,
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   createPasscode(password) {
-    return $api.post(this.getEntityResource() + "/passcode", {
-      type: "totp",
-      password: password,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .post(this.getEntityResource() + "/passcode", {
+        type: "totp",
+        password: password,
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   confirmPasscode(code) {
-    return $api.post(this.getEntityResource() + "/passcode/confirm", {
-      type: "totp",
-      code: code,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .post(this.getEntityResource() + "/passcode/confirm", {
+        type: "totp",
+        code: code,
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   activatePasscode() {
-    return $api.post(this.getEntityResource() + "/passcode/activate", {
-      type: "totp",
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .post(this.getEntityResource() + "/passcode/activate", {
+        type: "totp",
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   deactivatePasscode(password) {
-    return $api.post(this.getEntityResource() + "/passcode/deactivate", {
-      type: "totp",
-      password: password,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .post(this.getEntityResource() + "/passcode/deactivate", {
+        type: "totp",
+        password: password,
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   disablePasscodeSetup(hasPassword) {
@@ -330,9 +340,11 @@ export class User extends RestModel {
       order: "client_name",
     };
 
-    return $api.get(this.getEntityResource() + "/sessions", {
-      params,
-    }).then((response) => Promise.resolve(response.data));
+    return $api
+      .get(this.getEntityResource() + "/sessions", {
+        params,
+      })
+      .then((response) => Promise.resolve(response.data));
   }
 
   static getCollectionResource() {
