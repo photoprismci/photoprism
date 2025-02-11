@@ -1,5 +1,5 @@
 <template>
-  <div class="p-page p-page-errors">
+  <div class="p-page p-page-errors" tabindex="1">
     <v-toolbar
       flat
       :density="$vuetify.display.smAndDown ? 'compact' : 'default'"

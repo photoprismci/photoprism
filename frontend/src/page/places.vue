@@ -1,5 +1,5 @@
 <template>
-  <div :class="$config.aclClasses('places')" class="p-page p-page-places fill-height">
+  <div :class="$config.aclClasses('places')" class="p-page p-page-places fill-height" tabindex="1">
     <div class="places">
       <div v-if="mapError">
         <v-toolbar

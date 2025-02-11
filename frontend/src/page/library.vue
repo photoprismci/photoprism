@@ -1,5 +1,5 @@
 <template>
-  <div :class="$config.aclClasses('library')" class="p-page p-page-library">
+  <div :class="$config.aclClasses('library')" class="p-page p-page-library" tabindex="1">
     <v-tabs
       v-model="active"
       elevation="0"

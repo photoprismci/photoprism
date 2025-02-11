@@ -1,5 +1,5 @@
 <template>
-  <div class="p-page p-page-help">
+  <div class="p-page p-page-help" tabindex="1">
     <v-toolbar flat color="secondary" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
       <v-toolbar-title class="flex-grow-1">
         {{ $gettext(`Help`) }}

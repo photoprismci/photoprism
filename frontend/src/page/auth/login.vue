@@ -6,6 +6,7 @@
     fill-height
     class="auth-login wallpaper background-welcome pa-6"
     :style="wallpaper()"
+    tabindex="1"
   >
     <v-theme-provider theme="login">
       <v-row id="auth-layout" class="auth-layout">

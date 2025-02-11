@@ -66,6 +66,7 @@
               bg-color="navigation-home"
               width="100%"
               density="compact"
+              tabindex="-1"
               @click.capture="toggleDrawer"
             >
               <v-list-item class="px-3" :elevation="0" :ripple="false" @click.stop.prevent="goHome">
@@ -103,6 +104,7 @@
             color="primary"
             open-strategy="single"
             :density="$vuetify.display.smAndDown ? 'compact' : 'default'"
+            tabindex="0"
           >
             <v-list-item v-if="isMini && !isRestricted" class="nav-expand" @click.stop="toggleIsMini()">
               <v-icon :icon="rtl ? 'mdi-chevron-left' : 'mdi-chevron-right'" class="ma-auto"></v-icon>

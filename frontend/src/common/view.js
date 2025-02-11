@@ -3,8 +3,9 @@ import { toRaw } from "vue";
 const TouchStartEvent = "touchstart";
 const TouchMoveEvent = "touchmove";
 
-// If true, logging is enabled.
+// True if debug and/or trace logs should be recorded.
 const debug = window.__CONFIG__?.debug;
+const trace = window.__CONFIG__?.trace;
 
 // Returns the <html> element.
 export function getHtmlElement() {
@@ -105,13 +106,19 @@ export class View {
     this.uid = 0;
     this.scopes = [];
     this.preventNavigation = false;
+
+    if (trace) {
+      document.addEventListener("focusin", (ev) => {
+        console.debug("focus: ", ev.target);
+      });
+    }
   }
 
   // Changes the view context to the specified component,
   // and updates the window and <html> body as needed.
   enter(c) {
     if (!c) {
-      return;
+      return false;
     }
 
     if (this.isRoot()) {
@@ -129,7 +136,7 @@ export class View {
   // and updates the window and <html> body as needed.
   leave(c) {
     if (this.scopes.length === 0) {
-      return;
+      return false;
     }
 
     if (c) {
@@ -148,34 +155,56 @@ export class View {
 
   // Updates the window and the <html> body elements based on the specified component.
   apply(c) {
-    if (!c || typeof c !== "object" || !Number.isInteger(c?.$?.uid)) {
-      console.log(`view: invalid component passed to apply (#${this.uid.toString()})`, c);
-      return;
+    if (!c || typeof c !== "object" || !Number.isInteger(c?.$?.uid) || !c.$el) {
+      console.log(`view: invalid component (#${this.uid.toString()})`, c);
+      return false;
     }
 
-    const htmlEl = getHtmlElement();
-
-    if (!htmlEl) {
-      console.log(`view: failed to get HTML element (#${this.uid.toString()})`, c);
-      return;
-    }
-
-    const bodyEl = getBodyElement();
-
-    if (!bodyEl) {
-      console.log(`view: failed to get BODY element (#${this.uid.toString()})`, c);
-      return;
-    }
-
-    // Get the component's numeric unique ID, if any.
+    // Get the component's name and numeric ID.
+    const name = c?.$options?.name ? c.$options.name : "";
     const uid = c.$.uid;
+
+    if (!name) {
+      console.log(`view: component needs a name (#${uid})`, c);
+      return false;
+    }
+
+    // If debug mode is enabled, create a new log group in the browser console:
+    // https://developer.mozilla.org/en-US/docs/Web/API/console/groupCollapsed_static
+    if (debug) {
+      const scope = this.scopes.map((s) => `${s?.$options?.name} #${s?.$?.uid.toString()}`).join(" ▶ ");
+      console.groupCollapsed(
+        `%c${scope}`,
+        "background: #502A85; color: white; padding: 2px 6px; border-radius: 8px; font-weight: bold;"
+      );
+      console.log("data:", toRaw(c?.$data));
+    }
+
+    // Automatically focus the active component if its element tabindex attribute is set to "1":
+    // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex
+    let focusElement;
+
+    if (c.$el && c.$el.getAttribute && c.$el.getAttribute("tabindex") === "1") {
+      focusElement = c.$el;
+    } else if (c.$el.parentElement) {
+      focusElement = c.$el.parentElement.querySelector('[tabindex="1"]');
+    }
+
+    if (focusElement) {
+      try {
+        focusElement.focus();
+      } catch (err) {
+        console.log(`focus: ${err}`);
+      }
+    }
 
     // Return, as it should not be necessary to apply the same state twice.
     if (this.uid === uid) {
+      if (debug) {
+        console.groupEnd();
+      }
       return;
     }
-
-    const name = c?.$options?.name ? c.$options.name : "";
 
     let hideScrollbar = false;
     let disableScrolling = false;
@@ -210,9 +239,24 @@ export class View {
 
     this.preventNavigation = preventNavigation;
 
-    if (debug && name && uid) {
-      const scope = this.scopes.map((s) => `${s?.$options?.name} #${s?.$?.uid.toString()}`).join(" › ");
-      console.log(`view: ${scope}`, toRaw(c?.$data));
+    const htmlEl = getHtmlElement();
+
+    if (!htmlEl) {
+      if (debug) {
+        console.log(`html: failed to get element (#${this.uid.toString()})`, c);
+        console.groupEnd();
+      }
+      return false;
+    }
+
+    const bodyEl = getBodyElement();
+
+    if (!bodyEl) {
+      if (debug) {
+        console.log(`body: failed to get element (#${this.uid.toString()})`, c);
+        console.groupEnd();
+      }
+      return false;
     }
 
     if (hideScrollbar) {
@@ -264,6 +308,11 @@ export class View {
         console.log(`view: re-enabled touch navigation gestures`);
       }
     }
+
+    if (debug) {
+      console.groupEnd();
+    }
+    return true;
   }
 
   // Returns the currently active view component or null if none exists.

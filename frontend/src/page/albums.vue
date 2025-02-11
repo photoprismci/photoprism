@@ -1,5 +1,5 @@
 <template>
-  <div :class="$config.aclClasses('albums')" class="p-page p-page-albums not-selectable">
+  <div :class="$config.aclClasses('albums')" class="p-page p-page-albums not-selectable" tabindex="1">
     <v-form ref="form" class="p-albums-search" validate-on="invalid-input" @submit.prevent="updateQuery()">
       <v-toolbar
         flat

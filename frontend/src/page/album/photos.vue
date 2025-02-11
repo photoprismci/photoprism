@@ -1,5 +1,5 @@
 <template>
-  <div class="p-page p-page-album-photos">
+  <div class="p-page p-page-album-photos" tabindex="1">
     <p-album-toolbar
       ref="toolbar"
       :filter="filter"

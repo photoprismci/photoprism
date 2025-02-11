@@ -1,5 +1,5 @@
 <template>
-  <div class="p-page p-page-upgrade">
+  <div class="p-page p-page-upgrade" tabindex="1">
     <v-toolbar flat color="secondary" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
       <v-toolbar-title>
         {{ $gettext(`Membership`) }}

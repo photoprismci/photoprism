@@ -23,7 +23,6 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import "common/debug";
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import "common/navigation";

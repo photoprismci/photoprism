@@ -19,7 +19,7 @@
     >
       <div
         ref="content"
-        tabindex="0"
+        tabindex="1"
         class="p-lightbox__content"
         :class="{
           'sidebar-visible': sidebarVisible,

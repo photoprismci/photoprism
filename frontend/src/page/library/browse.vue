@@ -1,5 +1,5 @@
 <template>
-  <div class="p-page p-page-files">
+  <div class="p-page p-page-files" tabindex="1">
     <v-form ref="form" class="p-files-search" validate-on="invalid-input" @submit.prevent="updateQuery">
       <v-toolbar flat color="secondary" :density="$vuetify.display.smAndDown ? 'compact' : 'default'">
         <v-toolbar-title>

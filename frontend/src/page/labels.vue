@@ -1,5 +1,5 @@
 <template>
-  <div :class="$config.aclClasses('labels')" class="p-page p-page-labels not-selectable">
+  <div :class="$config.aclClasses('labels')" class="p-page p-page-labels not-selectable" tabindex="1">
     <v-form ref="form" class="p-labels-search" validate-on="invalid-input" @submit.stop.prevent="updateQuery()">
       <v-toolbar
         flat

@@ -1,5 +1,5 @@
 <template>
-  <div class="p-page p-page-license">
+  <div class="p-page p-page-license" tabindex="1">
     <v-toolbar flat :density="$vuetify.display.smAndDown ? 'compact' : 'default'" class="page-toolbar" color="secondary">
       <v-toolbar-title>
         {{ $gettext(`License`) }}
