@@ -37,6 +37,44 @@
         <!-- TODO: Create a reusable sidebar component that allows users to view/edit metadata. -->
       </div>
     </div>
+    <div v-show="video.controls && controlsShown !== 0" ref="controls" class="p-lightbox__controls" @click.stop.prevent>
+      <div class="video-control">
+        <v-icon v-if="video.seeking" icon="mdi-loading" class="animate-loading"></v-icon>
+        <v-icon
+          v-else-if="video.playing"
+          icon="mdi-pause"
+          class="clickable"
+          @pointerdown.stop.prevent="toggleVideo"
+        ></v-icon>
+        <v-icon
+          v-else-if="video.paused || video.ended"
+          icon="mdi-play"
+          class="clickable"
+          @pointerdown.stop.prevent="toggleVideo"
+        ></v-icon>
+        <v-icon v-else v-tooltip="video.error" icon="mdi-alert-circle" class="clickable"></v-icon>
+      </div>
+      <div class="video-control video-time text-body-2">
+        {{ $util.formatSeconds(video.time) }}
+      </div>
+      <v-slider
+        :model-value="video.time"
+        :disabled="video.state === 0"
+        :readonly="video.seeking"
+        :thumb-size="12"
+        :track-size="3"
+        hide-details
+        :error="!!video.error"
+        :min="0"
+        :max="video.duration"
+        class="video-control video-slider"
+        @update:model-value="seekVideo"
+      >
+      </v-slider>
+      <div class="video-control video-duration text-body-2">
+        {{ $util.formatSeconds(video.duration) }}
+      </div>
+    </div>
   </v-dialog>
 </template>
 
@@ -86,6 +124,20 @@ export default {
       subscriptions: [], // Event subscriptions.
       afterLeave: null, // Called after the dialog has closed.
       afterEnter: null, // Called after the dialog has opened.
+      // Video properties for rendering the controls.
+      video: {
+        controls: false,
+        src: "",
+        error: "",
+        state: 0,
+        time: 0,
+        duration: 0,
+        seeking: false,
+        waiting: false,
+        playing: false,
+        paused: false,
+        ended: false,
+      },
       // Slideshow properties.
       slideshow: {
         active: false,
@@ -172,6 +224,8 @@ export default {
         allowPanToNext: false,
         initialZoomLevel: "fit",
         secondaryZoomLevel: "fill",
+        hideAnimationDuration: 0,
+        showAnimationDuration: 0,
         wheelToZoom: true,
         maxZoomLevel: 6,
         bgOpacity: 1,
@@ -315,6 +369,7 @@ export default {
         width: model.Thumbs[thumbSize].w,
         height: model.Thumbs[thumbSize].h,
         alt: model?.Title,
+        model: model,
       };
 
       // Check if content is playable and return the data needed to render it in "contentLoad".
@@ -332,10 +387,11 @@ export default {
         // Set the slide data needed to render and play the video.
         return {
           type: "html", // Render custom HTML.
-          html: `<div class="pswp__error-msg">Loading video...</div>`, // Replaced with the <video> element.
+          html: `<div class="pswp__html"></div>`, // Replaced with the <video> element.
           model: model, // Content model.
+          duration: model.Duration > 0 ? model.Duration / 1000000000 : 0,
           format: Util.videoFormat(model?.Codec, model?.Mime), // Content format.
-          loop: isShort || model?.Type === media.Animated || model?.Type === media.Live, // If possible, loop these types.
+          loop: model?.Type !== media.Live && (isShort || model?.Type === media.Animated), // If possible, loop these types.
           msrc: img.src, // Image URL.
         };
       }
@@ -344,6 +400,8 @@ export default {
       // see https://photoswipe.com/data-sources/#dynamically-generated-data.
       return img;
     },
+    onLoadComplete(ev) {},
+    onContentResize(ev) {},
     onContentLoad(ev) {
       const { content } = ev;
       if (content.data?.type === "html") {
@@ -351,8 +409,28 @@ export default {
         ev.preventDefault();
 
         try {
-          // Create video element.
-          content.element = this.createVideoElement(content.data, false, false, false);
+          // Create pswp__media element.
+          const mediaElement = document.createElement("div");
+          mediaElement.setAttribute("class", "pswp__media");
+          mediaElement.classList.add(`pswp__media--${content.data.model.Type}`);
+
+          // Create and append video player.
+          mediaElement.appendChild(this.createVideoElement(content.data, false, false, false));
+
+          // Create and append cover image.
+          if (content.data.msrc) {
+            const imageElement = document.createElement("img");
+            imageElement.setAttribute("src", content.data.msrc);
+            imageElement.setAttribute("class", "pswp__image");
+            mediaElement.appendChild(imageElement);
+          }
+
+          // Create pswp__play button element.
+          const buttonElement = document.createElement("i");
+          buttonElement.setAttribute("class", "pswp__play mdi-play mdi v-icon v-theme--default clickable");
+          mediaElement.appendChild(buttonElement);
+
+          content.element = mediaElement;
           content.state = "loading";
           content.onLoaded();
         } catch (err) {
@@ -380,12 +458,6 @@ export default {
         preload = "metadata";
       }
 
-      let controls = true;
-
-      if (loop || slideshow) {
-        controls = false;
-      }
-
       // Set HTMLMediaElement properties.
       video.className = "pswp__video";
       video.poster = posterSrc;
@@ -394,58 +466,26 @@ export default {
       video.muted = mute || this.muted;
       video.preload = preload;
       video.playsInline = true;
-      video.controls = controls;
+      video.controls = false;
+      video.dir = this.$rtl ? "rtl" : "ltr";
 
-      // Disable the remote playback button on mobile devices to save space.
-      video.disableRemotePlayback = this.$isMobile;
-
-      // Specify which controls should be visible (not supported on all browsers):
-      // - https://wicg.github.io/controls-list/explainer.html
-      // - https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/controlsList
-      if (video?.controlsList instanceof DOMTokenList) {
-        // Disable the download button if downloads are not allowed.
-        if (!this.canDownload) {
-          video.controlsList.add("nodownload");
-        }
-
-        // Disable the remote playback and playback rate buttons on mobile devices to save space.
-        if (this.$isMobile) {
-          video.controlsList.add("noremoteplayback");
-          video.controlsList.add("noplaybackrate");
-        }
-      }
-
-      // Add an event listener to loop short videos of 5 seconds or less,
-      // even if the server does not know the duration.
-      video.addEventListener("loadedmetadata", () => {
-        if (video.duration && video.duration <= this.shortVideoDuration) {
-          data.loop = true;
-          video.loop = data.loop && !this.slideshow.active;
-          video.controls = false;
-        } else {
-          video.controls = !this.slideshow.active;
-        }
-      });
-
-      // Add an event listener to automatically hide the lightbox controls
-      // after a video has started playing.
-      video.addEventListener("playing", () => {
-        if (!video.paused && !video.ended) {
-          this.hideControlsWithDelay(this.playControlHideDelay);
-        }
-      });
-
-      // Add an event listener to automatically hide the lightbox controls
-      // after a video has started playing.
-      video.addEventListener("ended", () => {
-        if (!this.slideshow.active) {
-          this.showControls();
-        } else {
-          this.clearSlideshowInterval();
-          this.onSlideshowNext();
-          this.setSlideshowInterval();
-        }
-      });
+      // Attach video event handler.
+      video.addEventListener("loadstart", (ev) => this.onVideo(ev));
+      video.addEventListener("loadedmetadata", (ev) => this.onVideo(ev));
+      video.addEventListener("loadeddata", (ev) => this.onVideo(ev));
+      video.addEventListener("progress", (ev) => this.onVideo(ev));
+      video.addEventListener("stalled", (ev) => this.onVideo(ev));
+      video.addEventListener("abort", (ev) => this.onVideo(ev));
+      video.addEventListener("error", (ev) => this.onVideo(ev));
+      video.addEventListener("play", (ev) => this.onVideo(ev));
+      video.addEventListener("playing", (ev) => this.onVideo(ev));
+      video.addEventListener("pause", (ev) => this.onVideo(ev));
+      video.addEventListener("waiting", (ev) => this.onVideo(ev));
+      video.addEventListener("ended", (ev) => this.onVideo(ev));
+      video.addEventListener("seeked", (ev) => this.onVideo(ev));
+      video.addEventListener("seeking", (ev) => this.onVideo(ev));
+      video.addEventListener("timeupdate", (ev) => this.onVideo(ev));
+      video.addEventListener("durationchange", (ev) => this.onVideo(ev));
 
       // Create and append video source elements, depending on file format support.
       if (
@@ -467,6 +507,108 @@ export default {
 
       // Return HTMLMediaElement.
       return video;
+    },
+    onVideo(ev) {
+      const { video, data } = this.getContent();
+
+      if (!video || !data) {
+        return;
+      } else if (ev && ev.target.src !== video.src) {
+        return;
+      }
+
+      return this.setVideo(video, data, ev);
+    },
+    resetVideo(showControls = false) {
+      this.video = {
+        controls: !!showControls,
+        src: "",
+        error: "",
+        state: 0,
+        time: 0,
+        duration: 0,
+        seeking: false,
+        waiting: false,
+        playing: false,
+        paused: false,
+        ended: false,
+      };
+    },
+    setVideo(video, data, ev) {
+      if (!data) {
+        return;
+      } else if (!video) {
+        this.resetVideo();
+        return;
+      }
+
+      if (video.src !== this.video.src) {
+        this.resetVideo();
+      }
+
+      const isPlaying = video.readyState && !video.paused && !video.ended && !video.waiting && !video.error;
+
+      if (ev && ev.type) {
+        switch (ev.type) {
+          case "playing":
+            // Automatically hide the lightbox controls after a video has started playing.
+            this.video.waiting = false;
+            this.hideControlsWithDelay(this.playControlHideDelay);
+            video.parentElement.classList.add("is-playing");
+            break;
+          case "ended":
+          case "pause":
+            video.parentElement.classList.remove("is-playing");
+            break;
+          case "abort":
+          case "error":
+            video.parentElement.classList.remove("is-playing");
+            video.parentElement.classList.remove("is-broken");
+            break;
+          case "timeupdate":
+          case "loadeddata":
+          case "loadedmetadata":
+            this.video.waiting = false;
+            break;
+          case "waiting":
+            this.video.waiting = true;
+        }
+
+        // Automatically hide the lightbox controls after a video has started playing.
+        if (ev.type === "ended") {
+          if (!this.slideshow.active) {
+            this.showControls();
+          } else {
+            this.clearSlideshowInterval();
+            this.onSlideshowNext();
+            this.setSlideshowInterval();
+          }
+        }
+      }
+
+      // Loop short videos of 5 seconds or less, even if the server does not know the duration.
+      if (
+        !data.loop &&
+        video.duration &&
+        video.duration <= this.shortVideoDuration &&
+        data.model?.Type !== media.Live
+      ) {
+        data.loop = true;
+        video.loop = data.loop && !this.slideshow.active;
+      }
+
+      // Update properties of the currently playing video.
+      this.video.controls =
+        !this.slideshow.active && !video.loop && data.model?.Type !== media.Animated && data.model?.Type !== media.Live;
+      this.video.src = video.src;
+      this.video.error = video.error;
+      this.video.state = video.readyState;
+      this.video.time = video.currentTime;
+      this.video.duration = video.duration ? video.duration : data.duration;
+      this.video.seeking = !!video.seeking;
+      this.video.playing = isPlaying;
+      this.video.paused = video.paused;
+      this.video.ended = video.ended;
     },
     // Initializes and opens the PhotoSwipe lightbox with the
     // images and/or videos that belong to the specified models.
@@ -541,8 +683,8 @@ export default {
 
       // Handle zoom level changes to load higher quality thumbnails
       // when image size changes
-      this.lightbox.on("imageSizeChange", ({ content, width, height, slide }) => {
-        if (slide === lightbox.pswp.currSlide) {
+      this.lightbox.on("imageSizeChange", ({ slide }) => {
+        if (slide.isActive) {
           this.onZoomLevelChange();
         }
       });
@@ -579,6 +721,8 @@ export default {
       // Renders content when a slide starts to load (can be default prevented),
       // see https://photoswipe.com/events/#slide-content-events.
       this.lightbox.on("contentLoad", this.onContentLoad);
+      this.lightbox.on("contentResize", this.onContentResize);
+      this.lightbox.on("loadComplete", this.onLoadComplete);
 
       // Pauses videos, animations, and live photos when slide content becomes active (can be default prevented),
       // see https://photoswipe.com/events/#slide-content-events.
@@ -598,17 +742,19 @@ export default {
         let video;
 
         // Get <video> element, if any.
-        if (content?.element && content?.element instanceof HTMLMediaElement) {
-          video = content?.element;
+        if (content?.element && content?.element.firstElementChild instanceof HTMLMediaElement) {
+          video = content.element.firstElementChild;
         } else {
           video = false;
         }
+
+        this.setVideo(video, data);
 
         // Automatically play video on this slide if it's the first item,
         // a slideshow is active, or it's an animation or live photo.
         if (video) {
           if (data.loop || this.slideshow.active || firstPicture) {
-            this.playVideo(content.element, data.loop);
+            this.playVideo(content.element.firstElementChild, data.loop);
           }
         }
 
@@ -624,8 +770,8 @@ export default {
         const { content } = ev;
 
         // Stop any video currently playing on this slide.
-        if (content?.element && content?.element instanceof HTMLMediaElement) {
-          this.pauseVideo(content.element);
+        if (content?.element && content?.element.firstElementChild instanceof HTMLMediaElement) {
+          this.pauseVideo(content.element.firstElementChild);
         }
       });
 
@@ -931,22 +1077,7 @@ export default {
       }
     },
     // Called when the lightbox receives a pointer move, down or up event.
-    onLightboxPointerEvent(ev) {
-      if (!ev) {
-        return;
-      }
-
-      const target = ev?.originalEvent?.target;
-
-      // Don't trigger the built-in default action when an event occurs on a video
-      // at the bottom of the screen, so that the player controls remain usable.
-      if (target && target instanceof HTMLMediaElement) {
-        if (window.innerHeight - ev?.originalEvent.y < 128) {
-          ev.preventDefault();
-          return true;
-        }
-      }
-    },
+    onLightboxPointerEvent(ev) {},
     onControlClick(ev, action) {
       if (ev && ev.cancelable) {
         ev.stopPropagation();
@@ -981,11 +1112,8 @@ export default {
           this.hideControlsWithDelay(this.defaultControlHideDelay);
         }
       } else if (ev.target instanceof HTMLMediaElement) {
-        // Stop event default and propagation when user clicks/touches the player controls at the bottom of the screen.
-        if (window.innerHeight - ev.y > 128) {
-          ev.stopPropagation();
-          ev.preventDefault();
-        }
+        ev.stopPropagation();
+        ev.preventDefault();
       }
     },
     // Called when a pointer down (click, touch) event is captured by the lightbox container.
@@ -996,22 +1124,22 @@ export default {
 
       // Handle the event and prevent it from propagating when it occurs on a video element
       // except at the bottom of the screen, so that the player controls remain usable.
-      if (ev.target instanceof HTMLMediaElement) {
+      if (
+        ev.target instanceof HTMLMediaElement ||
+        (ev.target instanceof HTMLElement &&
+          (ev.target.classList.contains("pswp__image") || ev.target.classList.contains("pswp__play")))
+      ) {
         ev.stopPropagation();
 
-        if (window.innerHeight - ev.y > 128) {
-          ev.preventDefault();
-          this.resetTimer();
+        ev.preventDefault();
+        this.resetTimer();
 
-          if (this.slideshow.active) {
-            this.pauseSlideshow();
-          }
-
-          // Toggle video playback.
-          this.toggleVideo();
-        } else {
-          this.showControls();
+        if (this.slideshow.active) {
+          this.pauseSlideshow();
         }
+
+        // Toggle video playback.
+        this.toggleVideo();
       }
     },
     // Called when the user clicks on an image slide in the lightbox.
@@ -1070,24 +1198,25 @@ export default {
     },
     // Returns the active HTMLMediaElement element in the lightbox, if any.
     getContent() {
-      const result = { content: null, data: null, video: null };
+      const result = { slide: null, content: null, data: null, video: null };
       const pswp = this.pswp();
 
       if (!pswp) {
         return result;
       }
 
+      result.slide = pswp?.currSlide;
       result.content = pswp?.currSlide?.content;
 
-      if (!result.content) {
+      if (!result.slide || !result.content) {
         return result;
       }
 
       result.data = typeof result.content.data === "object" ? result.content.data : {};
 
       // Get <video> element, if any.
-      if (result.content.element && result.content.element instanceof HTMLMediaElement) {
-        result.video = result.content.element;
+      if (result.content.element && result.content.element.firstElementChild instanceof HTMLMediaElement) {
+        result.video = result.content.element.firstElementChild;
       }
 
       return result;
@@ -1112,24 +1241,23 @@ export default {
       }
     },
     // Starts playback on the specified video element, if any.
-    playVideo(el, loop) {
-      if (!el || typeof el.play !== "function") {
+    playVideo(video, loop) {
+      if (!video || typeof video.play !== "function") {
         return;
       }
 
-      if (el.preload === "none") {
-        el.preload = "auto";
+      if (video.preload === "none") {
+        video.preload = "auto";
       }
 
-      el.loop = loop && !this.slideshow.active;
-      el.controls = !(loop || this.slideshow.active);
-      el.muted = this.muted;
+      video.loop = loop && !this.slideshow.active;
+      video.muted = this.muted;
 
-      if (el.paused || el.ended) {
+      if (video.paused || video.ended) {
         try {
           // Calling pause() before a play promise has been resolved may result in an error,
           // see https://developer.chrome.com/blog/play-request-was-interrupted.
-          const playPromise = el.play();
+          const playPromise = video.play();
           if (playPromise !== undefined) {
             playPromise.catch((e) => {
               if (this.trace) {
@@ -1185,27 +1313,21 @@ export default {
         this.pauseVideo(video);
       }
     },
-    // Shows the controls on the current video element, if any.
-    showVideoControls() {
-      // Get active video element, if any.
-      const { video, data } = this.getContent();
-
-      if (!video) {
-        return;
+    seekVideo(time) {
+      if (typeof time !== "number") {
+        return false;
       }
 
-      video.controls = !data?.loop && !this.slideshow.active;
-    },
-    // Hides the controls on the current video element, if any.
-    hideVideoControls() {
       // Get active video element, if any.
       const { video } = this.getContent();
 
       if (!video) {
-        return;
+        return false;
       }
 
-      video.controls = false;
+      video.currentTime = time;
+
+      return true;
     },
     // Stops playback on the specified video element, if any.
     pauseVideo(el) {
@@ -1423,7 +1545,6 @@ export default {
       }
 
       this.showLightboxControls();
-      this.showVideoControls();
       this.startTimer();
     },
     showLightboxControls() {
@@ -1442,7 +1563,6 @@ export default {
       }
 
       this.hideLightboxControls();
-      this.hideVideoControls();
     },
     hideLightboxControls() {
       this.controlsShown = 0;
@@ -1551,17 +1671,19 @@ export default {
     },
     // Called when the zoom level changes and higher quality thumbnails may be required.
     onZoomLevelChange() {
-      const pswp = this.pswp();
+      const { slide, content, video, data } = this.getContent();
 
-      if (!pswp || !pswp.currSlide) {
+      if (!slide) {
+        return;
+      }
+
+      if (video) {
         return;
       }
 
       // Get current slide and zoom level.
-      const zoomLevel = pswp.currSlide.currZoomLevel;
-      const currSlide = pswp.currSlide;
-      const currIndex = pswp.currIndex;
-      const model = this.models[currIndex];
+      const zoomLevel = slide.currZoomLevel;
+      const model = data.model;
 
       // Don't continue if current model is not set.
       if (!model || !model.Thumbs) {
@@ -1574,8 +1696,8 @@ export default {
       }
 
       // Calculate thumbnail width and height based on slide size multiplied by zoom level and pixel ratio.
-      const currentWidth = Math.round(currSlide.width * zoomLevel * window.devicePixelRatio);
-      const currentHeight = Math.round(currSlide.height * zoomLevel * window.devicePixelRatio);
+      const currentWidth = Math.round(slide.width * zoomLevel * window.devicePixelRatio);
+      const currentHeight = Math.round(slide.height * zoomLevel * window.devicePixelRatio);
 
       // Find the right thumbnail size based on the slide size and zoom level in pixels.
       const thumbSize = Util.thumbSize(currentWidth, currentHeight);
@@ -1593,7 +1715,7 @@ export default {
       };
 
       // Get current thumbnail image URL.
-      const currentSrc = currSlide.data?.src;
+      const currentSrc = data.src;
 
       // Don't update thumbnail if the URL stays the same.
       if (currentSrc === img.src) {
@@ -1607,19 +1729,19 @@ export default {
       // Swap thumbnails when the new image has loaded.
       el.onload = () => {
         // Abort if image URL is empty or the current slide is undefined.
-        if (!pswp.currSlide || !el?.src) {
+        if (!content || !el?.src) {
           return;
         }
 
         // Update the slide's HTMLImageElement to use the new thumbnail image.
-        pswp.currSlide.content.element.src = el.src;
-        pswp.currSlide.content.element.width = img.width;
-        pswp.currSlide.content.element.height = img.height;
+        content.element.src = el.src;
+        content.element.width = img.width;
+        content.element.height = img.height;
 
         // Update PhotoSwipe's slide data.
-        pswp.currSlide.data.src = img.src;
-        pswp.currSlide.data.width = img.width;
-        pswp.currSlide.data.height = img.height;
+        data.src = img.src;
+        data.width = img.width;
+        data.height = img.height;
       };
     },
   },

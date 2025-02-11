@@ -68,6 +68,10 @@
     animation: rotation 8s infinite linear;
 }
 
+.animate-loading {
+    animation: rotation 1s infinite linear;
+}
+
 @keyframes pulse {
     0% {
         opacity: 0.5;

@@ -102,6 +102,17 @@ export default class Util {
     return result.join(":");
   }
 
+  static formatSeconds(time) {
+    if (!time || time < 0) {
+      return "0:00";
+    }
+
+    time = Math.ceil(time);
+    let sec = time % 60;
+    let min = Math.floor((time - sec) / 60);
+    return `${min.toString()}:${sec.toString().padStart(2, "0")}`;
+  }
+
   static formatNs(d) {
     if (!d || typeof d !== "number") {
       return "";
