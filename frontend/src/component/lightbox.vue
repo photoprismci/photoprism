@@ -265,7 +265,7 @@ export default {
         escKey: false,
         pinchToClose: false,
         counter: false,
-        trapFocus: false,
+        trapFocus: true,
         returnFocus: false,
         allowPanToNext: false,
         closeOnVerticalDrag: false,
