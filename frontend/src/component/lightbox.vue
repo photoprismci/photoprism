@@ -1242,7 +1242,7 @@ export default {
     },
     // Starts playback on the specified video element, if any.
     playVideo(video, loop) {
-      if (!video || typeof video.play !== "function") {
+      if (!video || !(video instanceof HTMLMediaElement)) {
         return;
       }
 
@@ -1330,10 +1330,14 @@ export default {
       return true;
     },
     // Stops playback on the specified video element, if any.
-    pauseVideo(el) {
-      if (el && typeof el.pause === "function" && !el.paused) {
+    pauseVideo(video) {
+      if (!video || !(video instanceof HTMLMediaElement)) {
+        return;
+      }
+
+      if (!video.paused) {
         try {
-          el.pause();
+          video.pause();
           this.showControls();
         } catch (e) {
           console.log(e);
@@ -1372,11 +1376,12 @@ export default {
       // Flag slideshow as active.
       this.slideshow.active = true;
 
-      // Get PhotoSwipe instance.
-      const pswp = this.pswp();
+      const { video } = this.getContent();
 
       // Play video, if any, but without looping.
-      this.playVideo(pswp.currSlide?.content?.element, false);
+      if (video && (video.paused || video.ended)) {
+        this.playVideo(video, false);
+      }
 
       // Show next slide at regular intervals.
       this.setSlideshowInterval();
