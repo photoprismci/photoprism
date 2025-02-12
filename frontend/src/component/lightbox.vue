@@ -193,12 +193,31 @@ export default {
       return false;
     },
     // Triggered before the lightbox content is initialized.
-    onInit() {
-      this.visible = true;
+    showDialog() {
       this.$view.enter(this);
+      this.busy = true;
+      this.visible = true;
 
       // Publish init event.
       this.$event.publish("lightbox.init");
+    },
+    // Hides the lightbox and restores the scrollbar state.
+    hideDialog() {
+      // Reset component state.
+      this.onReset();
+
+      // Hide sidebar.
+      this.hideSidebar();
+
+      // Remove lightbox focus and hide lightbox.
+      if (this.visible) {
+        this.visible = false;
+      }
+
+      this.busy = false;
+
+      // Publish event to be consumed by other components.
+      this.$event.publish("lightbox.closed");
     },
     // Triggered when the dialog is ready for the lightbox to be rendered.
     onEnter() {
@@ -206,12 +225,11 @@ export default {
     },
     // Triggered when the lightbox is removed and the dialog is closed.
     onLeave() {
-      this.visible = false;
-
       // Publish enter event.
-      this.$event.publish("lightbox.leave");
-
+      this.visible = false;
+      this.busy = false;
       this.$view.leave(this);
+      this.$event.publish("lightbox.leave");
     },
     // Returns the PhotoSwipe content element.
     getContentElement() {
@@ -245,14 +263,14 @@ export default {
         zoom: true,
         close: true,
         escKey: false,
-        pinchToClose: true,
+        pinchToClose: false,
         counter: false,
         trapFocus: false,
         returnFocus: false,
         allowPanToNext: false,
         closeOnVerticalDrag: false,
         initialZoomLevel: "fit",
-        secondaryZoomLevel: this.$isMobile ? 1 : "fill",
+        secondaryZoomLevel: "fill",
         hideAnimationDuration: 0,
         showAnimationDuration: 0,
         wheelToZoom: true,
@@ -275,18 +293,27 @@ export default {
     },
     // Displays the thumbnail images and/or videos that belong to the specified models in the lightbox.
     showThumbs(models, index = 0) {
+      if (this.isBusy("show thumbs")) {
+        return Promise.reject();
+      }
+
       // Check if at least one model was passed, as otherwise no content can be displayed.
       if (!Array.isArray(models) || models.length === 0 || index >= models.length) {
         console.log("model list passed to lightbox is empty:", models);
         return Promise.reject();
       }
 
+      // Show and initialize the component.
       this.$event.subscribeOnce("lightbox.enter", () => {
-        this.renderLightbox(models, index);
+        this.renderLightbox(models, index)
+          .then(() => {
+            this.busy = false;
+          })
+          .catch(() => {
+            this.hideDialog();
+          });
       });
-
-      // Show and register the component.
-      this.onInit();
+      this.showDialog();
 
       return Promise.resolve();
     },
@@ -984,7 +1011,7 @@ export default {
         });
       }
 
-      return Promise.reject();
+      return this.hideDialog();
     },
     onLightboxOpened() {
       this.addEventListeners();
@@ -996,34 +1023,20 @@ export default {
     },
     // Destroys the PhotoSwipe lightbox instance after use, see onClose().
     destroyLightbox() {
-      if (!this.busy) {
-        console.warn("lightbox: destroyLightbox() was called before closeLightbox()");
-        return false;
+      if (this.lightbox) {
+        this.lightbox.destroy();
+        this.$event.publish("lightbox.destroy");
+        return;
       }
 
-      if (!this.lightbox) {
-        console.warn("lightbox: cannot call this.lightbox.destroy() because no instance is set");
-        return false;
-      }
-
-      this.lightbox.destroy();
-      this.$event.publish("lightbox.destroy");
-
-      return true;
+      this.hideDialog();
     },
     onLightboxDestroyed() {
       // Remove lightbox reference.
       this.lightbox = null;
 
-      // Reset component state.
-      this.onReset();
-
       // Hide lightbox and sidebar.
-      this.hideViewer();
-      this.busy = false;
-
-      // Publish event to be consumed by other components.
-      this.$event.publish("lightbox.closed");
+      this.hideDialog();
     },
     // Returns the picture (model) caption as sanitized HTML, if any.
     formatCaption(model) {
@@ -1073,16 +1086,6 @@ export default {
       this.model = new Thumb();
       this.models = [];
       this.index = 0;
-    },
-    // Hides the lightbox and restores the scrollbar state.
-    hideViewer() {
-      // Hide sidebar.
-      this.hideSidebar();
-
-      // Remove lightbox focus and hide lightbox.
-      if (this.visible) {
-        this.visible = false;
-      }
     },
     // Returns the active PhotoSwipe instance, if any.
     // Be sure to check the result before using it!
@@ -1730,7 +1733,7 @@ export default {
         return { top, bottom, left, right };
       }
 
-      // Determine lightbox padding based on content and viewport size.
+      // Add padding based on content and viewport size, except on small mobile screens.
       if (viewport.x > this.mobileBreakpoint) {
         // Large screens.
         if (data.width % viewport.x !== 0 && viewport.x > viewport.y) {
@@ -1750,16 +1753,16 @@ export default {
           top = 72;
           bottom = 64;
         }
-      } else {
-        // Small screens.
-        top = 56;
-        bottom = 8;
       }
 
       return { top, bottom, left, right };
     },
     // Called when the zoom level changes and higher quality thumbnails may be required.
     onImageSizeChange() {
+      if (this.isBusy("change image size")) {
+        return;
+      }
+
       const { slide, content, video, data } = this.getContent();
 
       if (!slide) {
@@ -1812,26 +1815,30 @@ export default {
       }
 
       // Create HTMLImageElement to load thumbnail image in the matching size.
-      const el = new Image();
-      el.src = img.src;
+      try {
+        const el = new Image();
+        el.src = img.src;
 
-      // Swap thumbnails when the new image has loaded.
-      el.onload = () => {
-        // Abort if image URL is empty or the current slide is undefined.
-        if (!content || !el?.src) {
-          return;
-        }
+        // Swap thumbnails when the new image has loaded.
+        el.onload = () => {
+          // Abort if image URL is empty or the current slide is undefined.
+          if (!content || !el?.src) {
+            return;
+          }
 
-        // Update the slide's HTMLImageElement to use the new thumbnail image.
-        content.element.src = el.src;
-        content.element.width = img.width;
-        content.element.height = img.height;
+          // Update the slide's HTMLImageElement to use the new thumbnail image.
+          content.element.src = el.src;
+          content.element.width = img.width;
+          content.element.height = img.height;
 
-        // Update PhotoSwipe's slide data.
-        data.src = img.src;
-        data.width = img.width;
-        data.height = img.height;
-      };
+          // Update PhotoSwipe's slide data.
+          data.src = img.src;
+          data.width = img.width;
+          data.height = img.height;
+        };
+      } catch (err) {
+        console.warn("lightbox: failed to change image size", err);
+      }
     },
   },
 };

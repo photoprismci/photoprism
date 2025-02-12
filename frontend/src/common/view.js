@@ -125,7 +125,9 @@ export class View {
       initHtmlElement();
     }
 
-    this.scopes.push(c);
+    if (c !== this.current()) {
+      this.scopes.push(c);
+    }
 
     this.apply(c);
 
@@ -135,15 +137,16 @@ export class View {
   // Returns to the parent view context of the specified component,
   // and updates the window and <html> body as needed.
   leave(c) {
-    if (this.scopes.length === 0) {
+    if (!c || this.scopes.length === 0) {
       return false;
     }
 
-    if (c) {
-      const i = this.scopes.findLastIndex((s) => s === c);
-      if (i > 0) {
-        this.scopes.splice(i, 1);
-      }
+    const index = this.scopes.findLastIndex((s) => s === c);
+
+    if (index > 0) {
+      this.scopes.splice(index, 1);
+    } else if (index < 0) {
+      return;
     }
 
     if (this.scopes.length) {
