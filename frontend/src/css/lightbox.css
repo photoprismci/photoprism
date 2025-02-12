@@ -145,20 +145,24 @@
 
 .pswp__media.is-broken .pswp__image,
 .pswp__media.pswp__media--live .pswp__image,
+.pswp__media.pswp__media--animated .pswp__image,
 .pswp__media.pswp__media--image .pswp__image {
     visibility: visible;
 }
 
 .pswp__media.is-broken .pswp__video,
 .pswp__media.pswp__media--live .pswp__video,
+.pswp__media.pswp__media--animated .pswp__video,
 .pswp__media.pswp__media--image .pswp__video {
     visibility: hidden;
 }
 
+.pswp__media.pswp__media--animated.is-playing .pswp__image,
 .pswp__media.pswp__media--live.is-playing .pswp__image {
     visibility: hidden;
 }
 
+.pswp__media.pswp__media--animated.is-playing .pswp__video,
 .pswp__media.pswp__media--live.is-playing .pswp__video {
     visibility: visible;
 }
