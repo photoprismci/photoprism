@@ -685,7 +685,7 @@ export default {
       // when image size changes
       this.lightbox.on("imageSizeChange", ({ slide }) => {
         if (slide.isActive) {
-          this.onZoomLevelChange();
+          this.onImageSizeChange();
         }
       });
 
@@ -1675,14 +1675,14 @@ export default {
       return { top, bottom, left, right };
     },
     // Called when the zoom level changes and higher quality thumbnails may be required.
-    onZoomLevelChange() {
+    onImageSizeChange() {
       const { slide, content, video, data } = this.getContent();
 
       if (!slide) {
         return;
       }
 
-      if (video) {
+      if (video || data?.type === "html") {
         return;
       }
 
