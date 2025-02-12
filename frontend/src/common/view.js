@@ -192,7 +192,7 @@ export class View {
 
     if (focusElement) {
       try {
-        focusElement.focus();
+        focusElement.focus({ preventScroll: true, focusVisible: false });
       } catch (err) {
         console.log(`focus: ${err}`);
       }
