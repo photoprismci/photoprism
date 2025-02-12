@@ -75,31 +75,49 @@
 
 .pswp__html,
 .pswp__media {
+    position: relative;
     max-width: 100vw;
     max-height: 100vh;
-    /* display: flex;
-    justify-content: center;
-    align-items: center; */
-    position: relative;
 }
 
 .pswp__media .pswp__image,
 .pswp__media .pswp__video,
 .pswp__media .pswp__play {
     position: absolute;
+    cursor: pointer;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    cursor: pointer;
 }
 
 .pswp__media .pswp__image,
 .pswp__media .pswp__video {
     object-fit: contain;
-    max-width: 100vw !important;
-    max-height: 100vh !important;
+    max-width: 100vw;
+    max-height: 100vh;
     width: auto;
     height: 100%;
+}
+
+.pswp__media.pswp__media--live  {
+    position: absolute;
+    max-width: none;
+    max-height: none;
+}
+
+.pswp__media.pswp__media--live .pswp__play {
+    display: none;
+}
+
+.pswp__media.pswp__media--live .pswp__image,
+.pswp__media.pswp__media--live .pswp__video {
+    top: auto!important;
+    left: auto!important;
+    bottom: auto!important;
+    right: auto!important;
+    max-width: none!important;
+    max-height: none!important;
+    transform: none!important;
 }
 
 .pswp__media .pswp__image {
@@ -174,8 +192,8 @@
     font-size: 14px;
     font-weight: 400;
     color: #f3f3f3;
-    touch-action: auto;
     pointer-events: auto;
+    touch-action: auto;
 }
 
 .p-lightbox__container > .p-lightbox__content.slideshow-active .pswp__dynamic-caption {
@@ -233,7 +251,6 @@
 .pswp__dynamic-caption--mobile p,
 .pswp__dynamic-caption--mobile a {
     position: relative;
-    pointer-events: auto;
 }
 
 .pswp__dynamic-caption h4,
@@ -247,6 +264,8 @@
     letter-spacing: normal;
     margin: 0 0 8px 0;
     padding: 0;
+    pointer-events: none;
+    touch-action: none;
 }
 
 .pswp__dynamic-caption a {
@@ -259,6 +278,8 @@
     text-align: start;
     text-overflow: ellipsis;
     hyphens: auto;
+    pointer-events: auto;
+    touch-action: auto;
 }
 
 .pswp__dynamic-caption h4 {
@@ -378,7 +399,7 @@
 
 /* Zoom Toggle */
 
-.p-lightbox__container > .is-playable .pswp__button.pswp__button--zoom,
+.p-lightbox__container > .p-lightbox__content:not(.is-zoomable) .pswp__button.pswp__button--zoom,
 .p-lightbox__container > .p-lightbox__content.slideshow-active .pswp__button.pswp__button--zoom {
     display: none;
 }
@@ -461,7 +482,7 @@
 /* Allow navigation buttons on touch devices to be used without being visible. */
 
 .p-lightbox__container > .p-lightbox__content > .pswp--touch .pswp__button--arrow {
-    visibility: visible;
+    display: none;
 }
 
 .p-lightbox__container > .p-lightbox__content > .pswp--touch .pswp__button--arrow .pswp__icn {

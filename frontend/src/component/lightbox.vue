@@ -5,6 +5,7 @@
     :scrollable="false"
     fullscreen
     scrim
+    persistent
     tiled
     class="p-dialog p-lightbox v-dialog--lightbox"
     @after-enter="onEnter"
@@ -25,6 +26,7 @@
           'sidebar-visible': sidebarVisible,
           'slideshow-active': slideshow.active,
           'is-fullscreen': isFullscreen,
+          'is-zoomable': isZoomable,
           'is-favorite': model.Favorite,
           'is-playable': model.Playable,
           'is-muted': muted,
@@ -113,6 +115,7 @@ export default {
       canDownload: this.$config.allow("photos", "download") && this.$config.feature("download"),
       canFullscreen: !this.$isMobile,
       isFullscreen: !window.screenTop && !window.screenY,
+      isZoomable: true,
       mobileBreakpoint: 600, // Minimum viewport width for large screens.
       featExperimental: this.$config.featExperimental(), // Enables features that may be incomplete or unstable.
       featDevelop: this.$config.featDevelop(), // Enables new features that are still under development.
@@ -122,8 +125,6 @@ export default {
       model: new Thumb(), // Current slide.
       index: 0, // Current slide index in models.
       subscriptions: [], // Event subscriptions.
-      afterLeave: null, // Called after the dialog has closed.
-      afterEnter: null, // Called after the dialog has opened.
       // Video properties for rendering the controls.
       video: {
         controls: false,
@@ -150,12 +151,14 @@ export default {
   },
   created() {
     // this.subscriptions["lightbox.change"] = this.$event.subscribe("lightbox.change", this.onChange);
-    this.subscriptions["lightbox.open"] = this.$event.subscribe("lightbox.open", this.onOpen);
-    this.subscriptions["lightbox.pause"] = this.$event.subscribe("lightbox.pause", this.onPause);
-    this.subscriptions["lightbox.close"] = this.$event.subscribe("lightbox.close", this.onClose);
+    this.subscriptions["lightbox.open"] = this.$event.subscribe("lightbox.open", this.openLightbox.bind(this));
+    this.subscriptions["lightbox.pause"] = this.$event.subscribe("lightbox.pause", this.pauseLightbox.bind(this));
+    this.subscriptions["lightbox.close"] = this.$event.subscribe("lightbox.close", this.onClose.bind(this));
   },
   beforeUnmount() {
-    this.onPause();
+    this.clearTimeouts();
+    this.removeEventListeners();
+    this.pauseLightbox();
     this.destroyLightbox();
 
     for (let i = 0; i < this.subscriptions.length; i++) {
@@ -163,6 +166,24 @@ export default {
     }
   },
   methods: {
+    // Opens and initializes the lightbox with the given options.
+    openLightbox(ev, options) {
+      if (!options) {
+        return;
+      }
+
+      if (options.view) {
+        this.showView(options.view, options.index);
+      } else {
+        this.showThumbs(options.models, options.index);
+      }
+    },
+    // Pauses the lightbox slideshow and any videos that are playing.
+    pauseLightbox() {
+      this.pausePlaying();
+      this.pauseSlideshow();
+    },
+    // Returns true if a blocking event is currently being processed.
     isBusy(action) {
       if (this.busy) {
         console.log(`lightbox: still busy, cannot ${action ? action : "do this"}`);
@@ -171,21 +192,26 @@ export default {
 
       return false;
     },
-    onEnter() {
-      if (this.afterEnter) {
-        this.afterEnter();
-        this.afterEnter = null;
-      }
+    // Triggered before the lightbox content is initialized.
+    onInit() {
+      this.visible = true;
+      this.$view.enter(this);
 
-      this.afterLeave = null;
+      // Publish init event.
+      this.$event.publish("lightbox.init");
     },
+    // Triggered when the dialog is ready for the lightbox to be rendered.
+    onEnter() {
+      this.$event.publish("lightbox.enter");
+    },
+    // Triggered when the lightbox is removed and the dialog is closed.
     onLeave() {
-      if (this.afterLeave) {
-        this.afterLeave();
-        this.afterLeave = null;
-      }
+      this.visible = false;
 
-      this.afterEnter = null;
+      // Publish enter event.
+      this.$event.publish("lightbox.leave");
+
+      this.$view.leave(this);
     },
     // Returns the PhotoSwipe content element.
     getContentElement() {
@@ -218,12 +244,15 @@ export default {
         loop: true,
         zoom: true,
         close: true,
+        escKey: false,
+        pinchToClose: true,
         counter: false,
         trapFocus: false,
         returnFocus: false,
         allowPanToNext: false,
+        closeOnVerticalDrag: false,
         initialZoomLevel: "fit",
-        secondaryZoomLevel: "fill",
+        secondaryZoomLevel: this.$isMobile ? 1 : "fill",
         hideAnimationDuration: 0,
         showAnimationDuration: 0,
         wheelToZoom: true,
@@ -244,17 +273,6 @@ export default {
         errorMsg: this.$gettext("Error"),
       };
     },
-    onOpen(ev, options) {
-      if (!options) {
-        return;
-      }
-
-      if (options.view) {
-        this.showView(options.view, options.index);
-      } else {
-        this.showThumbs(options.models, options.index);
-      }
-    },
     // Displays the thumbnail images and/or videos that belong to the specified models in the lightbox.
     showThumbs(models, index = 0) {
       // Check if at least one model was passed, as otherwise no content can be displayed.
@@ -263,11 +281,12 @@ export default {
         return Promise.reject();
       }
 
-      this.afterEnter = () => {
+      this.$event.subscribeOnce("lightbox.enter", () => {
         this.renderLightbox(models, index);
-      };
+      });
 
-      this.onShow();
+      // Show and register the component.
+      this.onInit();
 
       return Promise.resolve();
     },
@@ -385,7 +404,7 @@ export default {
           : false;
 
         // Set the slide data needed to render and play the video.
-        return {
+        const data = {
           type: "html", // Render custom HTML.
           html: `<div class="pswp__html"></div>`, // Replaced with the <video> element.
           model: model, // Content model.
@@ -394,14 +413,26 @@ export default {
           loop: model?.Type !== media.Live && (isShort || model?.Type === media.Animated), // If possible, loop these types.
           msrc: img.src, // Image URL.
         };
+
+        if (model?.Type === media.Live) {
+          data.width = img.width;
+          data.height = img.height;
+        }
+
+        return data;
       }
 
       // Return the image data so that PhotoSwipe can render it in the lightbox,
       // see https://photoswipe.com/data-sources/#dynamically-generated-data.
       return img;
     },
-    onLoadComplete(ev) {},
-    onContentResize(ev) {},
+    isContentZoomable(isContentZoomable, content) {
+      if (content.data?.model?.Type === media.Live) {
+        isContentZoomable = true;
+      }
+
+      return isContentZoomable;
+    },
     onContentLoad(ev) {
       const { content } = ev;
       if (content.data?.type === "html") {
@@ -664,18 +695,26 @@ export default {
         },
       });
 
-      // Add a close event handler to destroy the lightbox after use,
-      // see https://photoswipe.com/events/#closing-events.
-      this.lightbox.on("close", () => {
-        this.$event.publish("lightbox.pause");
-        this.$event.publish("lightbox.close");
+      // Register animation event handlers to prevent user actions during animations,
+      // see https://photoswipe.com/events/#opening-or-closing-transition-events.
+      this.lightbox.on("openingAnimationStart", () => {
+        this.busy = true;
+      });
+      this.lightbox.on("openingAnimationEnd", () => {
+        this.busy = false;
+      });
+      this.lightbox.on("closingAnimationStart", () => {
+        this.busy = true;
+      });
+      this.lightbox.on("closingAnimationEnd", () => {
+        this.busy = false;
       });
 
       // Add a custom pointer event handler to prevent the default
       // action when events are triggered on an HTMLMediaElement.
-      this.lightbox.on("pointerUp", (ev) => this.onLightboxPointerEvent(ev));
-      this.lightbox.on("pointerDown", (ev) => this.onLightboxPointerEvent(ev));
-      this.lightbox.on("pointerMove", (ev) => this.onLightboxPointerEvent(ev));
+      this.lightbox.on("pointerUp", this.onLightboxPointerEvent.bind(this));
+      this.lightbox.on("pointerDown", this.onLightboxPointerEvent.bind(this));
+      this.lightbox.on("pointerMove", this.onLightboxPointerEvent.bind(this));
 
       // Add PhotoSwipe lightbox controls,
       // see https://photoswipe.com/adding-ui-elements/.
@@ -691,38 +730,20 @@ export default {
 
       // Trigger onChange() event handler when slide is changed and on initialization,
       // see https://photoswipe.com/events/#initialization-events.
-      this.lightbox.on("change", () => {
-        this.onChange();
-      });
-
-      this.lightbox.on("afterInit", () => {
-        // Attach touch and mouse event handlers to automatically hide controls.
-        document.addEventListener(
-          "touchstart",
-          () => {
-            this.resetTimer();
-            this.hasTouch = true;
-          },
-          { once: true }
-        );
-        document.addEventListener(
-          "mousemove",
-          () => {
-            this.startTimer();
-          },
-          { once: true }
-        );
-      });
+      this.lightbox.on("change", this.onChange.bind(this));
+      // this.lightbox.on("loadComplete", this.onLoadComplete.bind(this));
 
       // Processes model data for rendering slides with PhotoSwipe,
       // see https://photoswipe.com/filters/#itemdata.
-      this.lightbox.addFilter("itemData", this.getItemData);
+      this.lightbox.addFilter("itemData", this.getItemData.bind(this));
+      this.lightbox.addFilter("isContentZoomable", this.isContentZoomable.bind(this));
 
       // Renders content when a slide starts to load (can be default prevented),
       // see https://photoswipe.com/events/#slide-content-events.
-      this.lightbox.on("contentLoad", this.onContentLoad);
-      this.lightbox.on("contentResize", this.onContentResize);
-      this.lightbox.on("loadComplete", this.onLoadComplete);
+      this.lightbox.on("contentLoad", this.onContentLoad.bind(this));
+      // this.lightbox.on("contentResize", this.onContentResize.bind(this));
+      // this.lightbox.on("contentRemove", this.onContentRemove.bind(this));
+      // this.lightbox.on("contentDestroy", this.onContentDestroy.bind(this));
 
       // Pauses videos, animations, and live photos when slide content becomes active (can be default prevented),
       // see https://photoswipe.com/events/#slide-content-events.
@@ -737,6 +758,15 @@ export default {
 
         if (!data) {
           return;
+        }
+
+        switch (data.model?.Type) {
+          case media.Video:
+          case media.Animated:
+            this.isZoomable = false;
+            break;
+          default:
+            this.isZoomable = true;
         }
 
         let video;
@@ -775,14 +805,23 @@ export default {
         }
       });
 
+      // Add a close event handler to destroy the lightbox after use,
+      // see https://photoswipe.com/events/#closing-events.
+      this.lightbox.on("close", this.onLightboxClose.bind(this));
+
+      // Add a destroy event handler to complete the closing of the lightbox,
+      // see https://photoswipe.com/events/#closing-events.
+      this.lightbox.on("destroy", this.onLightboxDestroyed.bind(this));
+
+      // Add an init event handler that is triggered when PhotoSwipe is fully initialized,
+      // see https://photoswipe.com/events/#closing-events.
+      this.lightbox.on("afterInit", this.onLightboxOpened.bind(this));
+
       // Init PhotoSwipe.
       this.lightbox.init();
 
       // Show first image.
       this.lightbox.loadAndOpen(index);
-
-      // Publish event to be consumed by other components.
-      this.$event.publish("lightbox.opened");
 
       return Promise.resolve();
     },
@@ -930,12 +969,61 @@ export default {
         }
       });
     },
+    closeLightbox() {
+      if (this.isBusy("close lightbox")) {
+        return Promise.reject();
+      }
+
+      const pswp = this.pswp();
+
+      if (pswp) {
+        this.busy = true;
+        return new Promise((resolve) => {
+          this.$event.subscribeOnce("lightbox.leave", resolve);
+          this.destroyLightbox();
+        });
+      }
+
+      return Promise.reject();
+    },
+    onLightboxOpened() {
+      this.addEventListeners();
+      this.$event.publish("lightbox.opened");
+    },
+    onLightboxClose() {
+      this.$event.publish("lightbox.pause");
+      this.$event.publish("lightbox.close");
+    },
     // Destroys the PhotoSwipe lightbox instance after use, see onClose().
     destroyLightbox() {
-      if (this.lightbox) {
-        this.lightbox?.destroy();
-        this.lightbox = null;
+      if (!this.busy) {
+        console.warn("lightbox: destroyLightbox() was called before closeLightbox()");
+        return false;
       }
+
+      if (!this.lightbox) {
+        console.warn("lightbox: cannot call this.lightbox.destroy() because no instance is set");
+        return false;
+      }
+
+      this.lightbox.destroy();
+      this.$event.publish("lightbox.destroy");
+
+      return true;
+    },
+    onLightboxDestroyed() {
+      // Remove lightbox reference.
+      this.lightbox = null;
+
+      // Reset component state.
+      this.onReset();
+
+      // Hide lightbox and sidebar.
+      this.hideViewer();
+      this.busy = false;
+
+      // Publish event to be consumed by other components.
+      this.$event.publish("lightbox.closed");
     },
     // Returns the picture (model) caption as sanitized HTML, if any.
     formatCaption(model) {
@@ -965,50 +1053,13 @@ export default {
 
       return Util.sanitizeHtml(caption);
     },
-    onShow() {
-      // Render the component template.
-      this.visible = true;
-
-      this.$view.enter(this);
-
-      // Publish event to be consumed by other components.
-      this.$event.publish("lightbox.opened");
-    },
-    // Destroys the PhotoSwipe lightbox, resets the component state, and unhides the browser scrollbar.
+    // Removes any event listeners before the lightbox is fully closed.
     onClose() {
-      if (this.isBusy("close")) {
-        return Promise.reject();
-      }
-
-      this.busy = true;
-      this.$view.leave(this);
-
-      // Pause slideshow and any videos that are playing.
-      this.onPause();
-
-      // Destroy PhotoSwipe lightbox.
-      this.destroyLightbox();
-
-      // Reset component state.
-      this.onReset();
-
-      // Hide lightbox and sidebar.
-      this.hideViewer();
-      this.busy = false;
-
-      // Publish event to be consumed by other components.
-      this.$event.publish("lightbox.closed");
-
-      return Promise.resolve();
-    },
-    // Pauses the lightbox slideshow and any videos that are playing.
-    onPause() {
-      this.pausePlaying();
-      this.pauseSlideshow();
+      this.clearTimeouts();
+      this.removeEventListeners();
     },
     // Resets the component state after closing the lightbox.
     onReset() {
-      this.resetTimer();
       this.resetControls();
       this.resetModels();
     },
@@ -1071,13 +1122,17 @@ export default {
       }
 
       if (this.controlsVisible()) {
-        this.onClose();
+        this.closeLightbox();
       } else {
         this.showControls();
       }
     },
     // Called when the lightbox receives a pointer move, down or up event.
-    onLightboxPointerEvent(ev) {},
+    onLightboxPointerEvent(ev) {
+      if (ev && ev.originalEvent.target.closest(".pswp__dynamic-caption")) {
+        ev.preventDefault();
+      }
+    },
     onControlClick(ev, action) {
       if (ev && ev.cancelable) {
         ev.stopPropagation();
@@ -1107,7 +1162,7 @@ export default {
         if (!this.controlsVisible()) {
           ev.stopPropagation();
           ev.preventDefault();
-          this.resetTimer();
+          this.clearIdleTimeout();
           this.showLightboxControls();
           this.hideControlsWithDelay(this.defaultControlHideDelay);
         }
@@ -1122,23 +1177,37 @@ export default {
         return;
       }
 
-      // Handle the event and prevent it from propagating when it occurs on a video element
-      // except at the bottom of the screen, so that the player controls remain usable.
+      // Handle the click and touch events on custom content.
       if (
         ev.target instanceof HTMLMediaElement ||
         (ev.target instanceof HTMLElement &&
           (ev.target.classList.contains("pswp__image") || ev.target.classList.contains("pswp__play")))
       ) {
-        ev.stopPropagation();
-
-        ev.preventDefault();
-        this.resetTimer();
-
+        // Always stop slideshow after user interaction with the content.
         if (this.slideshow.active) {
           this.pauseSlideshow();
         }
 
+        // On touch devices, trigger the default event on the sides and when content is zoomed.
+        if (this.hasTouch) {
+          const { slide } = this.getContent();
+
+          if (slide.currZoomLevel !== slide.zoomLevels.initial) {
+            return;
+          } else if (ev.clientX && window.innerWidth) {
+            const x = ev.clientX / window.innerWidth;
+
+            // Let PhotoSwipe do the left and right 18% of the screen.
+            if (x <= 0.18 || x >= 0.82) {
+              return;
+            }
+          }
+        }
+
         // Toggle video playback.
+        this.clearIdleTimeout();
+        ev.stopPropagation();
+        ev.preventDefault();
         this.toggleVideo();
       }
     },
@@ -1154,7 +1223,9 @@ export default {
 
       const pswp = this.pswp();
 
-      if (pswp.currSlide.isZoomable()) {
+      const isZoomable = pswp.currSlide.isZoomable();
+
+      if (isZoomable) {
         pswp.currSlide.toggleZoom();
       }
     },
@@ -1293,7 +1364,7 @@ export default {
         case "Escape":
           ev.preventDefault();
           ev.stopPropagation();
-          this.onClose();
+          this.closeLightbox();
           break;
       }
     },
@@ -1456,7 +1527,7 @@ export default {
       new Photo().find(this.model.UID).then((p) => p.downloadAll());
     },
     onEdit() {
-      this.onPause();
+      this.pauseLightbox();
 
       let index = 0;
 
@@ -1476,14 +1547,13 @@ export default {
       let album = null;
 
       // Close lightbox and open edit dialog when closed.
-      this.onClose();
-      this.afterLeave = () => {
+      this.closeLightbox().then(() => {
         this.$event.publish("dialog.edit", { selection, album, index });
-      };
+      });
     },
     resize(force) {
       this.$nextTick(() => {
-        if (this.visible && this.getContentElement()) {
+        if (this.visible && this.getContentElement() && !this.isBusy("resize")) {
           const pswp = this.pswp();
           if (pswp && pswp?.updateSize) {
             pswp.updateSize(force);
@@ -1584,13 +1654,30 @@ export default {
         return;
       }
 
-      this.resetTimer();
+      this.clearIdleTimeout();
       this.idleTimer = window.setTimeout(() => {
         this.hideControls();
       }, delay);
     },
     controlsVisible() {
       return this.controlsShown !== 0;
+    },
+    onTouchStartOnce() {
+      this.clearIdleTimeout();
+      this.hasTouch = true;
+    },
+    onMouseMoveOnce() {
+      this.showControls();
+    },
+    // Removes any touch and mouse event handlers.
+    removeEventListeners() {
+      document.removeEventListener("touchstart", this.onTouchStartOnce.bind(this), { once: true });
+      document.removeEventListener("mousemove", this.onMouseMoveOnce.bind(this), { once: true });
+    },
+    // Attaches touch and mouse event handlers to automatically hide controls.
+    addEventListeners() {
+      document.addEventListener("touchstart", this.onTouchStartOnce.bind(this), { once: true });
+      document.addEventListener("mousemove", this.onMouseMoveOnce.bind(this), { once: true });
     },
     startTimer() {
       if (this.hasTouch || this.$isMobile) {
@@ -1599,16 +1686,13 @@ export default {
 
       this.hideControlsWithDelay(this.defaultControlHideDelay);
 
-      document.addEventListener(
-        "mousemove",
-        (ev) => {
-          this.showControls(ev);
-        },
-        { once: true }
-      );
+      document.addEventListener("mousemove", this.onMouseMoveOnce.bind(this), { once: true });
     },
-    // Resets the timer for hiding the lightbox controls.
-    resetTimer() {
+    clearTimeouts() {
+      this.clearIdleTimeout();
+    },
+    // Clears the idle timer used to automatically hide the lightbox controls.
+    clearIdleTimeout() {
       if (this.idleTimer) {
         window.clearTimeout(this.idleTimer);
         this.idleTimer = false;
