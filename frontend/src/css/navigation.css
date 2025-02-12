@@ -73,6 +73,17 @@ nav .v-list__item__title.title {
     margin-right: auto;
 }
 
+#p-navigation .nav-sidebar.v-navigation-drawer--mobile .nav-logo {
+    width: 40px;
+    text-align: inherit;
+    margin-inline-end: 12px;
+}
+
+#p-navigation .nav-sidebar.v-navigation-drawer--mobile .nav-logo img {
+    height: 34px;
+    width: 34px;
+}
+
 #p-navigation .nav-toolbar-title {
     font-size: 1.15rem;
     font-weight: 500;
