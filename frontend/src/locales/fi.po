@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-02-07 03:40+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2025-02-13 15:37+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1983,11 +1983,11 @@ msgstr "Ei mitään"
 
 #: src/component/lightbox.vue:553
 msgid "Not allowed"
-msgstr ""
+msgstr "Ei sallittu"
 
 #: src/component/lightbox.vue:550
 msgid "Not found"
-msgstr ""
+msgstr "Ei löytynyt"
 
 #: src/locales.js:37
 msgid "Not sorted."
@@ -1995,7 +1995,7 @@ msgstr "Ei lajiteltu."
 
 #: src/component/lightbox.vue:547
 msgid "Not supported"
-msgstr ""
+msgstr "Ei tuettu"
 
 #: src/page/library/import.vue:91
 msgid "Note you may manually manage your originals folder and importing is optional."
