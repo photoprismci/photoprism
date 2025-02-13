@@ -42,7 +42,7 @@
                 autocomplete="new-password"
                 :label="$gettext('Password')"
                 :placeholder="$gettext('optional')"
-                :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                 :type="showPassword ? 'text' : 'password'"
                 @click:append-inner="showPassword = !showPassword"
               ></v-text-field>

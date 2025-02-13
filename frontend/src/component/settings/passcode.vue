@@ -46,7 +46,7 @@
                   autocomplete="current-password"
                   class="input-password text-selectable"
                   prepend-inner-icon="mdi-lock"
-                  :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                  :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                   @click:append-inner="showPassword = !showPassword"
                   @keyup.enter="onSetup"
                 ></v-text-field>
@@ -215,7 +215,7 @@
                   :placeholder="$gettext('Password')"
                   class="input-password text-selectable"
                   prepend-inner-icon="mdi-lock"
-                  :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                  :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                   @click:append-inner="showPassword = !showPassword"
                   @keyup.enter="onDeactivate"
                 ></v-text-field>

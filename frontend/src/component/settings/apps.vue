@@ -41,7 +41,7 @@
                   autocapitalize="none"
                   autocomplete="current-password"
                   class="input-password text-monospace text-selectable"
-                  :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                  :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                   prepend-inner-icon="mdi-lock"
                   @click:append-inner="showPassword = !showPassword"
                   @keyup.enter="onConfirm"

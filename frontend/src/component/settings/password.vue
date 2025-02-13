@@ -21,13 +21,13 @@
               <v-text-field
                 v-model="oldPassword"
                 hide-details
-                type="password"
+                :type="showPassword ? 'text' : 'password'"
                 autocorrect="off"
                 autocapitalize="none"
                 autocomplete="current-password"
                 :disabled="busy"
                 :maxlength="maxLength"
-                :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
                 :label="$gettext('Current Password')"
                 class="input-current-password"
                 @click:append-inner="showPassword = !showPassword"
