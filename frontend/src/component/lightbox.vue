@@ -8,8 +8,11 @@
     persistent
     tiled
     class="p-dialog p-lightbox v-dialog--lightbox"
-    @after-enter="onEnter"
-    @after-leave="onLeave"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
+    @focus="onDialogFocus"
+    @focusin="onDialogFocus"
+    @focusout="onDialogFocus"
   >
     <div class="p-lightbox__underlay"></div>
     <div
@@ -40,7 +43,7 @@
       </div>
     </div>
     <div v-show="video.controls && controlsShown !== 0" ref="controls" class="p-lightbox__controls" @click.stop.prevent>
-      <div class="video-control">
+      <div class="video-control video-control--play">
         <v-icon v-if="video.seeking" icon="mdi-loading" class="animate-loading"></v-icon>
         <v-icon
           v-else-if="video.playing"
@@ -56,7 +59,7 @@
         ></v-icon>
         <v-icon v-else v-tooltip="video.error" icon="mdi-alert-circle" class="clickable"></v-icon>
       </div>
-      <div class="video-control video-time text-body-2">
+      <div class="video-control video-control--time text-body-2">
         {{ $util.formatSeconds(video.time) }}
       </div>
       <v-slider
@@ -69,12 +72,27 @@
         :error="!!video.error"
         :min="0"
         :max="video.duration"
-        class="video-control video-slider"
+        class="video-control video-control--slider"
         @update:model-value="seekVideo"
       >
       </v-slider>
-      <div class="video-control video-duration text-body-2">
+      <div class="video-control video-control--duration text-body-2">
         {{ $util.formatSeconds(video.duration) }}
+      </div>
+      <div v-if="video.castable" class="video-control video-control--cast">
+        <v-icon
+          v-if="video.casting"
+          icon="mdi-cast-connected"
+          class="clickable"
+          @pointerdown.stop.prevent="toggleVideoRemote"
+        ></v-icon>
+        <v-icon
+          v-else
+          icon="mdi-cast"
+          :disabled="video.remote === 'connecting'"
+          class="clickable"
+          @pointerdown.stop.prevent="toggleVideoRemote"
+        ></v-icon>
       </div>
     </div>
   </v-dialog>
@@ -138,6 +156,9 @@ export default {
         playing: false,
         paused: false,
         ended: false,
+        castable: false,
+        casting: false,
+        remote: "",
       },
       // Slideshow properties.
       slideshow: {
@@ -219,17 +240,24 @@ export default {
       // Publish event to be consumed by other components.
       this.$event.publish("lightbox.closed");
     },
-    // Triggered when the dialog is ready for the lightbox to be rendered.
-    onEnter() {
+    // Triggered when the dialog has been fully opened.
+    afterEnter() {
       this.$event.publish("lightbox.enter");
     },
-    // Triggered when the lightbox is removed and the dialog is closed.
-    onLeave() {
+    // Triggered when the dialog has closed.
+    afterLeave() {
       // Publish enter event.
       this.visible = false;
       this.busy = false;
       this.$view.leave(this);
       this.$event.publish("lightbox.leave");
+    },
+    // Triggered when the dialog focus changes.
+    onDialogFocus(ev) {
+      if (this.trace) {
+        console.log(`lightbox: dialog.${ev.type}`);
+      }
+      return false;
     },
     // Returns the PhotoSwipe content element.
     getContentElement() {
@@ -266,7 +294,7 @@ export default {
         pinchToClose: false,
         counter: false,
         trapFocus: true,
-        returnFocus: false,
+        returnFocus: true,
         allowPanToNext: false,
         closeOnVerticalDrag: false,
         initialZoomLevel: "fit",
@@ -524,6 +552,7 @@ export default {
       video.muted = mute || this.muted;
       video.preload = preload;
       video.playsInline = true;
+      video.disableRemotePlayback = false;
       video.controls = false;
       video.dir = this.$rtl ? "rtl" : "ltr";
 
@@ -563,6 +592,18 @@ export default {
       avcSource.src = Util.videoFormatUrl(model.Hash, media.FormatAvc);
       video.appendChild(avcSource);
 
+      if (video.remote && video.remote instanceof RemotePlayback) {
+        if (!this.video.castable) {
+          video.remote.watchAvailability((castable) => {
+            this.video.castable = castable;
+          });
+        }
+
+        video.addEventListener("connect", (ev) => this.onVideoRemote(ev));
+        video.addEventListener("connecting", (ev) => this.onVideoRemote(ev));
+        video.addEventListener("disconnect", (ev) => this.onVideoRemote(ev));
+      }
+
       // Return HTMLMediaElement.
       return video;
     },
@@ -577,20 +618,59 @@ export default {
 
       return this.setVideo(video, data, ev);
     },
-    resetVideo(showControls = false) {
-      this.video = {
-        controls: !!showControls,
-        src: "",
-        error: "",
-        state: 0,
-        time: 0,
-        duration: 0,
-        seeking: false,
-        waiting: false,
-        playing: false,
-        paused: false,
-        ended: false,
-      };
+    toggleVideoRemote() {
+      const { video, data } = this.getContent();
+
+      if (!video || !data) {
+        return;
+      } else if (!video.remote || !(video.remote instanceof RemotePlayback)) {
+        return;
+      }
+
+      if (video.remote.state === "connected" || video.remote.state === "disconnected") {
+        try {
+          video.remote.prompt().catch((err) => {
+            this.onVideoRemoteError(err);
+          });
+        } catch (err) {
+          this.onVideoRemoteError(err);
+        }
+      }
+    },
+    onVideoRemoteError(err) {
+      if (!err) {
+        return;
+      }
+
+      if (err instanceof DOMException) {
+        switch (err.name) {
+          case "NotSupportedError":
+            this.$notify.error(this.$gettext("Not supported"));
+            break;
+          case "NotFoundError":
+            this.$notify.error(this.$gettext("Not found"));
+            break;
+          case "NotAllowedError":
+            this.$notify.error(this.$gettext("Not allowed"));
+            break;
+          default:
+            this.$notify.error(err.message);
+        }
+      } else {
+        console.warn(err);
+      }
+    },
+    onVideoRemote(ev) {
+      const { video, data } = this.getContent();
+
+      if (!video || !data) {
+        return;
+      } else if (ev && ev.target.src !== video.src) {
+        return;
+      }
+
+      this.video.casting = ev.state === "connected";
+      this.video.remote = ev.state;
     },
     setVideo(video, data, ev) {
       if (!data) {
@@ -667,6 +747,23 @@ export default {
       this.video.playing = isPlaying;
       this.video.paused = video.paused;
       this.video.ended = video.ended;
+    },
+    resetVideo(showControls = false) {
+      this.video = {
+        controls: !!showControls,
+        src: "",
+        error: "",
+        state: 0,
+        time: 0,
+        duration: 0,
+        seeking: false,
+        waiting: false,
+        playing: false,
+        paused: false,
+        ended: false,
+        casting: false,
+        remote: "",
+      };
     },
     // Initializes and opens the PhotoSwipe lightbox with the
     // images and/or videos that belong to the specified models.

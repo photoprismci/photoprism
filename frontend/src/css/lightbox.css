@@ -374,6 +374,11 @@
     fill: #ffffffdd;
 }
 
+.p-lightbox__controls .video-control.video-control--cast,
+.p-lightbox__controls .video-control.video-control--duration {
+    padding-inline-end: 8px;
+}
+
 .p-lightbox__controls .v-slider .v-slider-thumb {
     color: #ffffff;
 }
