@@ -1,5 +1,13 @@
 <template>
-  <v-dialog :model-value="visible" persistent max-width="350" class="p-dialog p-service-delete" @keydown.esc="close">
+  <v-dialog
+    :model-value="visible"
+    persistent
+    max-width="350"
+    class="p-dialog p-service-delete"
+    @keydown.esc="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
+  >
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
         <v-icon size="54" color="primary">mdi-delete-outline</v-icon>
@@ -20,7 +28,10 @@
 export default {
   name: "PServiceDelete",
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     model: {
       type: Object,
       default: () => {},
@@ -34,14 +45,17 @@ export default {
   watch: {
     visible: function (show) {
       if (show) {
-        this.$view.enter(this);
         this.loading = false;
-      } else {
-        this.$view.leave(this);
       }
     },
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     close() {
       this.$emit("close");
     },

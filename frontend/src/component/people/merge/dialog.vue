@@ -22,7 +22,10 @@ import Subject from "model/subject";
 export default {
   name: "PPeopleMergeDialog",
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     subj1: {
       type: Object,
       default: new Subject(),

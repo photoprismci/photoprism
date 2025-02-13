@@ -1,5 +1,13 @@
 <template>
-  <v-dialog :model-value="visible" persistent max-width="580" class="p-dialog p-settings-webdav" @keydown.esc="close">
+  <v-dialog
+    :model-value="visible"
+    persistent
+    max-width="580"
+    class="p-dialog p-settings-webdav"
+    @keydown.esc="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
+  >
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
         <v-icon size="28" color="primary">mdi-swap-horizontal</v-icon>
@@ -80,23 +88,23 @@
 export default {
   name: "PSettingsWebdav",
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       user: this.$session.getUser(),
     };
   },
-  watch: {
-    visible: function (show) {
-      if (show) {
-        this.$view.enter(this);
-      } else {
-        this.$view.leave(this);
-      }
-    },
-  },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     webdavUrl() {
       let baseUrl = `${window.location.protocol}//${encodeURIComponent(this.user.Name)}@${window.location.host}/originals/`;
 

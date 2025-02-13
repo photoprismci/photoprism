@@ -1,9 +1,3 @@
-.p-page:focus,
-.p-dialog:focus,
-.v-dialog:focus {
-    outline: none;
-}
-
 .p-page-about {
     line-height: 1.5rem;
 }

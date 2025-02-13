@@ -6,6 +6,8 @@
     class="dialog-album-edit"
     color="background"
     @keydown.esc="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
   >
     <v-form
       ref="form"
@@ -119,7 +121,10 @@ import Album from "model/album";
 export default {
   name: "PAlbumEditDialog",
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     album: {
       type: Object,
       default: () => {},
@@ -151,15 +156,18 @@ export default {
   watch: {
     visible: function (show) {
       if (show) {
-        this.$view.enter(this);
         this.model = this.album.clone();
         this.category = this.model.Category ? this.model.Category : null;
-      } else {
-        this.$view.leave(this);
       }
     },
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     expand() {
       this.growDesc = !this.growDesc;
     },

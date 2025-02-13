@@ -6,6 +6,8 @@
     class="p-dialog dialog-label-edit"
     color="background"
     @keydown.esc="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
   >
     <v-form
       ref="form"
@@ -83,14 +85,17 @@ export default {
   watch: {
     visible: function (show) {
       if (show) {
-        this.$view.enter(this);
         this.model = this.label.clone();
-      } else {
-        this.$view.leave(this);
       }
     },
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     close() {
       this.$emit("close");
     },

@@ -7,6 +7,8 @@
     persistent
     class="p-photo-upload-dialog v-dialog--upload"
     @keydown.esc="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
   >
     <v-form ref="form" class="p-photo-upload" validate-on="invalid-input" tabindex="1" @submit.prevent="submit">
       <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()" />
@@ -133,7 +135,10 @@ import { Duration } from "luxon";
 export default {
   name: "PPhotoUploadDialog",
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     data: {
       type: Object,
       default: () => {},
@@ -175,7 +180,6 @@ export default {
   watch: {
     visible: function (show) {
       if (show) {
-        this.$view.enter(this);
         this.reset();
         this.isDemo = this.$config.get("demo");
         this.fileLimit = this.isDemo ? 3 : 0;
@@ -193,12 +197,16 @@ export default {
         this.load("");
       } else {
         this.reset();
-        // Re-enable the browser scrollbar.
-        this.$view.leave(this);
       }
     },
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     removeSelection(index) {
       this.selectedAlbums.splice(index, 1);
     },

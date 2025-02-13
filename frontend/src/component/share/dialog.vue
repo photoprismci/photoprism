@@ -1,5 +1,13 @@
 <template>
-  <v-dialog :model-value="visible" persistent max-width="540" class="p-dialog p-share-dialog" @keydown.esc="close">
+  <v-dialog
+    :model-value="visible"
+    persistent
+    max-width="540"
+    class="p-dialog p-share-dialog"
+    @keydown.esc="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
+  >
     <v-card>
       <v-card-title class="d-flex justify-space-between align-center ga-3">
         <h6 class="text-h6">{{ $gettext(`Share %{s}`, { s: model.modelName() }) }}</h6>
@@ -142,7 +150,10 @@ import * as options from "options/options";
 export default {
   name: "PShareDialog",
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     model: {
       type: Object,
       default: () => {},
@@ -170,7 +181,6 @@ export default {
   watch: {
     visible: function (show) {
       if (show) {
-        this.$view.enter(this);
         this.links = [];
         this.loading = true;
         this.expanded = [];
@@ -185,12 +195,16 @@ export default {
             }
           })
           .finally(() => (this.loading = false));
-      } else {
-        this.$view.leave(this);
       }
     },
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     expires(link) {
       let result = this.$gettext("Expires");
 

@@ -5,6 +5,8 @@
     max-width="575"
     class="p-dialog modal-dialog sponsor-dialog"
     @keydown.esc="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
   >
     <v-card>
       <v-card-title class="d-flex justify-start align-center ga-3">
@@ -49,7 +51,10 @@
 export default {
   name: "PDialogSponsor",
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -62,6 +67,12 @@ export default {
     };
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     close() {
       this.$emit("close");
     },

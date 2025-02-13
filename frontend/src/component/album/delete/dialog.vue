@@ -20,7 +20,10 @@
 export default {
   name: "PAlbumDeleteDialog",
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {};

@@ -6,6 +6,8 @@
     class="dialog-person-edit"
     color="background"
     @keydown.esc="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
   >
     <v-form
       ref="form"
@@ -74,7 +76,10 @@ import Subject from "model/subject";
 export default {
   name: "PPeopleEditDialog",
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     person: {
       type: Object,
       default: () => {},
@@ -90,14 +95,17 @@ export default {
   watch: {
     visible: function (show) {
       if (show) {
-        this.$view.enter(this);
         this.model = this.person.clone();
-      } else {
-        this.$view.leave(this);
       }
     },
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     close() {
       this.$emit("close");
     },

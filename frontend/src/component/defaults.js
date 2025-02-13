@@ -143,14 +143,18 @@ export default {
   VDialog: {
     scrim: true,
     scrollable: true,
-    retainFocus: true,
+    retainFocus: false,
     transition: false,
     persistent: true,
+    openDelay: 0,
+    closeDelay: 0,
     attach: document.body,
   },
   VOverlay: {
     scrim: true,
     transition: false,
+    openDelay: 0,
+    closeDelay: 0,
     attach: document.body,
   },
   VExpansionPanel: {

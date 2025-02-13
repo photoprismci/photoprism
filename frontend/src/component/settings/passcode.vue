@@ -5,6 +5,8 @@
     max-width="500"
     class="p-dialog modal-dialog p-settings-passcode"
     @keydown.esc="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
   >
     <v-form
       ref="form"
@@ -260,7 +262,10 @@
 export default {
   name: "PSettingsPasscode",
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     model: {
       type: Object,
       default: () => this.$session.getUser(),
@@ -304,10 +309,7 @@ export default {
   watch: {
     visible: function (show) {
       if (show) {
-        this.$view.enter(this);
         this.reset();
-      } else {
-        this.$view.leave(this);
       }
     },
   },
@@ -317,6 +319,12 @@ export default {
     }
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     reset() {
       this.code = "";
       this.password = "";

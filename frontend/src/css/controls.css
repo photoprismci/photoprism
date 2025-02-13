@@ -1,4 +1,4 @@
-/* Form Layout and Controls */
+/* Form Layout */
 
 .p-form {
     padding: 8px;
@@ -126,11 +126,18 @@
     }
 }
 
-/* Action Buttons */
+/* Element Focus */
 
-button:focus {
-    outline: none !important;
+div:focus,
+form:focus,
+button:focus,
+.p-page:focus,
+.p-dialog:focus,
+.v-dialog:focus {
+    outline: none;
 }
+
+/* Action Buttons */
 
 .action-buttons,
 .action-controls {

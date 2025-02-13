@@ -5,6 +5,8 @@
     max-width="500"
     class="p-dialog modal-dialog p-settings-password"
     @keydown.esc="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
   >
     <v-form ref="form" class="form-password" accept-charset="UTF-8" tabindex="1" @submit.prevent>
       <v-card>
@@ -96,7 +98,10 @@ import User from "model/user";
 export default {
   name: "PSettingsPassword",
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     model: {
       type: Object,
       default: () => new User(null),
@@ -127,21 +132,18 @@ export default {
       return !sessionUser.SuperAdmin || this.model.getId() === sessionUser.getId();
     },
   },
-  watch: {
-    visible: function (show) {
-      if (show) {
-        this.$view.enter(this);
-      } else {
-        this.$view.leave(this);
-      }
-    },
-  },
   created() {
     if (this.isPublic && !this.isDemo) {
       this.$emit("close");
     }
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     isDisabled() {
       return (
         this.isDemo ||

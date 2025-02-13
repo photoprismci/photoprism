@@ -32,7 +32,10 @@
 export default {
   name: "PPhotoDeleteDialog",
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     text: {
       type: String,
       default: "",

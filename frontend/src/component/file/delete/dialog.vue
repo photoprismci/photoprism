@@ -26,7 +26,10 @@
 export default {
   name: "PFileDeleteDialog",
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {};

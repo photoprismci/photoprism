@@ -1,5 +1,13 @@
 <template>
-  <v-dialog :model-value="visible" persistent max-width="400" class="p-dialog p-update" @keydown.esc="close">
+  <v-dialog
+    :model-value="visible"
+    persistent
+    max-width="400"
+    class="p-dialog p-update"
+    @keydown.esc="close"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
+  >
     <v-card>
       <v-card-title class="d-flex justify-start align-center flex-nowrap ga-3">
         <v-icon icon="mdi-alert-decagram-outline" size="28" color="primary"></v-icon>
@@ -32,16 +40,13 @@ export default {
       default: false,
     },
   },
-  watch: {
-    visible: function (show) {
-      if (show) {
-        this.$view.enter(this);
-      } else {
-        this.$view.leave(this);
-      }
-    },
-  },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+    },
+    afterLeave() {
+      this.$view.leave(this);
+    },
     getMessage() {
       return this.$gettext("A new version of %{s} is available:", { s: this.$config.getAbout() });
     },

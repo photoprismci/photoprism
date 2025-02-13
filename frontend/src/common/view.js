@@ -77,6 +77,47 @@ export function isMediaElement(el) {
   return el instanceof HTMLImageElement || el instanceof HTMLVideoElement || el instanceof HTMLCanvasElement;
 }
 
+// Returns the most likely focus element for the given component, or null if none exists.
+export function getFocusElement(c) {
+  if (!c) {
+    return null;
+  }
+
+  if (c.$refs) {
+    let ref;
+
+    if (c.$refs.form) {
+      ref = c.$refs.form;
+    } else if (c.$refs.content) {
+      ref = c.$refs.content;
+    } else if (c.$refs.container) {
+      ref = c.$refs.container;
+    } else if (c.$refs.dialog) {
+      ref = c.$refs.dialog;
+    }
+
+    if (ref && ref instanceof HTMLElement) {
+      return ref;
+    } else if (ref && ref.$el instanceof HTMLElement) {
+      return ref.$el;
+    } else if (c.$refs.dialog) {
+      return document.querySelector(".v-overlay-container .v-overlay__content");
+    }
+  }
+
+  if (c.$el) {
+    if (c.$el.getAttribute && c.$el.getAttribute("tabindex") === "1") {
+      return c.$el;
+    }
+
+    if (c.$el.parentElement) {
+      return c.$el.parentElement.querySelector('[tabindex="1"]');
+    }
+  }
+
+  return null;
+}
+
 // Prevents the default navigation touch gestures.
 export function preventNavigationTouchEvent(ev) {
   if (ev instanceof TouchEvent && ev.cancelable) {
@@ -185,19 +226,13 @@ export class View {
 
     // Automatically focus the active component if its element tabindex attribute is set to "1":
     // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex
-    let focusElement;
+    const focusElement = getFocusElement(c);
 
-    if (c.$el && c.$el.getAttribute && c.$el.getAttribute("tabindex") === "1") {
-      focusElement = c.$el;
-    } else if (c.$el.parentElement) {
-      focusElement = c.$el.parentElement.querySelector('[tabindex="1"]');
-    }
-
-    if (focusElement) {
+    if (focusElement && focusElement instanceof HTMLElement) {
       try {
-        focusElement.focus({ preventScroll: true, focusVisible: false });
+        focusElement.focus({ preventScroll: true });
       } catch (err) {
-        console.log(`focus: ${err}`);
+        console.log(`focus: ${err}`, focusElement);
       }
     }
 

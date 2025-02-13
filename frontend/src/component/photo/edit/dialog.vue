@@ -3,13 +3,14 @@
     ref="dialog"
     :model-value="visible"
     :fullscreen="$vuetify.display.smAndDown"
-    persistent
     scrim
     scrollable
     class="p-dialog p-photo-edit-dialog v-dialog--sidepanel"
     @click.stop="onClick"
+    @after-enter="afterEnter"
+    @after-leave="afterLeave"
   >
-    <v-card :tile="$vuetify.display.smAndDown">
+    <v-card ref="content" :tile="$vuetify.display.smAndDown" tabindex="1">
       <v-toolbar flat color="surface" :density="$vuetify.display.smAndDown ? 'compact' : 'comfortable'">
         <v-btn icon class="action-close" @click.stop="onClose">
           <v-icon>mdi-close</v-icon>
@@ -73,7 +74,7 @@
         </v-tab>
       </v-tabs>
 
-      <v-tabs-window v-model="active">
+      <v-tabs-window v-if="ready" v-model="active">
         <v-tabs-window-item value="details">
           <p-tab-photo-details ref="details" :uid="uid" @close="close" @prev="prev" @next="next"></p-tab-photo-details>
         </v-tabs-window-item>
@@ -117,7 +118,10 @@ export default {
     "p-tab-photo-info": PhotoInfo,
   },
   props: {
-    visible: Boolean,
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     index: {
       type: Number,
       default: 0,
@@ -142,6 +146,7 @@ export default {
       model: new Photo(),
       uid: "",
       loading: false,
+      ready: false,
       search: null,
       items: [],
       canEdit: this.$config.feature("edit"),
@@ -170,13 +175,10 @@ export default {
   watch: {
     visible: function (show) {
       if (show) {
-        this.$view.enter(this);
         if (this.tab) {
           this.active = this.tab;
         }
         this.find(this.index);
-      } else {
-        this.$view.leave(this);
       }
     },
   },
@@ -189,6 +191,14 @@ export default {
     }
   },
   methods: {
+    afterEnter() {
+      this.$view.enter(this);
+      this.ready = true;
+    },
+    afterLeave() {
+      this.ready = false;
+      this.$view.leave(this);
+    },
     onUpdate(ev, data) {
       if (!data || !data.entities || !Array.isArray(data.entities) || this.loading || !this.model || !this.model.UID) {
         return;
